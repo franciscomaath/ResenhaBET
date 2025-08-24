@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ResenhaBET v1.5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .btn-bet { transition: all 0.2s ease-in-out; }
+        .btn-bet:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .btn-bet:disabled { opacity: 0.5; cursor: not-allowed; }
+        .toast {
+            transition: opacity 0.5s, transform 0.5s;
+        }
+        .main-tab.active {
+            border-color: #22d3ee;
+            background-color: #164e63;
+        }
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+
+    <!-- Tela de Login -->
+    <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center p-4">
+        <h1 class="text-5xl font-black text-cyan-400 mb-2">ResenhaBET</h1>
+        <p class="text-gray-400 mb-8">Quem é você na resenha?</p>
+        <div class="w-full max-w-sm bg-gray-800 p-6 rounded-xl shadow-lg">
+            <label for="player-select" class="block text-sm font-medium text-gray-300 mb-2">Selecione seu nome:</label>
+            <select id="player-select" class="block w-full bg-gray-700 border-gray-600 rounded-md shadow-sm p-3 mb-4"></select>
+            <button id="login-btn" class="w-full bg-cyan-600 hover:bg-cyan-700 text-white font-bold py-3 rounded-lg">Entrar</button>
+        </div>
+    </div>
+
+    <!-- Tela Principal -->
+    <div id="app-screen" class="hidden">
+        <header class="bg-gray-800 p-4 shadow-md flex justify-between items-center sticky top-0 z-10">
+            <h1 class="text-xl font-bold text-cyan-400">ResenhaBET</h1>
+            <div class="text-right">
+                <div id="user-name" class="font-semibold"></div>
+                <div id="user-wallet" class="text-lg font-bold text-green-400"></div>
+            </div>
+        </header>
+
+        <main class="p-4 sm:p-6 md:p-8">
+            <!-- Abas de Navegação Principal -->
+            <div class="flex border-b border-gray-700 mb-6">
+                <button id="tab-betting" class="main-tab border-b-2 py-2 px-4 text-lg font-semibold">Partida Atual</button>
+                <button id="tab-history" class="main-tab border-b-2 border-transparent py-2 px-4 text-lg font-semibold text-gray-400 hover:text-white">Histórico</button>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Coluna Principal (Conteúdo da Aba) -->
+                <div class="lg:col-span-2 space-y-8">
+                    <!-- Aba de Partida Atual -->
+                    <div id="betting-view">
+                        <div id="match-container" class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                            <h2 class="text-2xl font-bold mb-4 text-center">Partida Atual</h2>
+                            <div id="no-match-message" class="text-center text-gray-500 py-12">
+                                <p>Aguardando o Admin definir a próxima partida...</p>
+                            </div>
+                            <div id="match-details" class="hidden">
+                                <!-- Info da Partida -->
+                                <div class="flex items-center justify-around text-center mb-6">
+                                    <div class="w-2/5">
+                                        <p id="p1-name" class="text-2xl font-bold"></p>
+                                        <p class="text-4xl font-black text-cyan-400" id="p1-odd"></p>
+                                    </div>
+                                    <div class="w-1/5 text-2xl font-light text-gray-500" id="draw-section">
+                                        <p>Empate</p>
+                                        <p class="text-4xl font-black text-yellow-400" id="draw-odd"></p>
+                                    </div>
+                                    <div class="w-2/5">
+                                        <p id="p2-name" class="text-2xl font-bold"></p>
+                                        <p class="text-4xl font-black text-cyan-400" id="p2-odd"></p>
+                                    </div>
+                                </div>
+                                <!-- Placar e Cronômetro -->
+                                <div id="score-timer-display" class="text-center my-4 bg-gray-900/50 p-4 rounded-lg">
+                                    <div class="flex justify-center items-center gap-4">
+                                        <span id="score1-display" class="text-5xl font-black">0</span>
+                                        <div class="flex flex-col items-center">
+                                            <span id="match-phase-display" class="bg-gray-700 text-gray-300 px-3 py-1 rounded-full text-sm font-semibold mb-1"></span>
+                                            <p id="timer" class="text-3xl font-black tracking-tighter">00:00</p>
+                                        </div>
+                                        <span id="score2-display" class="text-5xl font-black">0</span>
+                                    </div>
+                                    <div id="penalty-score-display" class="mt-2 text-lg text-yellow-400 hidden">
+                                        Pênaltis: <span id="penalty-score1-display">0</span> - <span id="penalty-score2-display">0</span>
+                                    </div>
+                                </div>
+                                <!-- Seção de Aposta -->
+                                <div id="betting-section" class="mt-8 border-t border-gray-700 pt-6">
+                                    <p id="betting-status" class="text-center font-semibold mb-4"></p>
+                                    <div class="flex items-center gap-4 mb-4">
+                                        <label for="bet-amount" class="text-lg">Apostar:</label>
+                                        <input type="number" id="bet-amount" min="1" value="1" class="flex-grow bg-gray-700 border-gray-600 rounded-md p-2 text-center text-lg">
+                                        <button id="bet-max-btn" class="bg-gray-600 hover:bg-gray-500 px-4 py-2 rounded-md">MAX</button>
+                                    </div>
+                                    <div id="bet-buttons" class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                        <button id="bet-on-p1" class="btn-bet bg-cyan-600 hover:bg-cyan-500 p-4 rounded-lg font-bold"></button>
+                                        <button id="bet-on-draw" class="btn-bet bg-yellow-600 hover:bg-yellow-500 p-4 rounded-lg font-bold">Apostar no Empate</button>
+                                        <button id="bet-on-p2" class="btn-bet bg-cyan-600 hover:bg-cyan-500 p-4 rounded-lg font-bold"></button>
+                                    </div>
+                                    <p id="current-bet-info" class="text-center mt-4 text-gray-400"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Histórico Pessoal de Apostas -->
+                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-4">Meu Histórico de Apostas</h2>
+                        <div id="my-bet-history" class="max-h-60 overflow-y-auto space-y-2 pr-2"></div>
+                    </div>
+                </div>
+
+                <!-- Aba de Histórico Global -->
+                <div id="history-view" class="hidden lg:col-span-2 space-y-4">
+                    <h2 class="text-3xl font-bold text-center">Histórico de Partidas</h2>
+                    <div id="global-bet-history" class="space-y-4"></div>
+                </div>
+
+                <!-- Coluna Direita: Ranking e Admin -->
+                <div class="space-y-8">
+                    <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-4">Ranking de Apostadores</h2>
+                        <div id="bettors-ranking" class="space-y-2"></div>
+                    </div>
+                    <!-- Painel do Admin -->
+                    <div id="admin-panel" class="hidden bg-gray-800 p-6 rounded-xl shadow-lg">
+                        <h2 class="text-2xl font-bold mb-4 text-red-400">Painel do Admin</h2>
+                        <div class="space-y-4">
+                            <!-- Definir Partida -->
+                            <div>
+                                <h3 class="font-semibold mb-2">1. Definir Partida</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <select id="admin-p1" class="bg-gray-700 p-2 rounded-md"></select>
+                                    <select id="admin-p2" class="bg-gray-700 p-2 rounded-md"></select>
+                                </div>
+                                <div class="flex items-center mt-2">
+                                    <input type="checkbox" id="admin-is-knockout" class="h-4 w-4 rounded bg-gray-700">
+                                    <label for="admin-is-knockout" class="ml-2">É eliminatória?</label>
+                                </div>
+                                <button id="admin-set-match-btn" class="w-full mt-2 bg-blue-600 hover:bg-blue-700 p-2 rounded-md">Definir Partida</button>
+                            </div>
+                            <!-- Controle do Jogo -->
+                             <div class="border-t border-gray-600 pt-4">
+                                <h3 class="font-semibold mb-2">2. Controle do Jogo</h3>
+                                <div class="flex items-end gap-2">
+                                    <div class="flex-grow">
+                                        <label for="admin-match-phase" class="text-sm">Fase:</label>
+                                        <select id="admin-match-phase" class="w-full bg-gray-700 p-2 rounded-md mt-1">
+                                            <option>Não Iniciado</option>
+                                            <option>1º Tempo</option>
+                                            <option>Intervalo</option>
+                                            <option>2º Tempo</option>
+                                            <option>Prorrogação</option>
+                                            <option>Pênaltis</option>
+                                            <option>Fim de Jogo</option>
+                                        </select>
+                                    </div>
+                                    <button id="admin-set-phase-btn" class="bg-gray-600 hover:bg-gray-500 p-2 rounded-md">Set</button>
+                                </div>
+                                <div class="grid grid-cols-3 gap-2 mt-2">
+                                    <button id="admin-start-timer-btn" class="bg-green-600 hover:bg-green-700 p-2 rounded-md">Iniciar</button>
+                                    <button id="admin-pause-timer-btn" class="bg-yellow-600 hover:bg-yellow-700 p-2 rounded-md">Pausar</button>
+                                    <button id="admin-reset-timer-btn" class="bg-red-600 hover:bg-red-700 p-2 rounded-md">Resetar</button>
+                                </div>
+                                <div class="mt-2">
+                                    <label class="text-sm">Atualizar Placar:</label>
+                                    <div class="flex items-center gap-2">
+                                        <input type="number" id="admin-score1" class="w-full bg-gray-700 p-2 rounded-md text-center" value="0">
+                                        <span>x</span>
+                                        <input type="number" id="admin-score2" class="w-full bg-gray-700 p-2 rounded-md text-center" value="0">
+                                    </div>
+                                    <div id="admin-penalty-scores" class="hidden mt-1">
+                                        <label class="text-xs">Pênaltis:</label>
+                                        <div class="flex items-center gap-2">
+                                            <input type="number" id="admin-penalty1" class="w-full bg-gray-700 p-2 rounded-md text-center" value="0">
+                                            <span>x</span>
+                                            <input type="number" id="admin-penalty2" class="w-full bg-gray-700 p-2 rounded-md text-center" value="0">
+                                        </div>
+                                    </div>
+                                    <button id="admin-update-score-btn" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-700 p-2 rounded-md">Atualizar Placar</button>
+                                </div>
+                            </div>
+                            <!-- Controle de Apostas -->
+                            <div class="border-t border-gray-600 pt-4">
+                                <h3 class="font-semibold mb-2">3. Controle de Apostas</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="admin-open-betting-btn" class="bg-green-600 hover:bg-green-700 p-2 rounded-md">Abrir Apostas</button>
+                                    <button id="admin-close-betting-btn" class="bg-red-600 hover:bg-red-700 p-2 rounded-md">Fechar Apostas</button>
+                                </div>
+                            </div>
+                            <!-- Resolver Partida -->
+                            <div class="border-t border-gray-600 pt-4">
+                                <h3 class="font-semibold mb-2">4. Resolver Partida</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                    <button id="admin-resolve-p1" class="bg-cyan-700 hover:bg-cyan-800 p-2 rounded-md"></button>
+                                    <button id="admin-resolve-draw" class="bg-yellow-700 hover:bg-yellow-800 p-2 rounded-md">Empate</button>
+                                    <button id="admin-resolve-p2" class="bg-cyan-700 hover:bg-cyan-800 p-2 rounded-md"></button>
+                                </div>
+                            </div>
+                             <!-- Gerenciamento de Apostadores -->
+                            <div class="border-t border-gray-600 pt-4">
+                                <h3 class="font-semibold mb-2">5. Gerenciamento de Apostadores</h3>
+                                <div class="space-y-3">
+                                    <div class="flex items-end gap-2">
+                                        <div class="flex-grow">
+                                            <label for="admin-give-money-player" class="text-sm">Dar dinheiro para:</label>
+                                            <select id="admin-give-money-player" class="w-full bg-gray-700 p-2 rounded-md mt-1"></select>
+                                        </div>
+                                        <div class="w-24">
+                                            <label for="admin-give-money-amount" class="text-sm">Valor:</label>
+                                            <input type="number" id="admin-give-money-amount" value="10" class="w-full bg-gray-700 p-2 rounded-md mt-1">
+                                        </div>
+                                    </div>
+                                    <button id="admin-give-money-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 p-2 rounded-md">Confirmar Crédito</button>
+                                    <div class="flex items-end gap-2">
+                                        <div class="flex-grow">
+                                            <label for="admin-add-guest" class="text-sm">Adicionar Convidado:</label>
+                                            <input type="text" id="admin-add-guest" placeholder="Nome do Convidado" class="w-full bg-gray-700 p-2 rounded-md mt-1">
+                                        </div>
+                                        <button id="admin-add-guest-btn" class="bg-purple-600 hover:bg-purple-700 p-2 rounded-md">Add</button>
+                                    </div>
+                                    <button id="admin-reset-wallets-btn" class="w-full mt-2 bg-red-800 hover:bg-red-900 p-2 rounded-md">Resetar Carteiras</button>
+                                </div>
+                            </div>
+                             <!-- Auras & Dados -->
+                            <div class="border-t border-gray-600 pt-4">
+                                <h3 class="font-semibold mb-2">6. Auras & Dados</h3>
+                                <div class="space-y-3">
+                                    <label for="import-auras-input" class="w-full text-center block cursor-pointer bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg transition duration-300">
+                                        Importar Auras (.json)
+                                    </label>
+                                    <input type="file" id="import-auras-input" class="hidden" accept=".json">
+                                    <div class="bg-gray-900/50 p-2 rounded-lg max-h-40 overflow-y-auto">
+                                        <h4 class="font-bold mb-2 text-sm text-center">Auras Atuais</h4>
+                                        <div id="auras-list" class="grid grid-cols-2 gap-1 text-xs">
+                                            <!-- Lista de auras -->
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                             <!-- Salvar/Carregar Histórico -->
+                             <div class="border-t border-gray-600 pt-4">
+                                <h3 class="font-semibold mb-2">7. Salvar/Carregar Histórico</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <button id="admin-export-btn" class="bg-blue-700 hover:bg-blue-800 p-2 rounded-md">Exportar</button>
+                                    <label for="admin-import-input" class="text-center cursor-pointer bg-purple-700 hover:bg-purple-800 p-2 rounded-md">Importar</label>
+                                    <input type="file" id="admin-import-input" class="hidden" accept=".json">
+                                </div>
+                            </div>
+                            <!-- Visão das Apostas -->
+                            <div class="border-t border-gray-600 pt-4">
+                                <h3 class="font-semibold mb-2">Apostas da Partida Atual</h3>
+                                <div id="admin-current-bets" class="max-h-40 overflow-y-auto space-y-1 text-sm"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Toast Notification -->
+    <div id="toast" class="toast fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white opacity-0 transform translate-y-5"></div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const socket = io();
+            let me = null;
+            let myWallet = 20;
+            let currentMatch = null;
+            let lastHistoryLength = 0;
+            let state = {};
+            
+            // --- Elementos do DOM ---
+            const loginScreen = document.getElementById('login-screen');
+            const appScreen = document.getElementById('app-screen');
+            const bettingView = document.getElementById('betting-view');
+            const historyView = document.getElementById('history-view');
+            const tabBetting = document.getElementById('tab-betting');
+            const tabHistory = document.getElementById('tab-history');
+            const playerSelect = document.getElementById('player-select');
+            const loginBtn = document.getElementById('login-btn');
+            const userNameEl = document.getElementById('user-name');
+            const userWalletEl = document.getElementById('user-wallet');
+            const noMatchMsg = document.getElementById('no-match-message');
+            const matchDetails = document.getElementById('match-details');
+            const p1NameEl = document.getElementById('p1-name');
+            const p1OddEl = document.getElementById('p1-odd');
+            const p2NameEl = document.getElementById('p2-name');
+            const p2OddEl = document.getElementById('p2-odd');
+            const drawSection = document.getElementById('draw-section');
+            const drawOddEl = document.getElementById('draw-odd');
+            const bettingStatus = document.getElementById('betting-status');
+            const betAmountInput = document.getElementById('bet-amount');
+            const betMaxBtn = document.getElementById('bet-max-btn');
+            const betButtons = document.getElementById('bet-buttons');
+            const betOnP1Btn = document.getElementById('bet-on-p1');
+            const betOnDrawBtn = document.getElementById('bet-on-draw');
+            const betOnP2Btn = document.getElementById('bet-on-p2');
+            const currentBetInfo = document.getElementById('current-bet-info');
+            const bettorsRanking = document.getElementById('bettors-ranking');
+            const myBetHistoryEl = document.getElementById('my-bet-history');
+            const globalBetHistoryEl = document.getElementById('global-bet-history');
+            const toastEl = document.getElementById('toast');
+            const timerEl = document.getElementById('timer');
+            const matchPhaseEl = document.getElementById('match-phase-display');
+            const score1Display = document.getElementById('score1-display');
+            const score2Display = document.getElementById('score2-display');
+            const penaltyScoreDisplay = document.getElementById('penalty-score-display');
+            const penaltyScore1Display = document.getElementById('penalty-score1-display');
+            const penaltyScore2Display = document.getElementById('penalty-score2-display');
+            const aurasList = document.getElementById('auras-list');
+            
+            // Admin Panel
+            const adminPanel = document.getElementById('admin-panel');
+            const adminP1Select = document.getElementById('admin-p1');
+            const adminP2Select = document.getElementById('admin-p2');
+            const adminIsKnockout = document.getElementById('admin-is-knockout');
+            const adminSetMatchBtn = document.getElementById('admin-set-match-btn');
+            const adminOpenBettingBtn = document.getElementById('admin-open-betting-btn');
+            const adminCloseBettingBtn = document.getElementById('admin-close-betting-btn');
+            const adminResolveP1Btn = document.getElementById('admin-resolve-p1');
+            const adminResolveDrawBtn = document.getElementById('admin-resolve-draw');
+            const adminResolveP2Btn = document.getElementById('admin-resolve-p2');
+            const adminResetWalletsBtn = document.getElementById('admin-reset-wallets-btn');
+            const adminGiveMoneyPlayerSelect = document.getElementById('admin-give-money-player');
+            const adminGiveMoneyAmountInput = document.getElementById('admin-give-money-amount');
+            const adminGiveMoneyBtn = document.getElementById('admin-give-money-btn');
+            const adminAddGuestInput = document.getElementById('admin-add-guest');
+            const adminAddGuestBtn = document.getElementById('admin-add-guest-btn');
+            const adminCurrentBets = document.getElementById('admin-current-bets');
+            const adminMatchPhaseSelect = document.getElementById('admin-match-phase');
+            const adminSetPhaseBtn = document.getElementById('admin-set-phase-btn');
+            const adminStartTimerBtn = document.getElementById('admin-start-timer-btn');
+            const adminPauseTimerBtn = document.getElementById('admin-pause-timer-btn');
+            const adminResetTimerBtn = document.getElementById('admin-reset-timer-btn');
+            const adminScore1Input = document.getElementById('admin-score1');
+            const adminScore2Input = document.getElementById('admin-score2');
+            const adminPenalty1Input = document.getElementById('admin-penalty1');
+            const adminPenalty2Input = document.getElementById('admin-penalty2');
+            const adminUpdateScoreBtn = document.getElementById('admin-update-score-btn');
+            const adminPenaltyScoresDiv = document.getElementById('admin-penalty-scores');
+            const adminImportAurasInput = document.getElementById('import-auras-input');
+            const adminExportBtn = document.getElementById('admin-export-btn');
+            const adminImportInput = document.getElementById('admin-import-input');
+
+            // --- Funções de Renderização ---
+            function renderBettorsRanking(bettors) {
+                bettorsRanking.innerHTML = '';
+                const hasAnyBets = Object.values(bettors).some(b => b.hasBetted);
+                let bettorsToShow = hasAnyBets 
+                    ? Object.values(bettors).filter(b => b.hasBetted)
+                    : Object.values(bettors);
+
+                const sortedBettors = bettorsToShow.sort((a, b) => b.wallet - a.wallet);
+
+                if (sortedBettors.length === 0) {
+                    bettorsRanking.innerHTML = '<p class="text-gray-500 text-center">Nenhum apostador ativo.</p>';
+                    return;
+                }
+
+                sortedBettors.forEach((bettor, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between items-center bg-gray-700 p-2 rounded-md';
+                    const isMe = bettor.name === me;
+                    div.innerHTML = `
+                        <div class="flex items-center">
+                            <span class="font-bold mr-2">${index + 1}.</span>
+                            <span class="${isMe ? 'text-cyan-400 font-bold' : ''}">${bettor.name}</span>
+                        </div>
+                        <span class="font-bold text-green-400">R$ ${bettor.wallet.toFixed(2)}</span>
+                    `;
+                    bettorsRanking.appendChild(div);
+                });
+            }
+
+            function renderMatch(matchData, currentBets) {
+                currentMatch = matchData;
+                if (matchData) {
+                    noMatchMsg.classList.add('hidden');
+                    matchDetails.classList.remove('hidden');
+
+                    p1NameEl.textContent = matchData.p1;
+                    p1OddEl.textContent = matchData.odds.p1 + 'x';
+                    betOnP1Btn.textContent = `Apostar em ${matchData.p1}`;
+                    adminResolveP1Btn.textContent = `${matchData.p1} Venceu`;
+                    
+                    p2NameEl.textContent = matchData.p2;
+                    p2OddEl.textContent = matchData.odds.p2 + 'x';
+                    betOnP2Btn.textContent = `Apostar em ${matchData.p2}`;
+                    adminResolveP2Btn.textContent = `${matchData.p2} Venceu`;
+                    
+                    score1Display.textContent = matchData.score1;
+                    score2Display.textContent = matchData.score2;
+                    penaltyScore1Display.textContent = matchData.penaltyScore1;
+                    penaltyScore2Display.textContent = matchData.penaltyScore2;
+
+                    if (matchData.isKnockout) {
+                        drawSection.classList.add('hidden');
+                        betOnDrawBtn.classList.add('hidden');
+                        adminResolveDrawBtn.classList.add('hidden');
+                        betButtons.classList.add('sm:grid-cols-2');
+                        betButtons.classList.remove('sm:grid-cols-3');
+                    } else {
+                        drawSection.classList.remove('hidden');
+                        betOnDrawBtn.classList.remove('hidden');
+                        adminResolveDrawBtn.classList.remove('hidden');
+                        betButtons.classList.remove('sm:grid-cols-2');
+                        betButtons.classList.add('sm:grid-cols-3');
+                        drawOddEl.textContent = matchData.odds.draw + 'x';
+                    }
+
+                    bettingStatus.textContent = matchData.bettingOpen ? 'APOSTAS ABERTAS!' : 'APOSTAS ENCERRADAS';
+                    bettingStatus.className = `text-center font-semibold mb-4 ${matchData.bettingOpen ? 'text-green-400' : 'text-red-400'}`;
+                    
+                    const myBet = currentBets.find(b => b.bettor === me);
+                    if (myBet) {
+                        currentBetInfo.textContent = `Sua aposta: R$ ${myBet.amount.toFixed(2)} em ${myBet.on}`;
+                    } else {
+                        currentBetInfo.textContent = 'Você ainda não apostou nesta partida.';
+                    }
+
+                    [betOnP1Btn, betOnP2Btn, betOnDrawBtn, betAmountInput, betMaxBtn].forEach(el => el.disabled = !matchData.bettingOpen);
+
+                } else {
+                    noMatchMsg.classList.remove('hidden');
+                    matchDetails.classList.add('hidden');
+                }
+            }
+
+            function renderAdminBets(bets) {
+                adminCurrentBets.innerHTML = '';
+                if (bets.length === 0) {
+                    adminCurrentBets.innerHTML = '<p class="text-gray-500">Nenhuma aposta ainda.</p>';
+                    return;
+                }
+                bets.forEach(bet => {
+                    const div = document.createElement('div');
+                    div.className = 'flex justify-between bg-gray-700/50 p-1 rounded';
+                    div.innerHTML = `
+                        <span>${bet.bettor}</span>
+                        <span>R$ ${bet.amount.toFixed(2)} em <strong>${bet.on}</strong></span>
+                    `;
+                    adminCurrentBets.appendChild(div);
+                });
+            }
+
+            function renderMyBetHistory(history) {
+                myBetHistoryEl.innerHTML = '';
+                const myBets = history.flatMap(h => h.bets.filter(b => b.bettor === me).map(b => ({...b, match: h.match, winner: h.winner})));
+                
+                if (myBets.length === 0) {
+                    myBetHistoryEl.innerHTML = '<p class="text-gray-500 text-center">Você ainda não fez nenhuma aposta.</p>';
+                    return;
+                }
+
+                myBets.forEach(bet => {
+                    const div = document.createElement('div');
+                    const isWin = bet.outcome === 'win';
+                    const outcomeClass = isWin ? 'text-green-400' : 'text-red-400';
+                    const outcomeText = isWin ? `+ R$ ${bet.payout.toFixed(2)}` : `- R$ ${bet.amount.toFixed(2)}`;
+                    div.className = 'flex justify-between items-center bg-gray-700/50 p-2 rounded-md';
+                    div.innerHTML = `
+                        <div>
+                            <p>Aposta de <strong>R$ ${bet.amount.toFixed(2)}</strong> em <strong>${bet.on}</strong></p>
+                            <p class="text-xs text-gray-400">${bet.match.p1} ${bet.match.score1} x ${bet.match.score2} ${bet.match.p2}</p>
+                        </div>
+                        <span class="font-bold ${outcomeClass}">${outcomeText}</span>
+                    `;
+                    myBetHistoryEl.appendChild(div);
+                });
+            }
+
+            function renderGlobalBetHistory(history) {
+                globalBetHistoryEl.innerHTML = '';
+                 if (history.length === 0) {
+                    globalBetHistoryEl.innerHTML = '<p class="text-gray-500 text-center mt-8">Nenhuma partida resolvida no histórico.</p>';
+                    return;
+                }
+                history.forEach(h => {
+                    const div = document.createElement('details');
+                    div.className = 'bg-gray-800 p-4 rounded-lg cursor-pointer';
+                    
+                    let betsHtml = h.bets.map(b => {
+                        const isWin = b.outcome === 'win';
+                        const outcomeClass = isWin ? 'text-green-400' : 'text-red-400';
+                        const outcomeText = isWin ? `+R$${b.payout.toFixed(2)}` : `-R$${b.amount.toFixed(2)}`;
+                        return `<li class="flex justify-between"><span>${b.bettor} apostou R$${b.amount.toFixed(2)} em ${b.on}</span> <span class="${outcomeClass}">${outcomeText}</span></li>`;
+                    }).join('');
+
+                    div.innerHTML = `
+                        <summary class="font-semibold text-lg flex justify-between">
+                            <span>${h.match.p1} ${h.match.score1} x ${h.match.score2} ${h.match.p2}</span>
+                            <span>Vencedor: ${h.winner}</span>
+                        </summary>
+                        <ul class="mt-2 pt-2 border-t border-gray-700 space-y-1 text-sm">${betsHtml}</ul>
+                    `;
+                    globalBetHistoryEl.appendChild(div);
+                });
+            }
+            
+            function formatTime(ms) {
+                const totalSeconds = Math.floor(ms / 1000);
+                const minutes = Math.floor(totalSeconds / 60).toString().padStart(2, '0');
+                const seconds = (totalSeconds % 60).toString().padStart(2, '0');
+                return `${minutes}:${seconds}`;
+            }
+
+            function renderTimer(timerState) {
+                matchPhaseEl.textContent = timerState.phase;
+                timerEl.textContent = formatTime(timerState.elapsed);
+                if (timerState.phase === 'Pênaltis') {
+                    penaltyScoreDisplay.classList.remove('hidden');
+                    adminPenaltyScoresDiv.classList.remove('hidden');
+                } else {
+                    penaltyScoreDisplay.classList.add('hidden');
+                    adminPenaltyScoresDiv.classList.add('hidden');
+                }
+            }
+            
+            function renderAurasList(auras) {
+                if (!aurasList || !auras) return;
+                const sortedPlayers = Object.keys(auras).sort();
+                aurasList.innerHTML = sortedPlayers.map(name => `
+                    <div class="flex justify-between bg-gray-700 p-1 rounded">
+                        <span>${name}</span>
+                        <span class="font-bold text-cyan-400">${Math.round(auras[name].aura)}</span>
+                    </div>
+                `).join('');
+            }
+
+            function showToast(message, isSuccess) {
+                toastEl.textContent = message;
+                toastEl.className = `toast fixed bottom-5 right-5 p-4 rounded-lg shadow-lg text-white opacity-0 transform translate-y-5 ${isSuccess ? 'bg-green-600' : 'bg-red-600'}`;
+                
+                setTimeout(() => {
+                    toastEl.classList.remove('opacity-0', 'translate-y-5');
+                }, 100);
+
+                setTimeout(() => {
+                    toastEl.classList.add('opacity-0', 'translate-y-5');
+                }, 4000);
+            }
+
+            function populateAdminSelects(players) {
+                adminP1Select.innerHTML = '';
+                adminP2Select.innerHTML = '';
+                adminGiveMoneyPlayerSelect.innerHTML = '';
+
+                players.sort().forEach(name => {
+                    const adminOpt1 = document.createElement('option');
+                    adminOpt1.value = name;
+                    adminOpt1.textContent = name;
+                    adminP1Select.appendChild(adminOpt1);
+
+                    const adminOpt2 = document.createElement('option');
+                    adminOpt2.value = name;
+                    adminOpt2.textContent = name;
+                    adminP2Select.appendChild(adminOpt2);
+
+                    const adminOpt3 = document.createElement('option');
+                    adminOpt3.value = name;
+                    adminOpt3.textContent = name;
+                    adminGiveMoneyPlayerSelect.appendChild(adminOpt3);
+                });
+                if (adminP2Select.options.length > 1) adminP2Select.selectedIndex = 1;
+            }
+
+            // --- Lógica de Socket ---
+            socket.on('initialState', (s) => {
+                state = s;
+                lastHistoryLength = state.betHistory.length;
+                playerSelect.innerHTML = '<option value="">-- Escolha seu nome --</option>';
+                state.players.forEach(name => {
+                    const option = document.createElement('option');
+                    option.value = name;
+                    option.textContent = name;
+                    playerSelect.appendChild(option);
+                });
+                populateAdminSelects(state.players);
+            });
+
+            socket.on('updateState', (s) => {
+                state = s;
+                if (state.betHistory.length > lastHistoryLength) {
+                    const lastResolved = state.betHistory[0];
+                    const myBet = lastResolved.bets.find(b => b.bettor === me);
+                    if (myBet) {
+                        if (myBet.outcome === 'win') {
+                            showToast(`Você ganhou R$ ${myBet.payout.toFixed(2)}!`, true);
+                        } else {
+                            showToast(`Você perdeu R$ ${myBet.amount.toFixed(2)}.`, false);
+                        }
+                    }
+                    lastHistoryLength = state.betHistory.length;
+                }
+                
+                renderBettorsRanking(state.bettors);
+                renderMatch(state.currentMatch, state.currentBets);
+                renderAdminBets(state.currentBets);
+                renderMyBetHistory(state.betHistory);
+                renderGlobalBetHistory(state.betHistory);
+                renderTimer(state.timerState);
+                renderAurasList(state.auras);
+                populateAdminSelects(state.players); // Atualiza a lista de jogadores para dar dinheiro
+
+                if (state.bettors[me]) {
+                    myWallet = state.bettors[me].wallet;
+                    userWalletEl.textContent = `R$ ${myWallet.toFixed(2)}`;
+                }
+            });
+
+            socket.on('timerUpdate', ({ elapsed }) => {
+                timerEl.textContent = formatTime(elapsed);
+            });
+            
+            socket.on('betError', (message) => alert(`Erro na aposta: ${message}`));
+            socket.on('adminSuccess', (message) => alert(`Sucesso: ${message}`));
+            socket.on('adminError', (message) => alert(`Erro: ${message}`));
+
+            // --- Event Listeners ---
+            loginBtn.addEventListener('click', () => {
+                me = playerSelect.value;
+                if (me) {
+                    socket.emit('setPlayer', me);
+                    userNameEl.textContent = me;
+                    loginScreen.classList.add('hidden');
+                    appScreen.classList.remove('hidden');
+                    if (me === 'Francisco' || me === 'Tadeu') {
+                        adminPanel.classList.remove('hidden');
+                    }
+                    // Forçar uma renderização completa com os dados já recebidos
+                    renderBettorsRanking(state.bettors);
+                    renderMatch(state.currentMatch, state.currentBets);
+                    renderMyBetHistory(state.betHistory);
+                }
+            });
+
+            betMaxBtn.addEventListener('click', () => betAmountInput.value = Math.floor(myWallet));
+            betOnP1Btn.addEventListener('click', () => { if(currentMatch) socket.emit('placeBet', { bettorName: me, on: currentMatch.p1, amount: betAmountInput.value }) });
+            betOnP2Btn.addEventListener('click', () => { if(currentMatch) socket.emit('placeBet', { bettorName: me, on: currentMatch.p2, amount: betAmountInput.value }) });
+            betOnDrawBtn.addEventListener('click', () => { if(currentMatch) socket.emit('placeBet', { bettorName: me, on: 'Empate', amount: betAmountInput.value }) });
+
+            // Admin Listeners
+            adminSetMatchBtn.addEventListener('click', () => {
+                const p1 = adminP1Select.value;
+                const p2 = adminP2Select.value;
+                if (p1 === p2) return alert('Jogadores devem ser diferentes.');
+                socket.emit('admin:setMatch', { p1, p2, isKnockout: adminIsKnockout.checked });
+            });
+            adminOpenBettingBtn.addEventListener('click', () => socket.emit('admin:toggleBetting', true));
+            adminCloseBettingBtn.addEventListener('click', () => socket.emit('admin:toggleBetting', false));
+            adminResolveP1Btn.addEventListener('click', () => { if(currentMatch) socket.emit('admin:resolveMatch', { winner: currentMatch.p1 }) });
+            adminResolveP2Btn.addEventListener('click', () => { if(currentMatch) socket.emit('admin:resolveMatch', { winner: currentMatch.p2 }) });
+            adminResolveDrawBtn.addEventListener('click', () => { if(currentMatch) socket.emit('admin:resolveMatch', { winner: 'Empate' }) });
+            adminResetWalletsBtn.addEventListener('click', () => { if (confirm('Tem certeza?')) socket.emit('admin:resetWallets') });
+            adminSetPhaseBtn.addEventListener('click', () => socket.emit('admin:setMatchPhase', adminMatchPhaseSelect.value));
+            adminStartTimerBtn.addEventListener('click', () => socket.emit('admin:startTimer'));
+            adminPauseTimerBtn.addEventListener('click', () => socket.emit('admin:pauseTimer'));
+            adminResetTimerBtn.addEventListener('click', () => socket.emit('admin:resetTimer'));
+            adminUpdateScoreBtn.addEventListener('click', () => socket.emit('admin:updateScore', { score1: parseInt(adminScore1Input.value), score2: parseInt(adminScore2Input.value), penaltyScore1: parseInt(adminPenalty1Input.value), penaltyScore2: parseInt(adminPenalty2Input.value) }));
+            adminImportAurasInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        socket.emit('admin:importAuras', event.target.result);
+                    } catch (err) {
+                        alert("Erro ao ler o arquivo.");
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            });
+             adminExportBtn.addEventListener('click', () => {
+                socket.emit('admin:exportData', (data) => {
+                    const dataStr = JSON.stringify(data, null, 2);
+                    const blob = new Blob([dataStr], {type: "application/json"});
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'resenhabet_data.json';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            });
+
+            adminImportInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    try {
+                        const data = JSON.parse(event.target.result);
+                        if (confirm("Tem certeza que deseja importar estes dados? A ação irá sobrescrever o histórico e as carteiras atuais.")) {
+                            socket.emit('admin:importData', data);
+                        }
+                    } catch (err) {
+                        alert("Erro ao ler o arquivo. Verifique se é um arquivo .json válido.");
+                    }
+                };
+                reader.readAsText(file);
+                e.target.value = '';
+            });
+
+            adminGiveMoneyBtn.addEventListener('click', () => {
+                const playerName = adminGiveMoneyPlayerSelect.value;
+                const amount = parseFloat(adminGiveMoneyAmountInput.value);
+                if (playerName && amount > 0) {
+                    socket.emit('admin:giveMoney', { playerName, amount });
+                }
+            });
+
+            adminAddGuestBtn.addEventListener('click', () => {
+                const guestName = adminAddGuestInput.value.trim();
+                if (guestName) {
+                    socket.emit('admin:addGuestBettor', guestName);
+                    adminAddGuestInput.value = '';
+                }
+            });
+
+
+            // Tab navigation
+            tabBetting.addEventListener('click', () => {
+                bettingView.style.display = 'block';
+                historyView.style.display = 'none';
+                tabBetting.classList.add('active');
+                tabHistory.classList.remove('active');
+            });
+            tabHistory.addEventListener('click', () => {
+                bettingView.style.display = 'none';
+                historyView.style.display = 'block';
+                tabBetting.classList.remove('active');
+                tabHistory.classList.add('active');
+            });
+            
+            // Set initial view
+            bettingView.style.display = 'block';
+            historyView.style.display = 'none';
+            tabBetting.classList.add('active');
+        });
+    </script>
+</body>
+</html>
