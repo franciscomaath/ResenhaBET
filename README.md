@@ -2,7 +2,7 @@
 
 Bem-vindo ao ResenhaBET, o sistema de apostas em tempo real que transforma os nossos campeonatos de EA FC numa experiência lendária\! ⚽️💸
 
-Este projeto funciona em conjunto com o [**ResenhaScore365**][https://github.com/franciscomaath/ResenhaScore365], utilizando os dados de "Aura" (habilidade) de cada jogador para gerar odds realistas e permitir que a galera aposte em tempo real nas partidas. Chega de "achismos", agora a zoeira é baseada em dados\!
+Este projeto funciona em conjunto com o [**ResenhaScore365**](https://github.com/franciscomaath/ResenhaScore365), utilizando os dados de "Aura" (habilidade) de cada jogador para gerar odds realistas e permitir que a galera aposte em tempo real nas partidas. Chega de "achismos", agora a zoeira é baseada em dados\!
 
 ## **✨ Funcionalidades Principais**
 
