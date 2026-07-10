@@ -1,7 +1,6 @@
 # ResenhaBET
 
 Plataforma multi-grupo para campeonatos de FIFA entre amigos, com apostas internas e suporte a eventos de futebol real.
-**[🔗 Acessar o projeto em produção](https://resenha-bet.vercel.app/)**
 
 ## A origem
 
@@ -161,8 +160,6 @@ O CI/CD existe no fluxo real do projeto, mas está configurado fora deste reposi
 
 ## Rodando localmente
 
-Se preferir só explorar o produto sem configurar o ambiente, o projeto está no ar em [resenha-bet.vercel.app](https://resenha-bet.vercel.app/).
-
 Pré-requisitos:
 
 - Java 17
@@ -213,6 +210,8 @@ Observação: A integração com APIfootball está implementada e foi validada e
 - Endurecer a experiência multi-grupo no frontend e continuar testando isolamento entre grupos.
 
 ## Screenshots
+
+Nota para o Francisco: adicionar 3-4 screenshots reais aqui antes de publicar: dashboard, tela de evento ao vivo, tela de apostas e gestão de grupos.
 
 <!-- screenshot: dashboard -->
 ![alt text](image.png)
