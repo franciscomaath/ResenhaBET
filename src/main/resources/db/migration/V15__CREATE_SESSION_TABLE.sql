@@ -1,0 +1,10 @@
+CREATE TABLE session(
+    id BIGSERIAL PRIMARY KEY,
+    user_id BIGINT NOT NULL,
+    token UUID NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL
+);
+
+ALTER TABLE session
+    ADD CONSTRAINT fk_user_id FOREIGN KEY (user_id) REFERENCES users(id);

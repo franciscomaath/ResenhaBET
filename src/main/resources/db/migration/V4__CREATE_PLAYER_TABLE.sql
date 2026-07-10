@@ -1,0 +1,9 @@
+CREATE TABLE player (
+    id BIGSERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    current_elo DECIMAL(10,2) NOT NULL DEFAULT 1000.00,
+    user_id BIGINT UNIQUE);
+
+ALTER TABLE player
+    ADD CONSTRAINT fk_player_user FOREIGN KEY (user_id) REFERENCES users(id);
