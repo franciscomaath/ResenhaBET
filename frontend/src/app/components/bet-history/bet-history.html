@@ -1,0 +1,22 @@
+<article class="rounded-xl bg-gray-800 p-6 shadow-lg">
+  <h2 class="mb-4 text-2xl font-bold">Meu Historico de Apostas</h2>
+  <div class="space-y-2">
+    @for (item of history(); track item.matchLabel + item.score) {
+      @for (bet of item.bets; track bet.bettor + bet.label) {
+        @if (bet.bettor === currentUser()) {
+          <div class="flex items-center justify-between rounded-md bg-gray-700/50 p-2">
+            <div>
+              <p>Aposta de <strong>R$ {{ bet.amount | number: '1.2-2' }}</strong> em <strong>{{ bet.label }}</strong></p>
+              <p class="text-xs text-gray-400">{{ item.matchLabel }} - {{ item.score }}</p>
+            </div>
+            <span class="font-bold" [class.text-green-400]="bet.outcome === 'win'" [class.text-red-400]="bet.outcome === 'loss'">
+              {{ bet.outcome === 'win' ? '+' : '-' }} R$ {{ (bet.outcome === 'win' ? bet.payout : bet.amount) | number: '1.2-2' }}
+            </span>
+          </div>
+        }
+      }
+    } @empty {
+      <p class="text-center text-gray-500">Voce ainda nao fez nenhuma aposta.</p>
+    }
+  </div>
+</article>

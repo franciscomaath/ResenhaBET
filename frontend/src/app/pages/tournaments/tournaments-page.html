@@ -1,0 +1,269 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <header>
+      <app-section-header label="Torneios" />
+      <h1 class="text-2xl font-black text-white">Torneios</h1>
+      <p class="mt-2 text-sm text-gray-400">Gerencie os torneios da resenha.</p>
+    </header>
+
+    <button *appGroupAdminOnly class="mt-2 min-h-11 shrink-0 rounded-md bg-cyan-600 px-5 py-3 font-bold hover:bg-cyan-700 sm:mt-8" (click)="openCreateModal()">
+      Criar Torneio
+    </button>
+  </div>
+
+  @if (createNotice()) {
+    <div class="rounded-xl border border-green-900 bg-green-950/50 p-4 text-sm text-green-200">
+      {{ createNotice() }}
+    </div>
+  }
+
+  @if (status() === 'loading') {
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="h-44 animate-pulse rounded-xl bg-gray-800"></div>
+      }
+    </div>
+  }
+
+  @if (status() === 'error') {
+    <div class="rounded-xl bg-red-950/60 p-4 text-red-200">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (status() === 'success' && sortedTournaments().length === 0) {
+    <div class="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-gray-700 bg-gray-800/60 p-8 text-center">
+      <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-700 text-2xl font-black text-cyan-400">
+        R
+      </div>
+      <h3 class="text-xl font-bold">Nenhum torneio encontrado</h3>
+    </div>
+  }
+
+  @if (status() === 'success' && sortedTournaments().length > 0) {
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      @for (tournament of sortedTournaments(); track trackTournament($index, tournament)) {
+        <a
+          [routerLink]="['/tournaments', tournament.id]"
+          class="block rounded-xl bg-gray-800 p-5 shadow-lg transition hover:-translate-y-0.5 hover:bg-gray-750 hover:shadow-xl"
+        >
+          <div class="mb-4 flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h3 class="text-xl font-bold">{{ tournament.name }}</h3>
+              @if (tournament.type === 'REAL_FOOTBALL') {
+                <p class="mt-1 text-xs uppercase tracking-[0.2em] text-cyan-300">Futebol real</p>
+              }
+            </div>
+            <span
+              class="inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1 text-xs font-bold"
+              [class.bg-gray-700]="tournament.status === 'CREATED'"
+              [class.text-gray-200]="tournament.status === 'CREATED'"
+              [class.bg-green-700]="tournament.status === 'IN_PROGRESS'"
+              [class.text-green-50]="tournament.status === 'IN_PROGRESS'"
+              [class.bg-blue-700]="tournament.status === 'COMPLETED'"
+              [class.text-blue-50]="tournament.status === 'COMPLETED'"
+              [class.bg-red-900]="tournament.status === 'CANCELLED'"
+              [class.text-red-100]="tournament.status === 'CANCELLED'"
+            >
+              @if (tournament.status === 'IN_PROGRESS') {
+                <span class="h-2 w-2 animate-pulse rounded-full bg-green-200"></span>
+              }
+              {{ statusLabel(tournament.status) }}
+            </span>
+          </div>
+
+          <div class="grid gap-3 text-sm text-gray-300">
+            <div class="flex items-center justify-between rounded-md bg-gray-900/50 p-3">
+              <span>Inicio</span>
+              <strong>{{ formatDate(tournament.startDate) }}</strong>
+            </div>
+            <div class="flex items-center justify-between rounded-md bg-gray-900/50 p-3">
+              <span>Formato</span>
+              <strong>{{ tournamentFormatLabel(tournament.format) }}</strong>
+            </div>
+            <div class="flex items-center justify-between rounded-md bg-gray-900/50 p-3">
+              <span>Inscritos</span>
+              <strong>{{ playerCountLabel(tournament.id) }}</strong>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</section>
+
+@if (isCreateModalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4">
+    <section class="w-full rounded-2xl bg-[var(--surface-2)] p-6 shadow-2xl sm:max-w-lg border border-gray-700 max-h-[90vh] overflow-y-auto">
+      <div class="mb-5 flex items-center justify-between gap-4 sticky top-0 bg-[var(--surface-2)] pb-2 z-10">
+        <h3 class="text-2xl font-bold">Criar Torneio</h3>
+        <button class="min-h-11 rounded-md bg-gray-700 px-4 font-bold hover:bg-gray-600" (click)="closeCreateModal()">
+          Fechar
+        </button>
+      </div>
+
+        <div class="space-y-4">
+          @if (!isRealFootball()) {
+            <label class="block">
+              <span class="mb-2 block text-sm font-semibold text-gray-300">Nome</span>
+              <input
+                class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+                [value]="newTournamentName()"
+                (input)="setTournamentName($event)"
+              />
+            </label>
+          }
+
+        @if (!isRealFootball()) {
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-gray-300">Formato</span>
+            <select
+              class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+              [value]="newTournamentFormat()"
+              (change)="setTournamentFormat($event)"
+            >
+              <option value="LEAGUE">Liga (todos contra todos)</option>
+              <option value="BRACKET">Mata-mata (eliminacao direta)</option>
+              <option value="LEAGUE_BRACKET">Fase de grupos + Mata-mata</option>
+            </select>
+            <p class="mt-1 text-xs text-gray-400">{{ formatDescription(newTournamentFormat()) }}</p>
+          </label>
+        }
+
+        <div class="block">
+          <span class="mb-2 block text-sm font-semibold text-gray-300">Tipo</span>
+          <div class="flex gap-3">
+            <button
+              class="min-h-11 flex-1 rounded-md px-3 py-2 text-sm font-bold"
+              [class.bg-cyan-600]="newTournamentType() === 'FIFA_MATCH'"
+              [class.bg-gray-700]="newTournamentType() !== 'FIFA_MATCH'"
+              (click)="setTournamentType('FIFA_MATCH')"
+            >
+              FIFA Match
+            </button>
+            <button
+              class="min-h-11 flex-1 rounded-md px-3 py-2 text-sm font-bold"
+              [class.bg-cyan-600]="newTournamentType() === 'REAL_FOOTBALL'"
+              [class.bg-gray-700]="newTournamentType() !== 'REAL_FOOTBALL'"
+              (click)="setTournamentType('REAL_FOOTBALL')"
+            >
+              Futebol Real
+            </button>
+          </div>
+          <p class="mt-1 text-xs text-gray-400">
+            @if (newTournamentType() === 'FIFA_MATCH') {
+              Torneio entre jogadores com partidas simuladas no grupo ativo
+            } @else {
+              Futebol real compartilhado: partidas e mercados sao comuns a todos os grupos; apostas e carteiras continuam por grupo
+            }
+          </p>
+        </div>
+
+        <div class="block">
+          <span class="mb-2 block text-sm font-semibold text-gray-300">Mercados ativos</span>
+          <div class="grid grid-cols-2 gap-2">
+            @for (mt of availableMarketTypes(); track mt.value) {
+              <label class="flex items-center gap-2 rounded-md bg-gray-900/50 p-3">
+                <input
+                  type="checkbox"
+                  class="h-4 w-4 rounded border-gray-600 bg-gray-700"
+                  [checked]="isMarketTypeSelected(mt.value)"
+                  [disabled]="mt.value === 'MATCH_RESULT'"
+                  (change)="toggleMarketType(mt.value)"
+                />
+                <span class="text-sm font-semibold text-gray-300">{{ mt.label }}</span>
+              </label>
+            }
+          </div>
+        </div>
+
+        @if (isRealFootball()) {
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-gray-300">Competicao</span>
+            <select
+              class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+              (change)="setSelectedCompetitionId($event)"
+            >
+              <option value="">Selecione uma competicao</option>
+              @for (comp of competitions(); track comp.id) {
+                <option [value]="comp.id">{{ comp.name }} ({{ comp.season }})</option>
+              }
+            </select>
+            <p class="mt-1 text-xs text-gray-400">
+              Se a competicao ja existir, o grupo sera conectado ao torneio compartilhado.
+            </p>
+          </label>
+        }
+
+        @if (!isRealFootball()) {
+          <div class="block">
+            <span class="mb-2 block text-sm font-semibold text-gray-300">Modo de geracao</span>
+            <div class="flex gap-3">
+              <button
+                class="min-h-11 flex-1 rounded-md px-3 py-2 text-sm font-bold"
+                [class.bg-cyan-600]="newTournamentGenerationMode() === 'AUTO'"
+                [class.bg-gray-700]="newTournamentGenerationMode() !== 'AUTO'"
+                (click)="setTournamentGenerationMode('AUTO')"
+              >
+                Gerar automaticamente
+              </button>
+              <button
+                class="min-h-11 flex-1 rounded-md px-3 py-2 text-sm font-bold"
+                [class.bg-cyan-600]="newTournamentGenerationMode() === 'MANUAL'"
+                [class.bg-gray-700]="newTournamentGenerationMode() !== 'MANUAL'"
+                (click)="setTournamentGenerationMode('MANUAL')"
+              >
+                Configurar manualmente
+              </button>
+            </div>
+            <p class="mt-1 text-xs text-gray-400">
+              @if (newTournamentGenerationMode() === 'AUTO') {
+                Sistema gera automaticamente rodadas e partidas
+              } @else {
+                Admin preenche jogadores e partidas manualmente
+              }
+            </p>
+          </div>
+        }
+
+        @if (!isRealFootball() && showThirdPlaceMatch()) {
+          <label class="flex items-center gap-3">
+            <input
+              type="checkbox"
+              class="h-5 w-5 rounded border-gray-600 bg-gray-700"
+              [checked]="newTournamentHasThirdPlaceMatch()"
+              (change)="toggleHasThirdPlaceMatch()"
+            />
+            <span class="text-sm font-semibold text-gray-300">Disputa de 3o lugar</span>
+          </label>
+        }
+
+        @if (!isRealFootball()) {
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-gray-300">Data inicial</span>
+            <input
+              type="datetime-local"
+              class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+              [value]="newTournamentStartDate()"
+              (input)="setTournamentStartDate($event)"
+            />
+          </label>
+
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-gray-300">Data final</span>
+            <input
+              type="datetime-local"
+              class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+              [value]="newTournamentEndDate()"
+              (input)="setTournamentEndDate($event)"
+            />
+          </label>
+        }
+
+        <button class="min-h-11 w-full rounded-md bg-cyan-600 p-3 font-bold hover:bg-cyan-700" (click)="createTournament()">
+          {{ isRealFootball() ? 'Criar e conectar' : 'Criar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

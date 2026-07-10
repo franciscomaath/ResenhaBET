@@ -1,0 +1,16 @@
+<article class="rounded-xl bg-gray-800 p-6 shadow-lg">
+  <h2 class="mb-4 text-2xl font-bold">Ranking de Apostadores</h2>
+  <div class="space-y-2">
+    @for (bettor of bettors(); track bettor.name; let index = $index) {
+      <div class="flex items-center justify-between rounded-md bg-gray-700/50 p-2">
+        <div class="flex items-center gap-3">
+          <span class="font-bold text-cyan-400">#{{ index + 1 }}</span>
+          <span [class.font-bold]="bettor.name === currentUser()" [class.text-cyan-400]="bettor.name === currentUser()">
+            {{ bettor.name }}
+          </span>
+        </div>
+        <span class="font-bold text-green-400">R$ {{ bettor.wallet | number: '1.2-2' }}</span>
+      </div>
+    }
+  </div>
+</article>

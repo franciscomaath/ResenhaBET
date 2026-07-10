@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/base.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/styles.css">
+  <script src="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/_ds_bundle.js"></script>
+  <style>
+    html, body { margin: 0; background: #06101f; }
+    @keyframes rb-live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+    input, select { font-family: var(--font-sans); }
+    input:focus, select:focus { outline: 2px solid rgba(61,139,253,0.55); outline-offset: 1px; }
+  </style>
+</helmet>
+
+<div style="font-family: var(--font-sans); color: #ffffff; background: #06101f; min-height: 100vh; max-width: 430px; margin: 0 auto; padding-bottom: 140px;" data-screen-label="Partida — Detalhe">
+
+  <!-- ======= Top bar ======= -->
+  <div style="position: sticky; top: 0; z-index: 40; display: flex; align-items: center; gap: 8px; height: 52px; padding: 0 8px; background: rgba(6,16,31,0.92); backdrop-filter: blur(8px); border-bottom: 1px solid #232c3a;">
+    <button style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; background: transparent; color: #3d8bfd; cursor: pointer; border-radius: 12px;">
+      <span class="material-icons" style="font-size: 22px;">arrow_back</span>
+    </button>
+    <div style="flex: 1; min-width: 0; text-align: center;">
+      <div style="font-size: 14px; font-weight: 700; color: #ffffff;">Partida #50</div>
+      <div style="font-size: 11px; color: #64748b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Copa Mateus do Nordeste 2025 · Play-in</div>
+    </div>
+    <button style="display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: none; background: transparent; color: #9ca3af; cursor: pointer; border-radius: 12px;">
+      <span class="material-icons" style="font-size: 22px;">more_vert</span>
+    </button>
+  </div>
+
+  <!-- ======= Scoreboard ======= -->
+  <div style="padding: 16px 16px 14px; border-bottom: 1px solid #232c3a; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+    <sc-if value="{{ isLive }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 800; letter-spacing: 0.08em; color: #34d399;">
+        <span style="width: 7px; height: 7px; border-radius: 50%; background: #34d399; animation: rb-live-pulse 1.4s ease-in-out infinite;"></span>
+        {{ liveLabel }}
+      </div>
+    </sc-if>
+    <sc-if value="{{ notLive }}" hint-placeholder-val="{{ false }}">
+      <span style="display: inline-flex; align-items: center; border-radius: 9999px; padding: 3px 12px; font-size: 11.5px; font-weight: 700; letter-spacing: 0.04em; background: {{ statusBg }}; color: {{ statusFg }};">{{ statusLabel }}</span>
+    </sc-if>
+
+    <div style="display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 12px; width: 100%;">
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #121822; border: 1px solid #232c3a; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 900; font-size: 20px; color: #60a5fa;">K</div>
+        <div style="text-align: center;">
+          <div style="font-size: 15px; font-weight: 800; color: #ffffff;">Kadu</div>
+          <div style="font-size: 11.5px; color: #64748b;">Bahia · Mandante</div>
+        </div>
+      </div>
+      <div class="tnum" style="font-family: var(--font-display); font-weight: 900; font-size: 44px; line-height: 1; color: #ffffff; display: flex; align-items: center; gap: 10px;">
+        <span>{{ homeScore }}</span><span style="font-size: 22px; color: #4b5563; font-weight: 700;">×</span><span>{{ awayScore }}</span>
+      </div>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 6px; min-width: 0;">
+        <div style="width: 48px; height: 48px; border-radius: 50%; background: #121822; border: 1px solid #232c3a; display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-weight: 900; font-size: 20px; color: #f87171;">N</div>
+        <div style="text-align: center;">
+          <div style="font-size: 15px; font-weight: 800; color: #ffffff;">Nicolas</div>
+          <div style="font-size: 11.5px; color: #64748b;">CRB · Visitante</div>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ resultLine }}" hint-placeholder-val="{{ false }}">
+      <div style="font-size: 12.5px; color: #d1d5db;">{{ resultLine }}</div>
+    </sc-if>
+  </div>
+
+  <!-- ======= Market tabs ======= -->
+  <div style="display: flex; gap: 4px; padding: 0 12px; border-bottom: 1px solid #232c3a; position: sticky; top: 52px; z-index: 30; background: #06101f;">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+      <button onClick="{{ t.onClick }}" style="min-height: 44px; padding: 0 12px; border: none; background: transparent; cursor: pointer; font-family: var(--font-sans); font-size: 13.5px; font-weight: {{ t.weight }}; color: {{ t.color }}; border-bottom: 2px solid {{ t.border }}; transition: color 120ms;">{{ t.label }}</button>
+    </sc-for>
+  </div>
+
+  <!-- ======= Markets ======= -->
+  <sc-if value="{{ marketsClosedNote }}" hint-placeholder-val="{{ false }}">
+    <div style="margin: 12px 16px 0; display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-radius: 12px; background: rgba(3,7,18,0.5); border: 1px solid #232c3a; font-size: 12.5px; color: #9ca3af;">
+      <span class="material-icons" style="font-size: 16px; color: #6b7280;">lock</span>
+      {{ marketsClosedNote }}
+    </div>
+  </sc-if>
+
+  <div style="display: flex; flex-direction: column;">
+    <sc-for list="{{ markets }}" as="m" hint-placeholder-count="3">
+      <div style="border-bottom: 1px solid #232c3a; padding: 12px 16px 14px;">
+        <button onClick="{{ m.toggle }}" style="display: flex; align-items: center; gap: 8px; width: 100%; border: none; background: transparent; cursor: pointer; padding: 0 0 0 0; min-height: 32px; text-align: left;">
+          <span style="font-family: var(--font-sans); font-size: 14px; font-weight: 700; color: #ffffff;">{{ m.name }}</span>
+          <span style="display: inline-flex; align-items: center; border-radius: 9999px; padding: 2px 9px; font-size: 10.5px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; background: {{ m.pillBg }}; color: {{ m.pillFg }};">{{ m.statusLabel }}</span>
+          <span class="material-icons" style="margin-left: auto; font-size: 20px; color: #6b7280; transform: {{ m.chevron }}; transition: transform 180ms;">expand_more</span>
+        </button>
+        <sc-if value="{{ m.open }}" hint-placeholder-val="{{ true }}">
+          <div style="display: grid; grid-template-columns: {{ m.gridCols }}; gap: 8px; margin-top: 10px;">
+            <sc-for list="{{ m.visibleOutcomes }}" as="o" hint-placeholder-count="3">
+              <button onClick="{{ o.select }}" style="display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 44px; padding: 8px 12px; border-radius: 12px; border: 1.5px solid {{ o.border }}; background: {{ o.bg }}; cursor: {{ o.cursor }}; opacity: {{ o.opacity }}; transition: border-color 120ms, background 120ms;">
+                <span style="font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: #d1d5db; text-align: left; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ o.label }}</span>
+                <span class="tnum" style="font-family: var(--font-display); font-weight: 900; font-size: 16px; color: {{ o.oddColor }}; flex-shrink: 0;">{{ o.oddText }}</span>
+              </button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ m.expandLabel }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ m.toggleExpand }}" style="display: flex; align-items: center; justify-content: center; gap: 4px; width: 100%; margin-top: 8px; min-height: 32px; border: none; background: transparent; cursor: pointer; font-family: var(--font-sans); font-size: 12.5px; font-weight: 700; color: #3d8bfd; border-radius: 8px;">
+              {{ m.expandLabel }}
+              <span class="material-icons" style="font-size: 16px; transform: {{ m.expandChevron }};">expand_more</span>
+            </button>
+          </sc-if>
+        </sc-if>
+      </div>
+    </sc-for>
+  </div>
+
+  <!-- ======= Admin panel ======= -->
+  <sc-if value="{{ isAdmin }}" hint-placeholder-val="{{ true }}">
+    <div style="margin: 20px 16px 0; display: flex; flex-direction: column; gap: 12px;">
+
+      <div style="background: #121822; border: 1px solid #232c3a; border-radius: 16px; overflow: hidden;">
+        <button onClick="{{ toggleAdmin }}" style="display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 16px; border: none; background: transparent; cursor: pointer; text-align: left;">
+          <span class="material-icons" style="font-size: 20px; color: #64748b;">admin_panel_settings</span>
+          <span style="font-family: var(--font-sans); font-size: 14px; font-weight: 800; color: #ffffff;">Painel do administrador</span>
+          <span class="material-icons" style="margin-left: auto; font-size: 22px; color: #6b7280; transform: {{ adminChevron }}; transition: transform 180ms;">expand_more</span>
+        </button>
+
+        <sc-if value="{{ adminOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top: 1px solid #232c3a;">
+
+            <!-- Market control -->
+            <button onClick="{{ toggleSecMercados }}" style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 16px; border: none; background: transparent; cursor: pointer; text-align: left;">
+              <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af;">Controle de mercados</span>
+              <span class="material-icons" style="margin-left: auto; font-size: 18px; color: #6b7280; transform: {{ secMercadosChevron }};">expand_more</span>
+            </button>
+            <sc-if value="{{ secMercados }}" hint-placeholder-val="{{ true }}">
+              <div style="padding: 0 16px 14px; display: flex; flex-direction: column; gap: 8px;">
+                <sc-for list="{{ adminMarkets }}" as="am" hint-placeholder-count="3">
+                  <div style="display: flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; background: rgba(3,7,18,0.5); border: 1px solid #232c3a;">
+                    <span style="font-size: 13px; font-weight: 600; color: #d1d5db; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ am.name }}</span>
+                    <span style="display: inline-flex; border-radius: 9999px; padding: 2px 8px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: {{ am.pillBg }}; color: {{ am.pillFg }};">{{ am.statusLabel }}</span>
+                    <button onClick="{{ am.toggle }}" style="margin-left: auto; flex-shrink: 0; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid {{ am.btnBorder }}; background: {{ am.btnBg }}; color: {{ am.btnFg }}; font-family: var(--font-sans); font-size: 12px; font-weight: 700; cursor: pointer;">{{ am.btnLabel }}</button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+
+            <!-- Match control -->
+            <button onClick="{{ toggleSecPartida }}" style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 16px; border: none; background: transparent; border-top: 1px solid #232c3a; cursor: pointer; text-align: left;">
+              <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af;">Controle da partida</span>
+              <span class="material-icons" style="margin-left: auto; font-size: 18px; color: #6b7280; transform: {{ secPartidaChevron }};">expand_more</span>
+            </button>
+            <sc-if value="{{ secPartida }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 16px 14px; display: flex; flex-direction: column; gap: 12px;">
+                <sc-if value="{{ showScoreEditor }}" hint-placeholder-val="{{ true }}">
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px 10px; border-radius: 12px; background: rgba(3,7,18,0.5); border: 1px solid #232c3a;">
+                      <button onClick="{{ homeMinus }}" style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 16px; font-weight: 700; cursor: pointer;">−</button>
+                      <div style="text-align: center;">
+                        <div style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;">Kadu</div>
+                        <div class="tnum" style="font-family: var(--font-display); font-weight: 900; font-size: 20px; color: #ffffff;">{{ homeScore }}</div>
+                      </div>
+                      <button onClick="{{ homePlus }}" style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 16px; font-weight: 700; cursor: pointer;">+</button>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 8px 10px; border-radius: 12px; background: rgba(3,7,18,0.5); border: 1px solid #232c3a;">
+                      <button onClick="{{ awayMinus }}" style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 16px; font-weight: 700; cursor: pointer;">−</button>
+                      <div style="text-align: center;">
+                        <div style="font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;">Nicolas</div>
+                        <div class="tnum" style="font-family: var(--font-display); font-weight: 900; font-size: 20px; color: #ffffff;">{{ awayScore }}</div>
+                      </div>
+                      <button onClick="{{ awayPlus }}" style="width: 32px; height: 32px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 16px; font-weight: 700; cursor: pointer;">+</button>
+                    </div>
+                  </div>
+                </sc-if>
+                <x-import component-from-global-scope="ResenhaBETDesignSystem_b0ab9a.Button" variant="primary" size="lg" block="{{ true }}" onClick="{{ primaryMatchAction }}" disabled="{{ primaryMatchDisabled }}" hint-size="100%,52px">{{ primaryMatchLabel }}</x-import>
+                <sc-if value="{{ showCancelMatch }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ cancelMatch }}" style="align-self: flex-start; height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid #374151; background: transparent; color: #9ca3af; font-family: var(--font-sans); font-size: 12px; font-weight: 700; cursor: pointer;">Cancelar partida</button>
+                </sc-if>
+              </div>
+            </sc-if>
+
+            <!-- Match administration -->
+            <button onClick="{{ toggleSecDatas }}" style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 16px; border: none; background: transparent; border-top: 1px solid #232c3a; cursor: pointer; text-align: left;">
+              <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af;">Administração da partida</span>
+              <span class="material-icons" style="margin-left: auto; font-size: 18px; color: #6b7280; transform: {{ secDatasChevron }};">expand_more</span>
+            </button>
+            <sc-if value="{{ secDatas }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 16px 14px; display: flex; flex-direction: column; gap: 6px;">
+                <label style="font-size: 12px; font-weight: 600; color: #9ca3af;">Data e hora</label>
+                <div style="display: flex; gap: 8px;">
+                  <input type="datetime-local" style="flex: 1; min-width: 0; height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 13px; color-scheme: dark;">
+                  <button style="flex-shrink: 0; height: 40px; padding: 0 16px; border-radius: 8px; border: none; background: #3d8bfd; color: #ffffff; font-family: var(--font-sans); font-size: 13px; font-weight: 700; cursor: pointer;">Salvar</button>
+                </div>
+              </div>
+            </sc-if>
+
+            <!-- Destructive -->
+            <button onClick="{{ toggleSecZona }}" style="display: flex; align-items: center; gap: 8px; width: 100%; min-height: 44px; padding: 0 16px; border: none; background: transparent; border-top: 1px solid rgba(239,68,68,0.25); cursor: pointer; text-align: left;">
+              <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #f87171;">Zona destrutiva</span>
+              <span class="material-icons" style="margin-left: auto; font-size: 18px; color: #6b7280; transform: {{ secZonaChevron }};">expand_more</span>
+            </button>
+            <sc-if value="{{ secZona }}" hint-placeholder-val="{{ false }}">
+              <div style="padding: 0 16px 14px;">
+                <sc-if value="{{ notConfirmingDelete }}" hint-placeholder-val="{{ true }}">
+                  <button onClick="{{ askDelete }}" style="height: 32px; padding: 0 12px; border-radius: 8px; border: 1px solid rgba(239,68,68,0.45); background: transparent; color: #f87171; font-family: var(--font-sans); font-size: 12px; font-weight: 700; cursor: pointer;">Excluir partida</button>
+                </sc-if>
+                <sc-if value="{{ confirmingDelete }}" hint-placeholder-val="{{ false }}">
+                  <div style="display: flex; flex-direction: column; gap: 10px; padding: 12px; border-radius: 12px; border: 1px solid rgba(239,68,68,0.35); background: rgba(239,68,68,0.06);">
+                    <div style="font-size: 13px; color: #fca5a5; font-weight: 600;">Excluir esta partida? Apostas e mercados serão removidos. Essa ação não pode ser desfeita.</div>
+                    <div style="display: flex; gap: 8px;">
+                      <button onClick="{{ confirmDeleteAction }}" style="height: 36px; padding: 0 14px; border-radius: 8px; border: none; background: #b91c1c; color: #ffffff; font-family: var(--font-sans); font-size: 12.5px; font-weight: 700; cursor: pointer;">Confirmar exclusão</button>
+                      <button onClick="{{ cancelDelete }}" style="height: 36px; padding: 0 14px; border-radius: 8px; border: 1px solid #374151; background: transparent; color: #d1d5db; font-family: var(--font-sans); font-size: 12.5px; font-weight: 700; cursor: pointer;">Cancelar</button>
+                    </div>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-if>
+
+          </div>
+        </sc-if>
+      </div>
+
+      <!-- Wallet top-up: its own card -->
+      <div style="background: #121822; border: 1px solid #232c3a; border-radius: 16px; overflow: hidden;">
+        <button onClick="{{ toggleWallet }}" style="display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 16px; border: none; background: transparent; cursor: pointer; text-align: left;">
+          <span class="material-icons" style="font-size: 20px; color: #10b981;">account_balance_wallet</span>
+          <span style="font-family: var(--font-sans); font-size: 14px; font-weight: 800; color: #ffffff;">Recarga de carteiras</span>
+          <span class="material-icons" style="margin-left: auto; font-size: 22px; color: #6b7280; transform: {{ walletChevron }}; transition: transform 180ms;">expand_more</span>
+        </button>
+        <sc-if value="{{ walletOpen }}" hint-placeholder-val="{{ false }}">
+          <div style="border-top: 1px solid #232c3a; padding: 14px 16px; display: flex; flex-direction: column; gap: 14px;">
+            <div style="display: flex; flex-direction: column; gap: 6px;">
+              <label style="font-size: 12px; font-weight: 600; color: #9ca3af;">Depositar para um jogador</label>
+              <select style="height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 13px;">
+                <option>Selecione um jogador</option>
+                <option>Kadu</option>
+                <option>Nicolas</option>
+                <option>Mateus</option>
+              </select>
+              <div style="display: flex; gap: 8px;">
+                <input type="number" placeholder="R$ 0,00" style="flex: 1; min-width: 0; height: 48px; padding: 0 12px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 14px;">
+                <button style="flex-shrink: 0; height: 48px; padding: 0 20px; border-radius: 12px; border: none; background: #10b981; color: #ffffff; font-family: var(--font-sans); font-size: 14px; font-weight: 700; cursor: pointer;">Depositar</button>
+              </div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 6px; padding-top: 12px; border-top: 1px solid #232c3a;">
+              <label style="font-size: 12px; font-weight: 600; color: #9ca3af;">Depositar para todos do grupo</label>
+              <div style="display: flex; gap: 8px;">
+                <input type="number" placeholder="R$ 0,00" style="flex: 1; min-width: 0; height: 40px; padding: 0 12px; border-radius: 8px; border: 1px solid #374151; background: #030712; color: #d1d5db; font-size: 13px;">
+                <button style="flex-shrink: 0; height: 40px; padding: 0 14px; border-radius: 8px; border: 1px solid rgba(16,185,129,0.5); background: transparent; color: #34d399; font-family: var(--font-sans); font-size: 13px; font-weight: 700; cursor: pointer;">Depositar em todos</button>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+
+    </div>
+  </sc-if>
+
+  <!-- ======= Bet history ======= -->
+  <div style="margin: 20px 16px 0; display: flex; flex-direction: column; gap: 10px;">
+    <div style="font-size: 12px; font-weight: 800; letter-spacing: 0.07em; text-transform: uppercase; color: #9ca3af;">Histórico de apostas</div>
+    <x-import component-from-global-scope="ResenhaBETDesignSystem_b0ab9a.EmptyState" icon="receipt_long" title="Nenhuma aposta ainda" subtitle="Nenhuma aposta encontrada para este evento." hint-size="100%,160px"></x-import>
+  </div>
+
+  <!-- ======= Bet slip pill ======= -->
+  <sc-if value="{{ slipCount }}" hint-placeholder-val="{{ false }}">
+    <div style="position: fixed; left: 50%; transform: translateX(-50%); bottom: 72px; z-index: 50; width: calc(100% - 32px); max-width: 398px;">
+      <button style="display: flex; align-items: center; gap: 10px; width: 100%; min-height: 52px; padding: 0 18px; border: none; border-radius: 9999px; background: #10b981; color: #ffffff; cursor: pointer; box-shadow: 0 8px 24px rgba(16,185,129,0.35); font-family: var(--font-sans);">
+        <span class="material-icons" style="font-size: 20px;">shopping_cart</span>
+        <span style="font-size: 14px; font-weight: 800;">{{ slipLabel }}</span>
+        <span class="tnum" style="margin-left: auto; font-family: var(--font-display); font-weight: 900; font-size: 16px;">{{ slipOdds }}</span>
+        <span class="material-icons" style="font-size: 20px;">chevron_right</span>
+      </button>
+    </div>
+  </sc-if>
+
+  <!-- ======= Bottom tab bar ======= -->
+  <div style="position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 45; width: 100%; max-width: 430px; height: 56px; display: grid; grid-template-columns: repeat(4, 1fr); background: #030712; border-top: 1px solid #232c3a; box-shadow: 0 -4px 20px rgba(0,0,0,0.3); padding-bottom: env(safe-area-inset-bottom, 0px);">
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #6b7280;"><span class="material-icons" style="font-size: 22px;">home</span><span style="font-size: 10px; font-weight: 600;">Dashboard</span></div>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #3d8bfd;"><span class="material-icons" style="font-size: 22px;">emoji_events</span><span style="font-size: 10px; font-weight: 700;">Torneios</span></div>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #6b7280;"><span class="material-icons" style="font-size: 22px;">group</span><span style="font-size: 10px; font-weight: 600;">Grupos</span></div>
+    <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #6b7280;"><span class="material-icons" style="font-size: 22px;">receipt_long</span><span style="font-size: 10px; font-weight: 600;">Apostas</span></div>
+  </div>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: { &quot;width&quot;: 430, &quot;height&quot;: 932 },
+  &quot;isAdmin&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Visualização&quot; },
+  &quot;matchStatus&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;andamento&quot;, &quot;options&quot;: [&quot;criada&quot;, &quot;andamento&quot;, &quot;penaltis&quot;, &quot;finalizada&quot;, &quot;cancelada&quot;], &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Partida&quot; },
+  &quot;isKnockout&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Partida&quot; }
+}">
+const STATUS_META = {
+  criada:     { label: 'Criada',       bg: 'rgba(107,114,128,0.18)', fg: '#d1d5db' },
+  andamento:  { label: 'Em Andamento', bg: 'rgba(16,185,129,0.15)',  fg: '#34d399' },
+  penaltis:   { label: 'Pênaltis',     bg: 'rgba(234,179,8,0.15)',   fg: '#fbbf24' },
+  finalizada: { label: 'Finalizada',   bg: 'rgba(61,139,253,0.15)',  fg: '#60a5fa' },
+  cancelada:  { label: 'Cancelada',    bg: 'rgba(239,68,68,0.14)',   fg: '#f87171' },
+};
+
+const MKT_META = {
+  aberto:    { label: 'Aberto',    bg: 'rgba(16,185,129,0.14)', fg: '#34d399' },
+  suspenso:  { label: 'Suspenso',  bg: 'rgba(234,179,8,0.14)',  fg: '#fbbf24' },
+  fechado:   { label: 'Fechado',   bg: 'rgba(107,114,128,0.18)', fg: '#9ca3af' },
+  cancelado: { label: 'Cancelado', bg: 'rgba(239,68,68,0.14)',  fg: '#f87171' },
+};
+
+function marketDefs(knockout) {
+  const defs = [
+    {
+      id: 'resultado',
+      name: knockout ? 'Resultado (Tempo Normal)' : 'Resultado (1X2)',
+      group: 'principal',
+      cols: knockout ? 2 : 3,
+      outcomes: knockout
+        ? [{ label: 'Kadu', odd: 2.45 }, { label: 'Nicolas', odd: 1.92 }]
+        : [{ label: 'Kadu', odd: 3.05 }, { label: 'Empate', odd: 3.93 }, { label: 'Nicolas', odd: 2.39 }],
+    },
+  ];
+  if (knockout) {
+    defs.push({
+      id: 'classificacao', name: 'Quem Avança', group: 'principal', cols: 2,
+      outcomes: [{ label: 'Kadu', odd: 1.65 }, { label: 'Nicolas', odd: 2.10 }],
+    });
+  }
+  defs.push(
+    {
+      id: 'btts', name: 'Ambos Marcam', group: 'principal', cols: 2,
+      outcomes: [{ label: 'Sim', odd: 1.72 }, { label: 'Não', odd: 2.05 }],
+    },
+    {
+      id: 'gols25', name: 'Total de Gols (2,5)', group: 'gols', cols: 2,
+      outcomes: [{ label: 'Mais de 2,5', odd: 1.85 }, { label: 'Menos de 2,5', odd: 1.95 }],
+    },
+    {
+      id: 'gols35', name: 'Total de Gols (3,5)', group: 'gols', cols: 2,
+      outcomes: [{ label: 'Mais de 3,5', odd: 2.40 }, { label: 'Menos de 3,5', odd: 1.55 }],
+    },
+    {
+      id: 'placar', name: 'Placar Exato', group: 'outros', cols: 3, expandable: true,
+      outcomes: [
+        { label: '1 × 0', odd: 8.50 }, { label: '1 × 1', odd: 7.20 }, { label: '0 × 1', odd: 8.00 },
+        { label: '2 × 0', odd: 12.00 }, { label: '2 × 2', odd: 15.00 }, { label: '0 × 2', odd: 11.00 },
+        { label: '2 × 1', odd: 9.75 }, { label: '0 × 0', odd: 10.50 }, { label: '1 × 2', odd: 8.80 },
+        { label: '3 × 1', odd: 18.00 }, { label: '1 × 3', odd: 16.50 }, { label: 'Outro', odd: 6.50 },
+      ],
+    }
+  );
+  return defs;
+}
+
+class Component extends DCLogic {
+  state = {
+    activeTab: 'todos',
+    sel: {},                       // marketId -> { label, odd }
+    collapsed: {},                 // marketId -> true
+    expanded: {},                  // marketId -> true (show all outcomes)
+    mktStatus: { resultado: 'aberto', classificacao: 'aberto', btts: 'aberto', gols25: 'aberto', gols35: 'suspenso', placar: 'aberto' },
+    homeScore: 1,
+    awayScore: 2,
+    adminOpen: false,
+    walletOpen: false,
+    sec: { mercados: true, partida: false, datas: false, zona: false },
+    confirmDelete: false,
+  };
+
+  matchStatus() { return this.props.matchStatus ?? 'andamento'; }
+
+  toggleSec(k) {
+    this.setState(s => ({ sec: { ...s.sec, [k]: !s.sec[k] }, confirmDelete: k === 'zona' ? false : s.confirmDelete }));
+  }
+
+  renderVals() {
+    const status = this.matchStatus();
+    const knockout = this.props.isKnockout ?? false;
+    const meta = STATUS_META[status] ?? STATUS_META.criada;
+    const isLive = status === 'andamento' || status === 'penaltis';
+    const matchOver = status === 'finalizada' || status === 'cancelada';
+    const notStarted = status === 'criada';
+    const s = this.state;
+
+    // ---- tabs
+    const tabDefs = [
+      { id: 'todos', label: 'Todos' },
+      { id: 'principal', label: 'Principal' },
+      { id: 'gols', label: 'Gols' },
+      { id: 'outros', label: 'Outros' },
+    ];
+    const tabs = tabDefs.map(t => ({
+      label: t.label,
+      onClick: () => this.setState({ activeTab: t.id }),
+      color: s.activeTab === t.id ? '#3d8bfd' : '#9ca3af',
+      weight: s.activeTab === t.id ? 800 : 600,
+      border: s.activeTab === t.id ? '#3d8bfd' : 'transparent',
+    }));
+
+    // ---- markets
+    const defs = marketDefs(knockout);
+    const shown = defs.filter(d => s.activeTab === 'todos' || d.group === s.activeTab);
+    const markets = shown.map(d => {
+      const mSt = matchOver ? 'fechado' : (s.mktStatus[d.id] ?? 'aberto');
+      const mm = MKT_META[mSt];
+      const open = !s.collapsed[d.id];
+      const locked = mSt !== 'aberto';
+      const isExpanded = !!s.expanded[d.id];
+      const COLLAPSED_COUNT = 6;
+      const list = d.expandable && !isExpanded ? d.outcomes.slice(0, COLLAPSED_COUNT) : d.outcomes;
+      const visibleOutcomes = list.map(o => {
+        const selected = s.sel[d.id] && s.sel[d.id].label === o.label;
+        return {
+          label: o.label,
+          oddText: o.odd.toFixed(2) + 'x',
+          bg: selected ? 'rgba(16,185,129,0.12)' : 'rgba(3,7,18,0.5)',
+          border: selected ? '#10b981' : '#374151',
+          oddColor: selected ? '#34d399' : '#60a5fa',
+          opacity: locked ? 0.45 : 1,
+          cursor: locked ? 'not-allowed' : 'pointer',
+          select: locked ? undefined : () => this.setState(st => {
+            const sel = { ...st.sel };
+            if (sel[d.id] && sel[d.id].label === o.label) delete sel[d.id];
+            else sel[d.id] = { label: o.label, odd: o.odd };
+            return { sel };
+          }),
+        };
+      });
+      return {
+        name: d.name,
+        statusLabel: mm.label, pillBg: mm.bg, pillFg: mm.fg,
+        open,
+        chevron: open ? 'rotate(180deg)' : 'rotate(0deg)',
+        toggle: () => this.setState(st => ({ collapsed: { ...st.collapsed, [d.id]: !st.collapsed[d.id] } })),
+        gridCols: 'repeat(' + d.cols + ', 1fr)',
+        visibleOutcomes,
+        expandLabel: d.expandable && d.outcomes.length > COLLAPSED_COUNT
+          ? (isExpanded ? 'Ver menos' : 'Ver todos os placares (' + d.outcomes.length + ')')
+          : false,
+        expandChevron: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
+        toggleExpand: () => this.setState(st => ({ expanded: { ...st.expanded, [d.id]: !st.expanded[d.id] } })),
+      };
+    });
+
+    // ---- admin market rows
+    const adminMarkets = defs.map(d => {
+      const mSt = s.mktStatus[d.id] ?? 'aberto';
+      const mm = MKT_META[mSt];
+      const isOpen = mSt === 'aberto';
+      return {
+        name: d.name,
+        statusLabel: mm.label, pillBg: mm.bg, pillFg: mm.fg,
+        btnLabel: isOpen ? 'Fechar' : 'Abrir',
+        btnBg: isOpen ? 'transparent' : '#3d8bfd',
+        btnFg: isOpen ? '#9ca3af' : '#ffffff',
+        btnBorder: isOpen ? '#374151' : '#3d8bfd',
+        toggle: () => this.setState(st => ({ mktStatus: { ...st.mktStatus, [d.id]: isOpen ? 'fechado' : 'aberto' } })),
+      };
+    });
+
+    // ---- match control
+    let primaryMatchLabel = 'Iniciar partida';
+    if (status === 'andamento') primaryMatchLabel = 'Encerrar partida';
+    if (status === 'penaltis') primaryMatchLabel = 'Encerrar pênaltis';
+    if (status === 'finalizada') primaryMatchLabel = 'Partida encerrada';
+    if (status === 'cancelada') primaryMatchLabel = 'Partida cancelada';
+
+    // ---- slip
+    const picks = Object.values(s.sel);
+    const combined = picks.reduce((acc, p) => acc * p.odd, 1);
+
+    const winner = s.homeScore === s.awayScore ? null : (s.homeScore > s.awayScore ? 'Kadu' : 'Nicolas');
+
+    return {
+      isAdmin: this.props.isAdmin ?? true,
+      isLive,
+      notLive: !isLive,
+      liveLabel: status === 'penaltis' ? 'AO VIVO • PÊNALTIS' : "AO VIVO • 45'",
+      statusLabel: meta.label, statusBg: meta.bg, statusFg: meta.fg,
+      homeScore: notStarted ? '–' : String(s.homeScore),
+      awayScore: notStarted ? '–' : String(s.awayScore),
+      resultLine: status === 'finalizada' && winner ? 'Resultado: vitória de ' + winner : false,
+      marketsClosedNote: matchOver ? (status === 'cancelada' ? 'Partida cancelada. Mercados encerrados.' : 'Partida finalizada. Mercados fechados.') : false,
+
+      tabs,
+      markets,
+
+      adminOpen: s.adminOpen,
+      adminChevron: s.adminOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleAdmin: () => this.setState(st => ({ adminOpen: !st.adminOpen })),
+
+      secMercados: s.sec.mercados,
+      secMercadosChevron: s.sec.mercados ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleSecMercados: () => this.toggleSec('mercados'),
+      adminMarkets,
+
+      secPartida: s.sec.partida,
+      secPartidaChevron: s.sec.partida ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleSecPartida: () => this.toggleSec('partida'),
+      showScoreEditor: isLive,
+      homeMinus: () => this.setState(st => ({ homeScore: Math.max(0, st.homeScore - 1) })),
+      homePlus: () => this.setState(st => ({ homeScore: st.homeScore + 1 })),
+      awayMinus: () => this.setState(st => ({ awayScore: Math.max(0, st.awayScore - 1) })),
+      awayPlus: () => this.setState(st => ({ awayScore: st.awayScore + 1 })),
+      primaryMatchLabel,
+      primaryMatchDisabled: matchOver,
+      primaryMatchAction: () => {},
+      showCancelMatch: !matchOver,
+      cancelMatch: () => {},
+
+      secDatas: s.sec.datas,
+      secDatasChevron: s.sec.datas ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleSecDatas: () => this.toggleSec('datas'),
+
+      secZona: s.sec.zona,
+      secZonaChevron: s.sec.zona ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleSecZona: () => this.toggleSec('zona'),
+      notConfirmingDelete: !s.confirmDelete,
+      confirmingDelete: s.confirmDelete,
+      askDelete: () => this.setState({ confirmDelete: true }),
+      cancelDelete: () => this.setState({ confirmDelete: false }),
+      confirmDeleteAction: () => this.setState({ confirmDelete: false }),
+
+      walletOpen: s.walletOpen,
+      walletChevron: s.walletOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+      toggleWallet: () => this.setState(st => ({ walletOpen: !st.walletOpen })),
+
+      slipCount: picks.length > 0,
+      slipLabel: picks.length === 1 ? '1 seleção — Apostar' : picks.length + ' seleções — Apostar',
+      slipOdds: combined.toFixed(2) + 'x',
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,334 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ResenhaBET Dark Theme Component Kit</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Inter+Tight:wght@400;700&display=swap');
+
+    :root {
+      /* Dark Theme Tokens */
+      --bg: #06101f;
+      --surface: #121822;
+      --border: #232c3a;
+      
+      --fg: #ffffff;
+      --muted: #aaccee;
+      
+      --success: #22c55e; /* Green for win/money/primary */
+      --danger: #ef4444;
+      --navigate: #3d8bfd; /* Blue for secondary/navigation */
+      --gold: #e0b243; /* Strictly for #1, champion, trophy */
+      
+      --font-display: 'Inter Tight', system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+      --font-body: 'Inter', system-ui, -apple-system, Segoe UI, Helvetica Neue, Arial, sans-serif;
+      
+      --radius: 8px;
+      --border-weight: 1px;
+      --spacing: 4px;
+    }
+
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--fg);
+      font-family: var(--font-body);
+      line-height: 1.5;
+      padding: 40px 20px;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    h1, h2, h3, h4, .display {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--fg);
+      margin-bottom: 16px;
+    }
+
+    h1 { font-size: 32px; }
+    h2 { 
+      font-size: 20px; 
+      margin-top: 40px; 
+      border-bottom: var(--border-weight) solid var(--border); 
+      padding-bottom: 8px; 
+    }
+
+    .grid {
+      display: grid;
+      gap: 24px;
+      margin-top: 24px;
+    }
+
+    /* Buttons */
+    .btn {
+      font-family: var(--font-body);
+      font-weight: 700;
+      border-radius: var(--radius);
+      padding: 12px 24px;
+      cursor: pointer;
+      border: none;
+      font-size: 14px;
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      background-color: var(--success);
+      color: #000000;
+    }
+    .btn-primary:hover, .btn-primary-pressed {
+      background-color: #16a34a;
+    }
+
+    .btn-secondary {
+      background-color: var(--surface);
+      color: var(--navigate);
+      border: var(--border-weight) solid var(--navigate);
+    }
+    .btn-secondary:hover, .btn-secondary-pressed {
+      background-color: rgba(61, 139, 253, 0.1);
+    }
+
+    .btn-admin-inline {
+      background-color: transparent;
+      color: var(--muted);
+      padding: 4px 8px;
+      font-size: 12px;
+      border: var(--border-weight) solid transparent;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .btn-admin-inline:hover {
+      border-color: var(--border);
+      color: var(--fg);
+    }
+
+    /* Cards */
+    .card {
+      background-color: var(--surface);
+      border: var(--border-weight) solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+
+    /* Match Row */
+    .match-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 0;
+      border-bottom: var(--border-weight) solid var(--border);
+    }
+    .match-row:last-child {
+      border-bottom: none;
+    }
+    .match-teams {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+    .match-time {
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    /* Odds Chips */
+    .odds-group {
+      display: flex;
+      gap: 8px;
+    }
+    .odds-chip {
+      background-color: var(--bg);
+      border: var(--border-weight) solid var(--border);
+      border-radius: var(--radius);
+      padding: 8px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      min-width: 64px;
+      transition: all 0.2s;
+    }
+    .odds-chip span:first-child {
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+    .odds-chip span:last-child {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--fg);
+      font-size: 14px;
+    }
+    .odds-chip:hover {
+      border-color: var(--navigate);
+    }
+    .odds-chip-selected {
+      background-color: var(--success);
+      border-color: var(--success);
+    }
+    .odds-chip-selected span {
+      color: #000000 !important;
+    }
+    .odds-chip-disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      border-color: var(--border) !important;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-status-live {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .badge-status-won {
+      background-color: rgba(34, 197, 94, 0.1);
+      color: var(--success);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    
+    .color-swatches {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+      gap: 12px;
+    }
+    .swatch {
+      height: 80px;
+      border-radius: var(--radius);
+      border: var(--border-weight) solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      padding: 8px;
+      font-size: 11px;
+      font-family: var(--font-display);
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+
+  <div style="max-width: 800px; margin: 0 auto;">
+    <h1 data-od-id="h1-title">ResenhaBET Dark Court</h1>
+    <p style="color: var(--muted); margin-bottom: 32px;">Dark theme component kit and visual language</p>
+
+    <h2 data-od-id="h2-colors">Colors</h2>
+    <div class="color-swatches" data-od-id="color-swatches">
+      <div class="swatch" style="background: var(--bg); color: var(--fg)">Bg</div>
+      <div class="swatch" style="background: var(--surface); color: var(--fg)">Surface</div>
+      <div class="swatch" style="background: var(--border); color: var(--fg)">Border</div>
+      <div class="swatch" style="background: var(--success); color: #000">Green (Action)</div>
+      <div class="swatch" style="background: var(--navigate); color: #000">Blue (Nav)</div>
+      <div class="swatch" style="background: var(--gold); color: #000">Gold (Rare)</div>
+    </div>
+
+    <h2 data-od-id="h2-buttons">Buttons</h2>
+    <div class="grid" style="grid-template-columns: auto auto auto 1fr; align-items: center;" data-od-id="button-grid">
+      <button class="btn btn-primary" data-od-id="btn-primary">Place Bet</button>
+      <button class="btn btn-primary btn-primary-pressed" data-od-id="btn-primary-pressed">Pressed</button>
+      <button class="btn btn-secondary" data-od-id="btn-secondary">View Matches</button>
+      <button class="btn btn-secondary btn-secondary-pressed" data-od-id="btn-secondary-pressed">Pressed</button>
+      <button class="btn-admin-inline" data-od-id="btn-admin">Sync Stats</button>
+    </div>
+
+    <h2 data-od-id="h2-badges">Badges</h2>
+    <div style="display: flex; gap: 12px; margin-top: 16px;" data-od-id="badges-container">
+      <span class="badge badge-status-live" data-od-id="badge-live">Live</span>
+      <span class="badge badge-status-won" data-od-id="badge-won">Won</span>
+    </div>
+
+    <h2 data-od-id="h2-odds">Odds Chips</h2>
+    <div class="odds-group" style="margin-top: 16px;" data-od-id="odds-container">
+      <div class="odds-chip" data-od-id="odds-1">
+        <span>1</span>
+        <span>+120</span>
+      </div>
+      <div class="odds-chip odds-chip-selected" data-od-id="odds-X">
+        <span>X</span>
+        <span>+240</span>
+      </div>
+      <div class="odds-chip odds-chip-disabled" data-od-id="odds-2">
+        <span>2</span>
+        <span>-150</span>
+      </div>
+    </div>
+
+    <h2 data-od-id="h2-match-row">Match Row</h2>
+    <div class="card" style="margin-top: 16px;" data-od-id="match-card">
+      <div class="match-row" data-od-id="match-row-1">
+        <div>
+          <div class="match-time">Today, 20:45</div>
+          <div class="match-teams">
+            <span>Real Madrid</span>
+            <span>Barcelona</span>
+          </div>
+        </div>
+        <div class="odds-group">
+          <div class="odds-chip" data-od-id="match1-odds1">
+            <span>1</span>
+            <span>2.10</span>
+          </div>
+          <div class="odds-chip" data-od-id="match1-oddsx">
+            <span>X</span>
+            <span>3.40</span>
+          </div>
+          <div class="odds-chip" data-od-id="match1-odds2">
+            <span>2</span>
+            <span>3.10</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="match-row" data-od-id="match-row-2">
+        <div>
+          <div class="match-time">
+            <span class="badge badge-status-live" style="margin-right: 8px" data-od-id="match2-live-badge">72'</span>
+          </div>
+          <div class="match-teams">
+            <span>Arsenal <span style="color: var(--success); margin-left: 4px;">1</span></span>
+            <span>Chelsea <span style="color: var(--muted); margin-left: 4px;">0</span></span>
+          </div>
+        </div>
+        <div class="odds-group">
+          <div class="odds-chip odds-chip-disabled" data-od-id="match2-odds1">
+            <span>1</span>
+            <span>1.15</span>
+          </div>
+          <div class="odds-chip odds-chip-disabled" data-od-id="match2-oddsx">
+            <span>X</span>
+            <span>5.50</span>
+          </div>
+          <div class="odds-chip odds-chip-disabled" data-od-id="match2-odds2">
+            <span>2</span>
+            <span>15.0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

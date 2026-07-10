@@ -1,0 +1,149 @@
+<section class="space-y-6">
+  <header>
+    <app-section-header label="Dashboard" />
+    <h1 class="text-2xl font-black text-white">Resumo</h1>
+    <p class="mt-2 text-sm text-gray-400">Bem vindo ao ResenhaBET.</p>
+  </header>
+
+  @if (status() === 'loading') {
+    <div class="mb-6 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="h-44 animate-pulse rounded-xl bg-gray-800"></div>
+      }
+    </div>
+  }
+
+  @if (liveEvents().length > 0) {
+    <div class="mb-6">
+      <div class="mb-4 flex items-center gap-2">
+        <span class="h-2 w-2 animate-pulse rounded-full bg-green-400"></span>
+        <h3 class="text-xl font-bold">Ao Vivo Agora</h3>
+      </div>
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        @for (event of liveEvents(); track event.id) {
+          <a
+            [routerLink]="['/events', event.id]"
+            class="block rounded-lg bg-gray-800 p-4 transition hover:-translate-y-0.5 hover:bg-gray-750 hover:shadow-xl shadow-lg border border-gray-700"
+          >
+            <div class="mb-2 flex items-center justify-between text-xs text-gray-500">
+              <span>Partida #{{ event.id }}</span>
+              <span class="inline-flex items-center gap-1 text-green-400 font-bold uppercase tracking-wider">
+                <span class="h-1.5 w-1.5 rounded-full bg-green-400 animate-pulse"></span>
+                Ao Vivo
+              </span>
+            </div>
+            
+            <div class="grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+              <!-- Home Team -->
+              <div class="flex flex-col items-center gap-1 text-center min-w-0">
+                @if (homeTeamBadgeUrl(event)) {
+                  <img [src]="homeTeamBadgeUrl(event)" alt="" class="h-10 w-10 object-contain drop-shadow-md" />
+                } @else {
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700 text-sm font-black text-gray-300">
+                    {{ homeInitials(event) }}
+                  </div>
+                }
+                <span class="truncate w-full text-sm font-semibold text-gray-300" [title]="displayHomeName(event)">
+                  {{ displayHomeName(event) }}
+                </span>
+              </div>
+
+              <!-- Score -->
+              <div class="flex items-center justify-center gap-2 rounded-lg bg-gray-900/60 px-3 py-2 font-black text-2xl drop-shadow-sm">
+                <span>{{ scoreValue(event.homeScore) }}</span>
+                <span class="text-sm font-bold text-gray-500">x</span>
+                <span>{{ scoreValue(event.awayScore) }}</span>
+              </div>
+
+              <!-- Away Team -->
+              <div class="flex flex-col items-center gap-1 text-center min-w-0">
+                @if (awayTeamBadgeUrl(event)) {
+                  <img [src]="awayTeamBadgeUrl(event)" alt="" class="h-10 w-10 object-contain drop-shadow-md" />
+                } @else {
+                  <div class="flex h-10 w-10 items-center justify-center rounded-full bg-gray-700 text-sm font-black text-gray-300">
+                    {{ awayInitials(event) }}
+                  </div>
+                }
+                <span class="truncate w-full text-sm font-semibold text-gray-300" [title]="displayAwayName(event)">
+                  {{ displayAwayName(event) }}
+                </span>
+              </div>
+            </div>
+          </a>
+        }
+      </div>
+    </div>
+  }
+
+  @if (status() === 'success' || status() === 'error') {
+    <h3 class="mb-4 text-xl font-bold">Torneios Ativos</h3>
+  }
+
+  @if (status() === 'error') {
+    <div class="rounded-xl bg-red-950/60 p-4 text-red-200">
+      {{ errorMessage() }}
+    </div>
+  }
+
+  @if (status() === 'success' && activeTournaments().length === 0) {
+    <div class="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-gray-700 bg-gray-800/60 p-8 text-center">
+      <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-700 text-2xl font-black text-cyan-400">
+        R
+      </div>
+      <h3 class="text-xl font-bold">Nenhum torneio ativo no momento</h3>
+    </div>
+  }
+
+  @if (status() === 'success' && activeTournaments().length > 0) {
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      @for (tournament of activeTournaments(); track trackTournament($index, tournament)) {
+        <a
+          [routerLink]="['/tournaments', tournament.id]"
+          class="block rounded-xl bg-gray-800 p-5 shadow-lg transition hover:-translate-y-0.5 hover:bg-gray-750 hover:shadow-xl"
+        >
+          <div class="mb-4 flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h3 class="text-xl font-bold">{{ tournament.name }}</h3>
+              @if (tournament.type === 'REAL_FOOTBALL') {
+                <p class="mt-1 text-xs uppercase tracking-[0.2em] text-cyan-300">Futebol real</p>
+              }
+            </div>
+            <span
+              class="inline-flex shrink-0 items-center gap-2 rounded-full px-3 py-1 text-xs font-bold"
+              [class.bg-gray-700]="tournament.status === 'CREATED'"
+              [class.text-gray-200]="tournament.status === 'CREATED'"
+              [class.bg-green-700]="tournament.status === 'IN_PROGRESS'"
+              [class.text-green-50]="tournament.status === 'IN_PROGRESS'"
+              [class.bg-blue-700]="tournament.status === 'COMPLETED'"
+              [class.text-blue-50]="tournament.status === 'COMPLETED'"
+              [class.bg-red-900]="tournament.status === 'CANCELLED'"
+              [class.text-red-100]="tournament.status === 'CANCELLED'"
+            >
+              @if (tournament.status === 'IN_PROGRESS') {
+                <span class="h-2 w-2 animate-pulse rounded-full bg-green-200"></span>
+              }
+              {{ statusLabel(tournament.status) }}
+            </span>
+          </div>
+
+          <div class="grid gap-3 text-sm text-gray-300">
+            <div class="flex items-center justify-between rounded-md bg-gray-900/50 p-3">
+              <span>Inicio</span>
+              <strong>{{ formatDate(tournament.startDate) }}</strong>
+            </div>
+            <div class="flex items-center justify-between rounded-md bg-gray-900/50 p-3">
+              <span>Formato</span>
+              <strong>{{ tournamentFormatLabel(tournament.format) }}</strong>
+            </div>
+            <div class="flex items-center justify-between rounded-md bg-gray-900/50 p-3">
+              <span>Inscritos</span>
+              <strong>{{ playerCountLabel(tournament.id) }}</strong>
+            </div>
+          </div>
+        </a>
+      }
+    </div>
+  }
+</section>
+
+

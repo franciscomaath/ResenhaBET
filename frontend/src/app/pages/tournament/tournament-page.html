@@ -1,0 +1,1023 @@
+<section class="space-y-5">
+  <a routerLink="/" class="inline-flex min-h-11 items-center rounded-xl bg-gray-800 px-4 font-semibold text-gray-200 hover:bg-gray-700">
+    Voltar
+  </a>
+
+  @if (status() === 'loading') {
+    <div class="space-y-4">
+      <div class="h-36 animate-pulse rounded-2xl bg-gray-800/80"></div>
+      <div class="h-72 animate-pulse rounded-2xl bg-gray-800/80"></div>
+    </div>
+  }
+
+  @if (status() === 'error') {
+    <div class="rounded-2xl border border-red-900 bg-red-950/60 p-4 text-red-200">{{ errorMessage() }}</div>
+  }
+
+  @if (status() === 'success' && tournament(); as tournament) {
+    <header class="rounded-2xl border border-gray-700 bg-gray-800 p-5 shadow-brand-card sm:p-6">
+      <div class="flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+        <header>
+          <app-section-header label="Torneio" />
+          <h1 class="font-display text-2xl font-black leading-tight text-white">{{ tournament.name }}</h1>
+          <p class="mt-2 text-sm font-medium text-gray-400">
+            {{ tournamentFormatLabel(tournament.format) }} • {{ formatDateTime(tournament.startDate) }}
+          </p>
+        </header>
+
+        <div class="flex flex-col gap-3 sm:items-end">
+          <span
+            class="inline-flex min-h-8 items-center justify-center gap-2 rounded-full border px-4 py-1 text-sm font-bold"
+            [class.border-gray-600]="tournament.status === 'CREATED'"
+            [class.bg-gray-700]="tournament.status === 'CREATED'"
+            [class.border-green-500]="tournament.status === 'IN_PROGRESS'"
+            [class.bg-green-700]="tournament.status === 'IN_PROGRESS'"
+            [class.border-blue-500]="tournament.status === 'COMPLETED'"
+            [class.bg-blue-700]="tournament.status === 'COMPLETED'"
+            [class.border-red-500]="tournament.status === 'CANCELLED'"
+            [class.bg-red-900]="tournament.status === 'CANCELLED'"
+          >
+            @if (tournament.status === 'IN_PROGRESS') {
+              <span class="h-2 w-2 animate-pulse rounded-full bg-green-200"></span>
+            }
+            {{ statusLabel(tournament.status) }}
+          </span>
+
+          @if (isRealFootball()) {
+            @if (tournament.status !== 'COMPLETED' && tournament.status !== 'CANCELLED') {
+              <button
+                *appAdminOnly
+                class="min-h-11 rounded-xl bg-green-600 px-5 py-3 font-bold hover:bg-green-700 disabled:opacity-50"
+                [disabled]="isSyncing()"
+                (click)="syncFixtures()"
+              >
+                {{ isSyncing() ? 'Sincronizando...' : 'Sincronizar Partidas' }}
+              </button>
+              <button
+                *appAdminOnly
+                class="min-h-11 rounded-xl bg-blue-600 px-5 py-3 font-bold hover:bg-blue-700 disabled:opacity-50"
+                [disabled]="isSyncing()"
+                (click)="syncOdds()"
+              >
+                {{ isSyncing() ? 'Sincronizando...' : 'Importar Odds' }}
+              </button>
+            }
+          } @else {
+            @if (tournament.status === 'CREATED') {
+              <button *appGroupAdminOnly class="min-h-11 rounded-xl bg-green-600 px-5 py-3 font-bold hover:bg-green-700" (click)="startTournament()">
+                Iniciar Torneio
+              </button>
+            }
+          }
+          @if (canAdvanceToBracket()) {
+            <button *appGroupAdminOnly class="min-h-11 rounded-xl bg-blue-600 px-5 py-3 font-bold hover:bg-blue-700" (click)="openAdvanceModal()">
+              Avancar ao Mata-mata
+            </button>
+          }
+        </div>
+      </div>
+    </header>
+
+
+
+    @if (isStartConfigModalOpen()) {
+      <div class="fixed inset-0 z-50 flex items-end bg-black/70 p-4 sm:items-center sm:justify-center">
+        <section class="w-full rounded-xl bg-gray-800 p-6 shadow-2xl sm:max-w-lg">
+          <div class="mb-5 flex items-center justify-between gap-4">
+            <h3 class="text-2xl font-bold">Configurar Fase de Grupos</h3>
+            <button class="min-h-11 rounded-xl bg-gray-700 px-4 font-bold hover:bg-gray-600" (click)="closeStartConfigModal()">
+              Fechar
+            </button>
+          </div>
+
+          <p class="mb-4 text-sm text-gray-300">
+            {{ players().length }} jogadores inscritos
+          </p>
+
+          @if (startConfigErrorMessage()) {
+            <p class="mb-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">{{ startConfigErrorMessage() }}</p>
+          }
+
+          @if (startConfigLoading()) {
+            <div class="h-32 animate-pulse rounded-xl bg-gray-700"></div>
+          } @else {
+            <div class="space-y-5">
+              <label class="block">
+                <span class="mb-2 block text-sm font-semibold text-gray-300">Numero de Grupos</span>
+                <select
+                  class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+                  [value]="startConfigNumberOfGroups() ?? ''"
+                  (change)="setStartConfigNumberOfGroups($event)"
+                >
+                  @for (option of startConfigGroupOptions(); track option.groupCount) {
+                    <option [value]="option.groupCount">
+                      {{ option.groupCount }} grupos ({{ option.playersPerGroup }} jogadores por grupo{{ option.remainder ? `, ${option.remainder} com +1` : '' }})
+                    </option>
+                  }
+                </select>
+              </label>
+
+              @if (startConfigSelectedOption(); as option) {
+                <p class="text-sm text-gray-400">
+                  Distribuicao: {{ option.playersPerGroup }} por grupo{{ option.remainder ? `, ${option.remainder} grupo(s) com ${option.playersPerGroup + 1} jogadores` : '' }}
+                </p>
+              }
+
+              <label class="block">
+                <span class="mb-2 block text-sm font-semibold text-gray-300">Jogadores que avancam por grupo</span>
+                <input
+                  type="number"
+                  min="1"
+                  class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+                  [value]="startConfigPlayersAdvancing() ?? ''"
+                  (input)="setStartConfigPlayersAdvancing($event)"
+                />
+              </label>
+
+              <div class="rounded-md bg-gray-900/50 p-4 text-sm text-gray-300">
+                <p><strong>Total avancando:</strong> {{ startConfigTotalAdvancing() }} jogadores</p>
+                @if (startConfigTotalAdvancing() < 2) {
+                  <p class="mt-1 text-red-400">Pelo menos 2 jogadores devem avancar ao mata-mata.</p>
+                }
+              </div>
+
+              <button
+                class="min-h-11 w-full rounded-xl bg-green-600 p-3 font-bold hover:bg-green-700 disabled:cursor-not-allowed disabled:opacity-60"
+                [disabled]="startConfigLoading() || startConfigTotalAdvancing() < 2 || !startConfigNumberOfGroups() || !startConfigPlayersAdvancing()"
+                (click)="startTournamentWithConfig()"
+              >
+                Iniciar Torneio
+              </button>
+            </div>
+          }
+        </section>
+      </div>
+    }
+
+    @if (isAdvanceModalOpen()) {
+      <div class="fixed inset-0 z-50 flex items-end bg-black/70 p-4 sm:items-center sm:justify-center">
+        <section class="w-full rounded-xl bg-gray-800 p-6 shadow-2xl sm:max-w-lg">
+          <div class="mb-5 flex items-center justify-between gap-4">
+            <h3 class="text-2xl font-bold">Avancar ao Mata-mata</h3>
+            <button class="min-h-11 rounded-xl bg-gray-700 px-4 font-bold hover:bg-gray-600" (click)="closeAdvanceModal()">
+              Cancelar
+            </button>
+          </div>
+
+          <p class="mb-4 text-sm text-gray-300">
+            A fase de grupos sera encerrada. Jogadores serao classificados automaticamente e o mata-mata sera gerado. Deseja continuar?
+          </p>
+
+          @if (advanceErrorMessage()) {
+            <p class="mb-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">{{ advanceErrorMessage() }}</p>
+          }
+
+          <button
+            class="min-h-11 w-full rounded-xl bg-blue-600 p-3 font-bold hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-60"
+            [disabled]="isAdvancing()"
+            (click)="advanceToBracket()"
+          >
+            @if (isAdvancing()) {
+              <span>Avancando...</span>
+            } @else {
+              <span>Confirmar</span>
+            }
+          </button>
+        </section>
+      </div>
+    }
+
+    <nav class="hide-scrollbar flex gap-1 overflow-x-auto rounded-2xl border border-gray-800 bg-gray-950 p-1">
+      <button class="tab-button" [class.active]="activeTab() === 'matches'" (click)="setTab('matches')">
+        Partidas
+      </button>
+      @if (showStandingsTab()) {
+        <button class="tab-button" [class.active]="activeTab() === 'standings'" (click)="setTab('standings')">
+          Classificação
+        </button>
+      }
+      @if (showBracketTab()) {
+        <button class="tab-button" [class.active]="activeTab() === 'bracket'" (click)="setTab('bracket')">
+          Mata-mata
+        </button>
+      }
+      <button class="tab-button" [class.active]="activeTab() === 'players'" (click)="setTab('players')">
+        Jogadores
+      </button>
+      <button class="tab-button" [class.active]="activeTab() === 'ranking'" (click)="setTab('ranking')">
+        Ranking
+      </button>
+      <button *appGroupAdminOnly class="tab-button" [class.active]="activeTab() === 'admin'" (click)="setTab('admin')">
+        Ações do Torneio
+      </button>
+    </nav>
+
+    @if (activeTab() === 'ranking') {
+      <section class="space-y-4">
+        <div class="flex items-center justify-between">
+          <h3 class="text-2xl font-bold">Ranking de Apostas</h3>
+          <button
+            class="inline-flex min-h-11 items-center rounded-xl px-2 text-sm font-semibold text-blue-400 hover:text-blue-300"
+            type="button"
+            (click)="loadBettingRanking()"
+          >
+            Recarregar
+          </button>
+        </div>
+
+        @if (bettingRankingStatus() === 'loading') {
+          <div class="flex flex-col items-center justify-center rounded-2xl border border-gray-700/50 bg-gray-800/50 p-10 text-center">
+            <span class="material-icons mb-2 text-4xl text-gray-500">hourglass_empty</span>
+            <p class="text-lg font-bold text-white">Carregando ranking...</p>
+          </div>
+        } @else if (bettingRankingStatus() === 'error') {
+          <div class="rounded-2xl border border-red-900 bg-red-950/60 p-4 text-red-200">
+            {{ bettingRankingError() }}
+          </div>
+        } @else if (bettingRanking().length === 0) {
+          <div class="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-700 bg-gray-800/50 p-10 text-center">
+            <span class="material-icons mb-2 text-4xl text-gray-500">leaderboard</span>
+            <p class="text-lg font-bold text-white">Sem ranking</p>
+            <p class="text-sm text-gray-400">Nenhum dado de ranking de apostas para este torneio.</p>
+          </div>
+        } @else {
+          <div class="overflow-hidden rounded-2xl border border-gray-800 bg-gray-800 shadow-brand-card">
+            <div class="grid grid-cols-[42px_1fr_auto] gap-3 border-b border-gray-700/70 bg-gray-900/50 px-4 py-3 text-xs font-bold uppercase tracking-wide text-gray-400">
+              <span>#</span>
+              <span>Jogador</span>
+              <span class="text-right">Saldo</span>
+            </div>
+            <div class="divide-y divide-gray-700/60">
+              @for (player of bettingRanking(); track player.userId; let i = $index) {
+                <div class="grid grid-cols-[42px_1fr_auto] items-center gap-3 px-4 py-3">
+                  <span class="font-display text-base font-black" [class.text-amber-300]="i < 3" [class.text-gray-400]="i >= 3">{{ i + 1 }}º</span>
+                  <span class="min-w-0 truncate font-semibold text-white">{{ player.userName }}</span>
+                  <span class="font-display text-right font-black text-green-400">R$ {{ player.balance | number: '1.2-2' }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        }
+      </section>
+    }
+
+    @if (activeTab() === 'admin') {
+      <section *appGroupAdminOnly class="space-y-5">
+        <h3 class="text-2xl font-bold">Acoes do Torneio</h3>
+        <div class="rounded-2xl border border-gray-800 bg-gray-900/80 p-5 shadow-brand-card sm:p-6">
+          <div class="grid gap-6 md:grid-cols-2">
+            <div class="space-y-3">
+              <label class="block">
+                <span class="mb-2 block text-sm font-medium text-gray-200">Renomear Torneio</span>
+                <div class="flex gap-2">
+                  <input
+                    class="min-h-11 w-full rounded-xl border border-gray-700 bg-gray-950 px-3 text-sm text-white outline-none ring-0 placeholder:text-gray-500 focus:border-blue-500"
+                    type="text"
+                    [value]="updateTournamentName()"
+                    (input)="setUpdateTournamentName($event)"
+                  />
+                  <button
+                    class="min-h-11 rounded-xl bg-green-600 px-4 text-sm font-semibold text-white hover:bg-green-700 disabled:cursor-not-allowed disabled:bg-gray-700"
+                    [disabled]="isUpdatingTournament() || !updateTournamentName().trim()"
+                    (click)="updateTournament()"
+                  >
+                    Atualizar
+                  </button>
+                </div>
+              </label>
+            </div>
+            
+            <div class="space-y-3">
+              <span class="mb-2 block text-sm font-medium text-gray-200">Acoes Destrutivas</span>
+              <div class="flex flex-wrap gap-3">
+                @if (tournament.status === 'CREATED' || tournament.status === 'IN_PROGRESS') {
+                  <button
+                    class="min-h-11 rounded-xl border border-red-900 bg-red-950/60 px-4 text-sm font-semibold text-red-200 hover:bg-red-900 hover:text-white disabled:opacity-50"
+                    [disabled]="isCancelingTournament()"
+                    (click)="cancelTournament()"
+                  >
+                    Cancelar Torneio
+                  </button>
+                }
+                <button
+                  class="min-h-11 rounded-xl bg-red-800 px-4 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                  [disabled]="isDeletingTournament()"
+                  (click)="deleteTournament()"
+                >
+                  Excluir Torneio
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    }
+
+    @if (activeTab() === 'matches') {
+      <section class="space-y-5">
+        <app-tournament-wallet-panel [balance]="walletBalance()" [tournamentName]="walletTournamentName()" />
+
+        <div class="flex items-center justify-between gap-4">
+          <h3 class="text-2xl font-bold">Partidas</h3>
+          <button
+            *appGroupAdminOnly
+            class="min-h-11 rounded-xl px-5 py-3 font-bold disabled:cursor-not-allowed disabled:opacity-50"
+            [class.bg-green-600]="canCreateManualMatch()"
+            [class.hover:bg-green-700]="canCreateManualMatch()"
+            [class.bg-gray-700]="!canCreateManualMatch()"
+            [class.text-gray-300]="!canCreateManualMatch()"
+            [disabled]="!canCreateManualMatch()"
+            [title]="canCreateManualMatch() ? 'Criar partida manualmente' : 'Criacao manual disponivel apenas para torneios manuais'"
+            (click)="openCreateMatchModal()"
+          >
+            Criar Partida
+          </button>
+        </div>
+
+        @for (group of eventsByRound(); track roundId(group.round)) {
+          <article class="space-y-3">
+            <div class="flex items-center gap-3">
+              <div>
+                <h4 class="font-display text-sm font-black uppercase tracking-wider text-gray-200">{{ group.round.name }}</h4>
+                @if (group.isGroupStage && group.groupNumber !== undefined) {
+                  <p class="mt-1 text-sm text-blue-400">{{ tournamentGroupLabel(group.groupNumber) }}</p>
+                }
+              </div>
+              <span class="h-px flex-1 bg-gray-800"></span>
+              <span class="rounded-full border border-gray-700 bg-gray-900 px-3 py-1 text-xs font-semibold text-gray-400">
+                {{ group.events.length }} partida{{ group.events.length === 1 ? '' : 's' }}
+              </span>
+            </div>
+
+            <div class="space-y-3">
+              @for (event of group.events; track event.id) {
+                <article class="overflow-hidden rounded-2xl border border-gray-800 bg-gray-900/70 shadow-brand-card">
+                  <a [routerLink]="['/events', event.id]" class="block p-3 transition hover:bg-gray-800/70 sm:p-4">
+                    <div class="grid gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+                      <div class="flex items-center justify-between gap-3 rounded-xl bg-gray-950/70 p-3 sm:block sm:bg-transparent sm:p-0">
+                        <div class="min-w-0">
+                          <p class="truncate text-base font-bold text-white">{{ eventPlayerLabel(event, 'home') }}</p>
+                          <p class="mt-1 inline-flex min-w-0 items-center gap-2 text-sm text-gray-400">
+                            @if (isRealFootball()) {
+                              @if (teamBadgeUrlById(event.teamHomeId); as badgeUrl) {
+                                <img
+                                  class="h-8 w-8 shrink-0 rounded-lg bg-gray-950 object-contain p-1"
+                                  [src]="badgeUrl"
+                                  [alt]="translatedTeamName(event.teamHomeName, 'Casa')"
+                                />
+                              } @else {
+                                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-950 text-xs font-black text-blue-300">
+                                  {{ teamAbbreviationById(event.teamHomeId) }}
+                                </span>
+                              }
+                              <span class="truncate">{{ translatedTeamName(event.teamHomeName, 'Casa') }}</span>
+                            } @else {
+                              @if (teamBadgeUrl(playerById(event.playerHomeId)); as badgeUrl) {
+                                <img
+                                  class="h-8 w-8 shrink-0 rounded-lg bg-gray-950 object-contain p-1"
+                                  [src]="badgeUrl"
+                                  [alt]="playerTeam(event.playerHomeId)"
+                                />
+                              } @else {
+                                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-950 text-xs font-black text-blue-300">
+                                  {{ playerInitials(playerById(event.playerHomeId)) }}
+                                </span>
+                              }
+                              <span class="truncate">{{ playerTeam(event.playerHomeId) }}</span>
+                            }
+                          </p>
+                        </div>
+                        <strong class="font-display shrink-0 text-3xl font-black text-white sm:hidden">{{ event.homeScore ?? 0 }}</strong>
+                      </div>
+
+                      <div class="hidden text-center sm:block">
+                        <p class="font-display text-2xl font-black text-white">
+                          {{ event.homeScore ?? 0 }} x {{ event.awayScore ?? 0 }}
+                        </p>
+                      </div>
+
+                      <div class="flex items-center justify-between gap-3 rounded-xl bg-gray-950/70 p-3 sm:block sm:bg-transparent sm:p-0 sm:text-right">
+                        <div class="min-w-0 sm:flex sm:flex-col sm:items-end">
+                          <p class="truncate text-base font-bold text-white">{{ eventPlayerLabel(event, 'away') }}</p>
+                          <p class="mt-1 inline-flex min-w-0 items-center gap-2 text-sm text-gray-400 sm:flex-row-reverse">
+                            @if (isRealFootball()) {
+                              @if (teamBadgeUrlById(event.teamAwayId); as badgeUrl) {
+                                <img
+                                  class="h-8 w-8 shrink-0 rounded-lg bg-gray-950 object-contain p-1"
+                                  [src]="badgeUrl"
+                                  [alt]="translatedTeamName(event.teamAwayName, 'Fora')"
+                                />
+                              } @else {
+                                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-950 text-xs font-black text-blue-300">
+                                  {{ teamAbbreviationById(event.teamAwayId) }}
+                                </span>
+                              }
+                              <span class="truncate">{{ translatedTeamName(event.teamAwayName, 'Fora') }}</span>
+                            } @else {
+                              @if (teamBadgeUrl(playerById(event.playerAwayId)); as badgeUrl) {
+                                <img
+                                  class="h-8 w-8 shrink-0 rounded-lg bg-gray-950 object-contain p-1"
+                                  [src]="badgeUrl"
+                                  [alt]="playerTeam(event.playerAwayId)"
+                                />
+                              } @else {
+                                <span class="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-950 text-xs font-black text-blue-300">
+                                  {{ playerInitials(playerById(event.playerAwayId)) }}
+                                </span>
+                              }
+                              <span class="truncate">{{ playerTeam(event.playerAwayId) }}</span>
+                            }
+                          </p>
+                        </div>
+                        <strong class="font-display shrink-0 text-3xl font-black text-white sm:hidden">{{ event.awayScore ?? 0 }}</strong>
+                      </div>
+                    </div>
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                      <span
+                        class="inline-flex items-center gap-1 rounded-full px-3 py-1 font-bold"
+                        [class.bg-gray-700]="event.status === 'CREATED'"
+                        [class.text-gray-300]="event.status === 'CREATED'"
+                        [class.bg-green-900]="event.status === 'IN_PROGRESS'"
+                        [class.text-green-300]="event.status === 'IN_PROGRESS'"
+                        [class.bg-blue-900]="event.status === 'COMPLETED' || event.status === 'PENALTIES'"
+                        [class.text-blue-300]="event.status === 'COMPLETED' || event.status === 'PENALTIES'"
+                        [class.bg-red-950]="event.status === 'CANCELLED'"
+                        [class.text-red-300]="event.status === 'CANCELLED'"
+                      >
+                        @if (event.status === 'IN_PROGRESS') {
+                          <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-current"></span>
+                        }
+                        {{ statusLabel(event.status) }}
+                        @if (event.isBye && event.status === 'COMPLETED') {
+                          <span class="rounded-full bg-amber-950 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-200">
+                            W.O.
+                          </span>
+                        }
+                      </span>
+                      <p class="text-gray-500">{{ formatDateTime(event.gameDatetime) }}</p>
+                    </div>
+                  </a>
+
+                  @if (matchResultMarket(event.id); as market) {
+                    @if (shouldShowOdds(event, market)) {
+                      <div class="border-t border-gray-800 bg-green-950/10 p-3">
+                        <div class="mb-2 flex items-center gap-2">
+                          <span class="h-1.5 w-1.5 animate-pulse rounded-full bg-green-400"></span>
+                          <span class="text-xs font-black uppercase tracking-wider text-green-400">{{ oddsSourceLabel() }}</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-2">
+                          @for (outcome of market.outcomes; track outcome.id) {
+                            <button
+                              class="min-h-16 rounded-xl border p-2 text-center transition-all"
+                              [class.bg-green-600]="isOutcomeSelected(event.id, market.marketType, outcome.id)"
+                              [class.border-green-400]="isOutcomeSelected(event.id, market.marketType, outcome.id)"
+                              [class.ring-2]="isOutcomeSelected(event.id, market.marketType, outcome.id)"
+                              [class.ring-green-400]="isOutcomeSelected(event.id, market.marketType, outcome.id)"
+                              [class.border-gray-700]="!isOutcomeSelected(event.id, market.marketType, outcome.id)"
+                              [class.bg-gray-950]="!isOutcomeSelected(event.id, market.marketType, outcome.id)"
+                              [class.hover:bg-gray-800]="!isOutcomeSelected(event.id, market.marketType, outcome.id)"
+                              (click)="addOutcomeToCart(event, market, outcome)"
+                            >
+                              <p class="truncate text-xs font-bold leading-tight text-gray-300">{{ outcomeName(outcome.name, event) }}</p>
+                              <p class="font-display mt-1 text-xl font-black text-blue-300">{{ outcome.odd }}x</p>
+                            </button>
+                          }
+                        </div>
+                      </div>
+                    }
+                  }
+                </article>
+              }
+            </div>
+          </article>
+        } @empty {
+          <div class="rounded-2xl border border-dashed border-gray-700 bg-gray-800/50 p-8 text-center text-gray-500">
+            Nenhuma partida criada para este torneio.
+          </div>
+        }
+      </section>
+    }
+
+    @if (activeTab() === 'standings' && showStandingsTab()) {
+      <section class="space-y-5">
+        <h3 class="text-2xl font-bold">Classificacao</h3>
+
+        @if (scoreboard(); as sb) {
+          @if (tournament.format === 'LEAGUE' && sb.entries && sb.entries.length > 0) {
+            <article class="overflow-hidden rounded-2xl border border-gray-800 bg-gray-800 shadow-brand-card">
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left">
+                  <thead class="bg-gray-900/50 text-xs uppercase tracking-wide text-gray-400">
+                    <tr>
+                      <th class="px-4 py-3 font-semibold">#</th>
+                      <th class="px-4 py-3 font-semibold">Jogador</th>
+                      <th class="px-4 py-3 font-semibold text-center">J</th>
+                      <th class="px-4 py-3 font-semibold text-center">V</th>
+                      <th class="px-4 py-3 font-semibold text-center">E</th>
+                      <th class="px-4 py-3 font-semibold text-center">D</th>
+                      <th class="px-4 py-3 font-semibold text-center">SG</th>
+                      <th class="px-4 py-3 font-semibold text-center text-gray-200">Pts</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-700/70">
+                    @for (entry of sb.entries; track entry.playerId; let index = $index) {
+                      <tr>
+                        <td class="px-4 py-3 font-display font-black text-blue-400">{{ index + 1 }}</td>
+                        <td class="px-4 py-3 font-semibold">
+                          <span class="inline-flex items-center gap-2">
+                            @if (teamBadgeUrl(playerById(entry.playerId)); as badgeUrl) {
+                              <img class="h-7 w-7 shrink-0 rounded bg-gray-950 object-contain p-1" [src]="badgeUrl" [alt]="playerTeam(entry.playerId)" />
+                            } @else {
+                              <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-950 text-xs font-black text-blue-300">{{ playerInitials(playerById(entry.playerId)) }}</span>
+                            }
+                            {{ entry.playerName }}
+                          </span>
+                        </td>
+                        <td class="px-4 py-3 text-center">{{ entry.matchesPlayed }}</td>
+                        <td class="px-4 py-3 text-center">{{ entry.wins }}</td>
+                        <td class="px-4 py-3 text-center">{{ entry.draws }}</td>
+                        <td class="px-4 py-3 text-center">{{ entry.losses }}</td>
+                        <td class="px-4 py-3 text-center">{{ entry.goalDifference }}</td>
+                        <td class="px-4 py-3 text-center font-display font-black text-white">{{ entry.points }}</td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </article>
+          }
+
+          @if (tournament.format === 'LEAGUE_BRACKET' && sb.groups && sb.groups.length > 0) {
+            <div class="space-y-6">
+              @for (group of sb.groups; track group.groupNumber) {
+                <article class="overflow-hidden rounded-2xl border border-gray-800 bg-gray-800 shadow-brand-card">
+                  <div class="flex items-center justify-between border-b border-gray-700/70 bg-gray-900/40 p-4">
+                    <h4 class="font-display text-lg font-black">{{ groupDisplayLabel(group) }}</h4>
+                    <span class="text-xs font-bold text-gray-400">
+                      {{ (isRealFootball() && group.teamStandings ? group.teamStandings.length : group.standings.length) }} participantes
+                    </span>
+                  </div>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left">
+                      <thead class="bg-gray-900/50 text-xs uppercase tracking-wide text-gray-400">
+                        <tr>
+                          <th class="px-4 py-3 font-semibold">#</th>
+                          <th class="px-4 py-3 font-semibold">{{ isRealFootball() ? 'Time' : 'Jogador' }}</th>
+                          <th class="px-4 py-3 font-semibold text-center">J</th>
+                          <th class="px-4 py-3 font-semibold text-center">V</th>
+                          <th class="px-4 py-3 font-semibold text-center">E</th>
+                          <th class="px-4 py-3 font-semibold text-center">D</th>
+                          <th class="px-4 py-3 font-semibold text-center">SG</th>
+                          <th class="px-4 py-3 font-semibold text-center text-gray-200">Pts</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-700/70">
+                        @if (isRealFootball() && group.teamStandings) {
+                          @for (entry of group.teamStandings; track entry.teamId; let index = $index) {
+                            <tr [ngClass]="isQualifyingPosition(index) ? 'border-l-4 border-green-500 bg-green-950/20' : 'border-l-4 border-transparent'">
+                              <td class="px-4 py-3 font-display font-black" [class.text-green-400]="isQualifyingPosition(index)" [class.text-blue-400]="!isQualifyingPosition(index)">{{ index + 1 }}</td>
+                              <td class="px-4 py-3 font-semibold">
+                                <span class="inline-flex items-center gap-2">
+                                  @if (teamBadgeUrlById(entry.teamId); as badgeUrl) {
+                                    <img class="h-7 w-7 shrink-0 rounded bg-gray-950 object-contain p-1" [src]="badgeUrl" [alt]="translatedTeamName(entry.teamName)" />
+                                  } @else {
+                                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-950 text-xs font-black text-blue-300">{{ teamAbbreviationById(entry.teamId) }}</span>
+                                  }
+                                  {{ translatedTeamName(entry.teamName) }}
+                                </span>
+                              </td>
+                              <td class="px-4 py-3 text-center">{{ entry.matchesPlayed }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.wins }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.draws }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.losses }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.goalDifference }}</td>
+                              <td class="px-4 py-3 text-center font-display font-black text-white">{{ entry.points }}</td>
+                            </tr>
+                          }
+                        } @else {
+                          @for (entry of group.standings; track entry.playerId; let index = $index) {
+                            <tr [ngClass]="isQualifyingPosition(index) ? 'border-l-4 border-green-500 bg-green-950/20' : 'border-l-4 border-transparent'">
+                              <td class="px-4 py-3 font-display font-black" [class.text-green-400]="isQualifyingPosition(index)" [class.text-blue-400]="!isQualifyingPosition(index)">{{ index + 1 }}</td>
+                              <td class="px-4 py-3 font-semibold">
+                                <span class="inline-flex items-center gap-2">
+                                  @if (teamBadgeUrl(playerById(entry.playerId)); as badgeUrl) {
+                                    <img class="h-7 w-7 shrink-0 rounded bg-gray-950 object-contain p-1" [src]="badgeUrl" [alt]="playerTeam(entry.playerId)" />
+                                  } @else {
+                                    <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-950 text-xs font-black text-blue-300">{{ playerInitials(playerById(entry.playerId)) }}</span>
+                                  }
+                                  {{ entry.playerName }}
+                                </span>
+                              </td>
+                              <td class="px-4 py-3 text-center">{{ entry.matchesPlayed }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.wins }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.draws }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.losses }}</td>
+                              <td class="px-4 py-3 text-center">{{ entry.goalDifference }}</td>
+                              <td class="px-4 py-3 text-center font-display font-black text-white">{{ entry.points }}</td>
+                            </tr>
+                          }
+                        }
+                      </tbody>
+                    </table>
+                  </div>
+                </article>
+              }
+            </div>
+          }
+
+          @if (tournament.format === 'LEAGUE_BRACKET' && sb.placements && sb.placements.length > 0) {
+            <div class="space-y-3">
+              <h4 class="text-xl font-bold">Mata-mata</h4>
+              @for (placement of sb.placements; track placement.playerId) {
+                <div class="rounded-xl bg-gray-800 p-4 shadow-lg flex items-center gap-4">
+                  <span class="text-2xl font-black text-amber-300">#{{ placement.position }}</span>
+                  <div class="flex items-center gap-2">
+                    @if (teamBadgeUrl(playerById(placement.playerId)); as badgeUrl) {
+                      <img class="h-7 w-7 shrink-0 rounded bg-gray-950 object-contain p-1" [src]="badgeUrl" [alt]="playerTeam(placement.playerId)" />
+                    } @else {
+                      <span class="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded bg-blue-950 text-xs font-black text-blue-300">{{ playerInitials(playerById(placement.playerId)) }}</span>
+                    }
+                    <div>
+                      <p class="font-semibold">{{ placement.playerName }}</p>
+                      <p class="text-sm text-gray-400">{{ eliminationRoundLabel(placement.eliminationRound) }}</p>
+                    </div>
+                  </div>
+                </div>
+              }
+            </div>
+          }
+        } @else {
+          <div class="rounded-2xl border border-dashed border-gray-700 bg-gray-800/50 p-8 text-center text-gray-500">
+            Classificação disponivel apos o inicio do torneio.
+          </div>
+        }
+      </section>
+    }
+
+    @if (activeTab() === 'bracket') {
+      <section class="space-y-5">
+        <h3 class="text-2xl font-bold">Mata-mata</h3>
+
+        @if (knockoutRounds().length > 0) {
+          <div class="hide-scrollbar overflow-x-auto pb-2">
+            <div class="flex min-w-max gap-5">
+              @for (column of bracketColumns(); track roundId(column.round)) {
+                <section class="flex w-44 flex-col gap-3 sm:w-56">
+                  <h4
+                    class="text-center text-xs font-black uppercase tracking-wider"
+                    [class.text-amber-300]="isFinalBracketColumn(roundId(column.round))"
+                    [class.text-gray-400]="!isFinalBracketColumn(roundId(column.round))"
+                  >
+                    {{ column.round.name }}
+                  </h4>
+
+                  <div class="flex flex-1 flex-col justify-around gap-4">
+                    @for (event of column.events; track event.id) {
+                      <a
+                        [routerLink]="['/events', event.id]"
+                        class="block overflow-hidden rounded-xl border bg-gray-900/80 text-sm shadow-brand-card transition hover:bg-gray-800/80"
+                        [class.border-amber-500/50]="isChampionMatch(roundId(column.round), event)"
+                        [class.border-gray-800]="!isChampionMatch(roundId(column.round), event)"
+                      >
+                        @if (isChampionMatch(roundId(column.round), event)) {
+                          <div class="flex items-center justify-center gap-1 border-b border-amber-500/30 bg-amber-500/10 px-2 py-1 text-[10px] font-black uppercase tracking-wider text-amber-300">
+                            <span class="material-icons text-sm">emoji_events</span>
+                            Campeão
+                          </div>
+                        }
+
+                        <div
+                          class="flex items-center justify-between gap-2 border-l-4 px-3 py-2"
+                          [class.border-green-400]="matchWinner(event) === 'home'"
+                          [class.border-transparent]="matchWinner(event) !== 'home'"
+                        >
+                          <span class="min-w-0 truncate font-semibold" [class.text-white]="matchWinner(event) === 'home'" [class.text-gray-400]="matchWinner(event) !== 'home'">
+                            {{ bracketSideLabel(event, 'home') }}
+                          </span>
+                          <span class="font-display shrink-0 font-black" [class.text-white]="matchWinner(event) === 'home'" [class.text-gray-400]="matchWinner(event) !== 'home'">
+                            {{ bracketScoreLabel(event, 'home') }}
+                          </span>
+                        </div>
+                        <div class="h-px bg-gray-800"></div>
+                        <div
+                          class="flex items-center justify-between gap-2 border-l-4 px-3 py-2"
+                          [class.border-green-400]="matchWinner(event) === 'away'"
+                          [class.border-transparent]="matchWinner(event) !== 'away'"
+                        >
+                          <span class="min-w-0 truncate font-semibold" [class.text-white]="matchWinner(event) === 'away'" [class.text-gray-400]="matchWinner(event) !== 'away'">
+                            {{ event.isBye ? 'BYE' : bracketSideLabel(event, 'away') }}
+                          </span>
+                          <span class="font-display shrink-0 font-black" [class.text-white]="matchWinner(event) === 'away'" [class.text-gray-400]="matchWinner(event) !== 'away'">
+                            {{ event.isBye ? '—' : bracketScoreLabel(event, 'away') }}
+                          </span>
+                        </div>
+                        @if (event.penaltiesHome !== null && event.penaltiesAway !== null) {
+                          <p class="border-t border-gray-800 px-3 py-1 text-center text-xs text-blue-300">
+                            Penaltis: {{ event.penaltiesHome }} x {{ event.penaltiesAway }}
+                          </p>
+                        }
+                      </a>
+                    } @empty {
+                      <div class="rounded-xl border border-dashed border-gray-700 bg-gray-800/50 p-4 text-center text-xs text-gray-500">
+                        Nenhuma partida nesta rodada.
+                      </div>
+                    }
+                  </div>
+                </section>
+              }
+            </div>
+          </div>
+        } @else {
+          <div class="rounded-2xl border border-dashed border-gray-700 bg-gray-800/50 p-8 text-center text-gray-500">
+            Mata-mata ainda nao iniciado.
+          </div>
+        }
+      </section>
+    }
+
+    @if (activeTab() === 'players') {
+      <section class="space-y-5">
+        <div class="flex items-center justify-between gap-4">
+          <h3 class="text-2xl font-bold">Jogadores Inscritos</h3>
+          @if (tournament.status === 'CREATED') {
+            <button *appGroupAdminOnly class="min-h-11 rounded-xl bg-green-600 px-5 py-3 font-bold hover:bg-green-700" (click)="openAddPlayerModal()">
+              Adicionar Jogador
+            </button>
+          }
+        </div>
+
+        <article class="overflow-hidden rounded-xl bg-gray-800 shadow-lg">
+          <div class="grid gap-3 border-b border-gray-700 p-4 text-sm font-bold text-gray-400"
+               [class.grid-cols-3]="!isLeagueBracket()"
+               [class.grid-cols-4]="isLeagueBracket()">
+            <span>Jogador</span>
+            <span>Time</span>
+            @if (isLeagueBracket()) {
+              <span>Grupo</span>
+            }
+            <span class="sr-only">Acoes</span>
+          </div>
+          @for (player of players(); track player.tournamentPlayerId) {
+            <div class="grid items-center gap-3 border-b border-gray-700/70 p-4 last:border-b-0"
+                 [class.grid-cols-3]="!isLeagueBracket()"
+                 [class.grid-cols-4]="isLeagueBracket()">
+              <span class="font-semibold">{{ player.playerName }}</span>
+              <span class="inline-flex min-w-0 items-center gap-2 text-gray-300">
+                <span class="rounded bg-blue-950 px-2 py-1 text-xs font-black text-blue-300">
+                  {{ teamAbbreviation(player) }}
+                </span>
+                <span class="truncate">{{ translatedTeamName(player.teamName, 'Sem time') }}</span>
+              </span>
+              @if (isLeagueBracket()) {
+                <span class="text-sm text-gray-400">
+                  {{ tournamentGroupLabel(player.groupNumber) }}
+                </span>
+              }
+              <button *appGroupAdminOnly class="min-h-11 rounded-xl bg-gray-700 px-3 font-bold hover:bg-gray-600" (click)="openTeamModal(player)">
+                Editar
+              </button>
+            </div>
+          } @empty {
+            <p class="p-6 text-center text-gray-500">Nenhum jogador inscrito.</p>
+          }
+        </article>
+      </section>
+    }
+  }
+</section>
+
+@if (isAddPlayerModalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-end bg-black/70 p-4 sm:items-center sm:justify-center">
+    <section class="w-full rounded-xl bg-gray-800 p-6 shadow-2xl sm:max-w-lg">
+      <div class="mb-5 flex items-center justify-between gap-4">
+        <h3 class="text-2xl font-bold">Adicionar Jogador</h3>
+        <button class="min-h-11 rounded-xl bg-gray-700 px-4 font-bold hover:bg-gray-600" (click)="closeAddPlayerModal()">
+          Fechar
+        </button>
+      </div>
+
+      @if (availablePlayers().length > 0) {
+        <div class="space-y-5">
+        <label class="block">
+          <span class="mb-2 block text-sm font-semibold text-gray-300">Jogador</span>
+          <select
+            class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+            [value]="selectedPlayerId() ?? ''"
+            (change)="setSelectedPlayer($event)"
+          >
+            @for (player of availablePlayers(); track player.id) {
+              <option [value]="player.id">{{ player.name }}</option>
+            }
+          </select>
+        </label>
+
+        <button class="mt-5 min-h-11 w-full rounded-xl bg-green-600 p-3 font-bold hover:bg-green-700" (click)="addPlayerToTournament()">
+          Adicionar
+        </button>
+        </div>
+      } @else {
+        <p class="rounded-md bg-gray-900/50 p-4 text-center text-gray-400">
+          Todos os jogadores ativos ja estao inscritos neste torneio.
+        </p>
+      }
+
+      <div class="mt-6 border-t border-gray-700 pt-5">
+        <h4 class="mb-3 text-lg font-bold">Criar novo jogador</h4>
+        <div class="flex flex-col gap-3 sm:flex-row">
+          <input
+            class="min-h-11 min-w-0 flex-1 rounded-xl border border-gray-600 bg-gray-700 p-3"
+            placeholder="Nome do jogador"
+            [value]="newPlayerName()"
+            (input)="setNewPlayerName($event)"
+          />
+          <button class="min-h-11 rounded-xl bg-green-600 px-5 py-3 font-bold hover:bg-green-700" (click)="createAndAddPlayer()">
+            Criar e adicionar
+          </button>
+        </div>
+      </div>
+    </section>
+  </div>
+}
+
+@if (isTeamModalOpen() && teamPlayer(); as player) {
+  <div class="fixed inset-0 z-50 flex items-end bg-black/70 p-4 sm:items-center sm:justify-center">
+    <section class="w-full rounded-xl bg-gray-800 p-6 shadow-2xl sm:max-w-lg">
+      <div class="mb-5 flex items-center justify-between gap-4">
+        <div>
+          <h3 class="text-2xl font-bold">Alterar Time</h3>
+          <p class="mt-1 text-sm text-gray-400">{{ player.playerName }}</p>
+        </div>
+        <button class="min-h-11 rounded-xl bg-gray-700 px-4 font-bold hover:bg-gray-600" (click)="closeTeamModal()">
+          Fechar
+        </button>
+      </div>
+
+      @if (teamErrorMessage()) {
+        <p class="mb-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">
+          {{ teamErrorMessage() }}
+        </p>
+      }
+
+      @if (teams().length > 0) {
+        <label class="block">
+          <span class="mb-2 block text-sm font-semibold text-gray-300">Time</span>
+          <select
+            class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+            [value]="selectedTeamId() ?? ''"
+            (change)="setSelectedTeam($event)"
+          >
+            @for (team of teams(); track team.id) {
+              <option [value]="team.id">{{ team.name }} ({{ team.abbreviation }})</option>
+            }
+          </select>
+        </label>
+
+        <div class="mt-5 flex gap-3">
+          <button class="min-h-11 w-full rounded-xl bg-red-600/20 p-3 font-bold text-red-500 hover:bg-red-600/30 border border-red-500/50" (click)="removePlayer()">
+            Remover Jogador
+          </button>
+          <button class="min-h-11 w-full rounded-xl bg-green-600 p-3 font-bold hover:bg-green-700" (click)="savePlayerTeam()">
+            Salvar Time
+          </button>
+        </div>
+      } @else {
+        <p class="rounded-md bg-gray-900/50 p-4 text-center text-gray-400">
+          Nenhum time cadastrado. Cadastre times no backend antes de atribuir.
+        </p>
+        <button class="mt-5 min-h-11 w-full rounded-xl bg-red-600/20 p-3 font-bold text-red-500 hover:bg-red-600/30 border border-red-500/50" (click)="removePlayer()">
+          Remover Jogador
+        </button>
+      }
+    </section>
+  </div>
+}
+
+@if (isCreateMatchModalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-end bg-black/70 p-4 sm:items-center sm:justify-center">
+    <section class="w-full rounded-xl bg-gray-800 p-6 shadow-2xl sm:max-w-2xl">
+      <div class="mb-5 flex items-center justify-between gap-4">
+        <h3 class="text-2xl font-bold">Criar Partida</h3>
+        <button class="min-h-11 rounded-xl bg-gray-700 px-4 font-bold hover:bg-gray-600" (click)="closeCreateMatchModal()">
+          Fechar
+        </button>
+      </div>
+
+      @if (rounds().length > 0 && players().length >= 1) {
+        <div class="grid gap-4">
+          @if (createMatchErrorMessage()) {
+            <p class="rounded-md bg-red-950/60 p-3 text-sm text-red-200">
+              {{ createMatchErrorMessage() }}
+            </p>
+          }
+
+          <label class="flex items-center gap-3 rounded-xl border border-gray-700 bg-gray-900/40 px-4 py-3 text-sm font-semibold text-gray-200">
+            <input
+              type="checkbox"
+              class="h-4 w-4 rounded border-gray-500 bg-gray-700"
+              [checked]="isCreateCompletedEvent()"
+              (change)="setCreateCompletedEvent($event)"
+            />
+            Criar partida já finalizada
+          </label>
+
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-gray-300">Rodada</span>
+            <select
+              class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+              [value]="selectedRoundId() ?? ''"
+              (change)="setSelectedRound($event)"
+            >
+              @for (round of rounds(); track roundId(round)) {
+                <option [value]="roundId(round)">{{ round.name }}</option>
+              }
+            </select>
+          </label>
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="mb-2 block text-sm font-semibold text-gray-300">Mandante</span>
+              <select
+                class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+                [value]="selectedHomePlayerId() ?? ''"
+                (change)="setSelectedHomePlayer($event)"
+              >
+                <option value="">Selecione...</option>
+                @for (player of players(); track player.tournamentPlayerId) {
+                  <option [value]="tournamentPlayerPlayerId(player)">{{ player.playerName }}</option>
+                }
+              </select>
+            </label>
+
+            <label class="block">
+              <span class="mb-2 block text-sm font-semibold text-gray-300">Visitante</span>
+              <select
+                class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+                [value]="selectedAwayPlayerId() ?? ''"
+                (change)="setSelectedAwayPlayer($event)"
+              >
+                <option value="">Selecione...</option>
+                @for (player of players(); track player.tournamentPlayerId) {
+                  <option [value]="tournamentPlayerPlayerId(player)">{{ player.playerName }}</option>
+                }
+              </select>
+            </label>
+          </div>
+
+          @if (isCreateCompletedEvent()) {
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="block">
+                <span class="mb-2 block text-sm font-semibold text-gray-300">Placar mandante</span>
+                <input
+                  type="number"
+                  min="0"
+                  class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+                  [value]="completedHomeScoreInput()"
+                  (input)="setCompletedHomeScore($event)"
+                />
+              </label>
+
+              <label class="block">
+                <span class="mb-2 block text-sm font-semibold text-gray-300">Placar visitante</span>
+                <input
+                  type="number"
+                  min="0"
+                  class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+                  [value]="completedAwayScoreInput()"
+                  (input)="setCompletedAwayScore($event)"
+                />
+              </label>
+            </div>
+
+            <label class="flex items-center gap-3 rounded-xl border border-gray-700 bg-gray-900/40 px-4 py-3 text-sm font-semibold text-gray-200">
+              <input
+                type="checkbox"
+                class="h-4 w-4 rounded border-gray-500 bg-gray-700"
+                [checked]="isCreateByeMatch()"
+                (change)="setCreateByeMatch($event)"
+              />
+              É W.O.
+            </label>
+          }
+
+          <label class="block">
+            <span class="mb-2 block text-sm font-semibold text-gray-300">Data e hora</span>
+            <input
+              type="datetime-local"
+              class="min-h-11 w-full rounded-xl border border-gray-600 bg-gray-700 p-3"
+              [value]="selectedGameDateTime()"
+              (input)="setSelectedGameDateTime($event)"
+            />
+          </label>
+
+          <button class="min-h-11 rounded-xl bg-green-600 p-3 font-bold hover:bg-green-700" (click)="createMatch()">
+            Criar Partida
+          </button>
+        </div>
+      } @else {
+        <p class="rounded-md bg-gray-900/50 p-4 text-center text-gray-400">
+          Inicie o torneio para gerar rodadas e cadastre pelo menos um jogador para W.O ou dois para partida normal.
+        </p>
+      }
+    </section>
+  </div>
+}

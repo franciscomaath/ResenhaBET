@@ -1,0 +1,55 @@
+<article class="rounded-xl bg-gray-800 p-6 shadow-lg">
+  <h2 class="mb-4 text-2xl font-bold text-red-400">Painel do Admin</h2>
+  <div class="space-y-4">
+    <section>
+      <h3 class="mb-2 font-semibold">1. Definir Partida</h3>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="rounded-md bg-blue-600 p-2 hover:bg-blue-700" (click)="createDemoMatch.emit(false)">Liga</button>
+        <button class="rounded-md bg-blue-600 p-2 hover:bg-blue-700" (click)="createDemoMatch.emit(true)">Mata-mata</button>
+      </div>
+    </section>
+
+    <section class="border-t border-gray-600 pt-4">
+      <h3 class="mb-2 font-semibold">2. Controle do Jogo</h3>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="rounded-md bg-indigo-600 p-2 hover:bg-indigo-700" (click)="updateScore.emit({ home: 1, away: 0 })">1 x 0</button>
+        <button class="rounded-md bg-indigo-600 p-2 hover:bg-indigo-700" (click)="updateScore.emit({ home: 1, away: 1 })">1 x 1</button>
+      </div>
+    </section>
+
+    <section class="border-t border-gray-600 pt-4">
+      <h3 class="mb-2 font-semibold">3. Controle de Apostas</h3>
+      <div class="grid grid-cols-2 gap-2">
+        <button class="rounded-md bg-green-600 p-2 hover:bg-green-700" (click)="toggleBetting.emit(true)">Abrir</button>
+        <button class="rounded-md bg-red-600 p-2 hover:bg-red-700" (click)="toggleBetting.emit(false)">Fechar</button>
+      </div>
+    </section>
+
+    @if (match(); as match) {
+      <section class="border-t border-gray-600 pt-4">
+        <h3 class="mb-2 font-semibold">4. Resolver Partida</h3>
+        <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <button class="rounded-md bg-cyan-700 p-2 hover:bg-cyan-800" (click)="resolveMatch.emit('home')">{{ match.home.name }}</button>
+          @if (!match.isKnockout) {
+            <button class="rounded-md bg-yellow-700 p-2 hover:bg-yellow-800" (click)="resolveMatch.emit('draw')">Empate</button>
+          }
+          <button class="rounded-md bg-cyan-700 p-2 hover:bg-cyan-800" (click)="resolveMatch.emit('away')">{{ match.away.name }}</button>
+        </div>
+      </section>
+    }
+
+    <section class="border-t border-gray-600 pt-4">
+      <h3 class="mb-2 font-semibold">Apostas da Partida Atual</h3>
+      <div class="max-h-40 space-y-1 overflow-y-auto text-sm">
+        @for (bet of currentBets(); track bet.bettor) {
+          <div class="flex justify-between rounded bg-gray-700/50 p-1">
+            <span>{{ bet.bettor }}</span>
+            <span>R$ {{ bet.amount | number: '1.2-2' }} em <strong>{{ bet.label }}</strong></span>
+          </div>
+        } @empty {
+          <p class="text-gray-500">Nenhuma aposta ainda.</p>
+        }
+      </div>
+    </section>
+  </div>
+</article>

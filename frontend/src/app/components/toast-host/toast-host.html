@@ -1,0 +1,15 @@
+<div class="pointer-events-none fixed inset-x-0 bottom-0 z-[80] flex flex-col items-end gap-3 p-4 sm:inset-x-auto sm:right-0 sm:w-96">
+  @for (toast of toastService.toasts(); track toast.id) {
+    <section [class]="toastClasses(toast)" role="alert" aria-live="polite">
+      <span class="min-w-0 leading-5">{{ toast.message }}</span>
+      <button
+        class="min-h-11 min-w-11 rounded-md bg-white/10 px-3 text-base font-black hover:bg-white/20"
+        type="button"
+        aria-label="Fechar aviso"
+        (click)="dismiss(toast.id)"
+      >
+        x
+      </button>
+    </section>
+  }
+</div>

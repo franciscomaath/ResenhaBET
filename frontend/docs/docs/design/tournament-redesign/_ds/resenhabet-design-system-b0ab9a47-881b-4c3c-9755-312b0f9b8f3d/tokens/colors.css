@@ -1,0 +1,95 @@
+/* ResenhaBET — Color tokens
+ * Canonical brand palette. Dark theme only.
+ * SEMANTIC ROLES:
+ *   green  -> primary actions + money (stakes, balances, winnings)
+ *   blue   -> navigation + accent (active nav, links, focus rings)
+ *   gold   -> rankings + trophies ONLY
+ *   red    -> destructive + losses
+ * Legacy note: the live app still uses cyan in many templates (mid-migration);
+ * cyan tokens are kept under "Legacy" below but should not be used for new work.
+ */
+
+:root {
+  /* --- Neutral gray scale (Tailwind-derived, from frontend styles.css) --- */
+  --color-gray-50: #f9fafb;
+  --color-gray-100: #f3f4f6;
+  --color-gray-200: #e5e7eb;
+  --color-gray-300: #d1d5db;
+  --color-gray-400: #9ca3af;
+  --color-gray-500: #6b7280;
+  --color-gray-600: #4b5563;
+  --color-gray-700: #374151;
+  --color-gray-800: #1f2937;
+  --color-gray-900: #111827;
+  --color-gray-950: #030712;
+
+  /* --- Brand base palette --- */
+  --color-brand-bg: #06101f;       /* darkest page background */
+  --color-brand-surface: #121822;  /* card surface */
+  --color-brand-border: #232c3a;   /* hairline borders */
+  --color-brand-blue: #3d8bfd;     /* navigation / accent */
+  --color-brand-green: #10b981;    /* primary actions / money */
+  --color-brand-red: #ef4444;      /* destructive / losses */
+  --color-brand-gold: #e0b243;     /* rankings / trophies */
+  --color-brand-text: #ffffff;
+  --color-brand-muted: #64748b;
+
+  /* Tonal steps for interactive states */
+  --color-green-500: #10b981;
+  --color-green-600: #059669;
+  --color-green-700: #047857;
+  --color-green-400: #34d399;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3d8bfd;
+  --color-blue-600: #2f6fd8;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+  --color-gold-400: #ecc65f;
+  --color-gold-500: #e0b243;
+  --color-gold-600: #c8992f;
+
+  /* --- Legacy (cyan) — present in live app, do not use for new work --- */
+  --color-cyan-300: #67e8f9;
+  --color-cyan-400: #22d3ee;
+  --color-cyan-500: #06b6d4;
+  --color-cyan-600: #0891b2;
+  --color-cyan-700: #0e7490;
+  --color-cyan-950: #083344;
+
+  /* ================= SEMANTIC ALIASES ================= */
+
+  /* Surfaces — never more than three levels */
+  --surface-1: var(--color-brand-bg);       /* page background */
+  --surface-2: var(--color-brand-surface);  /* standard cards */
+  --surface-3: var(--color-gray-950);       /* inputs + elevated secondary */
+  --surface-inset: rgba(3, 7, 18, 0.5);     /* inset rows inside cards */
+  --border-hairline: var(--color-brand-border);
+  --border-strong: var(--color-gray-700);
+
+  /* Text */
+  --text-primary: var(--color-brand-text);
+  --text-secondary: var(--color-gray-300);
+  --text-muted: var(--color-brand-muted);
+
+  /* Actions */
+  --accent: var(--color-brand-blue);          /* navigation / links */
+  --accent-muted: #18335c;
+  --blue-400: var(--color-blue-400);           /* bright blue — highlighted names, avatar initials */
+  --primary: var(--color-brand-green);         /* primary action / money */
+  --primary-hover: var(--color-green-700);
+  --money: var(--color-brand-green);
+  --money-positive: var(--color-green-400);
+  --danger: var(--color-brand-red);
+  --danger-hover: var(--color-red-700);
+  --rank-gold: var(--color-brand-gold);        /* rankings + trophies only */
+
+  /* Status */
+  --status-live: var(--color-brand-green);
+  --status-scheduled: var(--color-gray-700);
+  --status-ended: var(--color-brand-blue);
+  --status-warn: #eab308;
+
+  /* Focus ring */
+  --focus-ring: rgba(61, 139, 253, 0.55);
+}

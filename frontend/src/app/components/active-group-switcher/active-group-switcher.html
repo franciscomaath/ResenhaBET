@@ -1,0 +1,10 @@
+<button
+  type="button"
+  class="flex h-10 max-w-[160px] items-center gap-2 rounded-full border border-gray-700 bg-gray-800/80 pl-3 pr-2 shadow-sm transition hover:bg-gray-700"
+  routerLink="/groups"
+>
+  <span class="truncate text-sm font-semibold text-white">
+    {{ activeGroup()?.name ?? 'Sem grupo' }}
+  </span>
+  <span class="material-icons text-sm text-gray-400">chevron_right</span>
+</button>

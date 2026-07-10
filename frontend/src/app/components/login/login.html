@@ -1,0 +1,165 @@
+<main class="flex min-h-screen items-center justify-center bg-gray-900 p-4 text-white">
+  <section class="w-full max-w-md rounded-xl bg-gray-800 p-6 shadow-lg">
+    <div class="mb-8 text-center">
+      <h1 class="mb-2 text-5xl font-black text-cyan-400">ResenhaBET</h1>
+      @if (step() === 'register') {
+        <p class="text-gray-400">Crie sua conta para jogar</p>
+      } @else if (step() === 'setup-pin') {
+        <p class="text-gray-400">Proteja sua conta com um PIN</p>
+      } @else {
+        <p class="text-gray-400">Quem é você na resenha?</p>
+      }
+    </div>
+
+    @if (step() === 'setup-pin') {
+      <div class="space-y-4">
+        <p class="text-center text-sm text-gray-300">
+          Você ainda não tem um PIN definido. Defina um PIN de 4 dígitos para proteger sua conta.
+        </p>
+
+        <div>
+          <input
+            class="block min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3 text-center text-2xl font-black tracking-[0.4em]"
+            type="password"
+            inputmode="numeric"
+            maxlength="4"
+            placeholder="PIN"
+            autocomplete="off"
+            [ngModel]="newPinValue()"
+            (ngModelChange)="newPinValue.set($event)"
+            name="newPinValue"
+            autofocus
+          />
+          @if (error()) {
+            <p class="mt-2 rounded-lg bg-red-950/60 p-2 text-sm text-red-200">{{ error() }}</p>
+          }
+        </div>
+
+        <button
+          class="min-h-11 w-full flex items-center justify-center rounded-lg bg-cyan-600 py-3 font-bold hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+          type="button"
+          [disabled]="loading() || !isNewPinValid()"
+          (click)="submitPinSetup()"
+        >
+          @if (loading()) {
+            <span class="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+            Definindo...
+          } @else {
+            Definir PIN
+          }
+        </button>
+
+        <button
+          class="min-h-11 w-full flex items-center justify-center rounded-lg border border-gray-600 py-3 font-bold text-gray-300 hover:bg-gray-700"
+          type="button"
+          [disabled]="loading()"
+          (click)="skipPinSetup()"
+        >
+          Agora não
+        </button>
+      </div>
+    } @else if (step() === 'register') {
+      <div class="space-y-4">
+        <div>
+          <input
+            class="block min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+            type="text"
+            placeholder="Seu nome"
+            autocomplete="off"
+            [ngModel]="nameValue()"
+            (ngModelChange)="nameValue.set($event)"
+            name="registerName"
+            autofocus
+          />
+          @if (error()) {
+            <p class="mt-2 rounded-lg bg-red-950/60 p-2 text-sm text-red-200">{{ error() }}</p>
+          }
+        </div>
+
+        <button
+          class="min-h-11 w-full flex items-center justify-center rounded-lg bg-cyan-600 py-3 font-bold hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+          type="button"
+          [disabled]="loading() || !nameValue().trim()"
+          (click)="submitRegister()"
+        >
+          @if (loading()) {
+            <span class="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+            Criando...
+          } @else {
+            Criar conta
+          }
+        </button>
+
+        <button
+          class="block w-full text-center text-sm font-semibold text-cyan-400 hover:text-cyan-300"
+          type="button"
+          (click)="backToLogin()"
+        >
+          Já tenho conta
+        </button>
+      </div>
+    } @else {
+      <form (ngSubmit)="submit()" class="space-y-4">
+        <div>
+          <input
+            class="block min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+            type="text"
+            placeholder="Seu nome"
+            autocomplete="off"
+            [readonly]="step() === 'pin'"
+            [ngModel]="nameValue()"
+            (ngModelChange)="nameValue.set($event)"
+            name="nameValue"
+            autofocus
+          />
+          @if (step() === 'name' && error()) {
+            <p class="mt-2 rounded-lg bg-red-950/60 p-2 text-sm text-red-200">{{ error() }}</p>
+          }
+        </div>
+
+        @if (step() === 'pin') {
+          <div>
+            <input
+              class="block min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3 text-center text-2xl font-black tracking-[0.4em]"
+              type="password"
+              inputmode="numeric"
+              maxlength="4"
+              placeholder="PIN"
+              autocomplete="off"
+              [ngModel]="pinValue()"
+              (ngModelChange)="pinValue.set($event)"
+              name="pinValue"
+              autofocus
+            />
+            @if (error()) {
+              <p class="mt-2 rounded-lg bg-red-950/60 p-2 text-sm text-red-200">{{ error() }}</p>
+            }
+          </div>
+        }
+
+        <button
+          class="min-h-11 w-full flex items-center justify-center rounded-lg bg-cyan-600 py-3 font-bold hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+          type="submit"
+          [disabled]="loading() || (step() === 'pin' && !isPinValid()) || (step() === 'name' && !nameValue().trim())"
+        >
+          @if (loading()) {
+            <span class="mr-2 inline-block h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+            Entrando...
+          } @else {
+            Entrar
+          }
+        </button>
+
+        @if (step() === 'name') {
+          <button
+            class="block w-full text-center text-sm font-semibold text-cyan-400 hover:text-cyan-300"
+            type="button"
+            (click)="showRegister()"
+          >
+            Criar conta
+          </button>
+        }
+      </form>
+    }
+  </section>
+</main>

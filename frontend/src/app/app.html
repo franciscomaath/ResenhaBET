@@ -1,0 +1,96 @@
+@if (!state.currentUser()) {
+  <app-login (loginSuccess)="resolveCurrentGroup($event.currentGroupId ?? null)" />
+} @else if (isClaimPlayerRoute()) {
+  <router-outlet />
+} @else if (!state.activeGroup()) {
+  <div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[var(--surface-1)] p-6 text-center text-white">
+    <h1 class="mb-6 text-3xl font-bold text-cyan-400">ResenhaBET</h1>
+    
+    @if (gateMode === 'join') {
+      <p class="mb-8 max-w-sm text-gray-300">
+        Você ainda não está em um grupo. Insira o código de convite para entrar em um grupo existente.
+      </p>
+
+      <div class="w-full max-w-xs space-y-4">
+        <input
+          type="text"
+          [(ngModel)]="joinCode"
+          placeholder="Código"
+          maxlength="6"
+          class="w-full rounded-md border border-gray-700 bg-[var(--surface-2)] p-4 text-center text-xl tracking-widest text-white outline-none focus:border-cyan-500 uppercase"
+        />
+        @if (joinGroupError) {
+          <p class="text-sm text-red-400">{{ joinGroupError }}</p>
+        }
+        <button
+          class="w-full rounded-md bg-cyan-600 p-4 font-bold text-white hover:bg-cyan-500 disabled:opacity-50"
+          [disabled]="isJoiningGroup || joinCode.length !== 6"
+          (click)="submitJoinGroup()"
+        >
+          {{ isJoiningGroup ? 'Entrando...' : 'Entrar no Grupo' }}
+        </button>
+        
+        <div class="my-6 text-sm text-gray-500">— ou —</div>
+        
+        <button class="block w-full text-sm font-semibold text-cyan-400 hover:text-cyan-300 pb-2" (click)="setGateMode('create')">
+          Criar novo grupo
+        </button>
+        <button class="block w-full text-sm text-gray-400 hover:text-gray-300 font-semibold" (click)="logout()">
+          Sair
+        </button>
+      </div>
+    } @else if (gateMode === 'create') {
+      <p class="mb-8 max-w-sm text-gray-300">
+        Dê um nome para o seu novo grupo.
+      </p>
+
+      <div class="w-full max-w-xs space-y-4">
+        <input
+          type="text"
+          [(ngModel)]="newGroupName"
+          placeholder="Nome do grupo"
+          class="w-full rounded-md border border-gray-700 bg-[var(--surface-2)] p-4 text-center text-lg text-white outline-none focus:border-cyan-500"
+        />
+        @if (createGroupError) {
+          <p class="text-sm text-red-400">{{ createGroupError }}</p>
+        }
+        <button
+          class="w-full rounded-md bg-cyan-600 p-4 font-bold text-white hover:bg-cyan-500 disabled:opacity-50"
+          [disabled]="isCreatingGroup || !newGroupName.trim()"
+          (click)="submitCreateGroup()"
+        >
+          {{ isCreatingGroup ? 'Criando...' : 'Criar Grupo' }}
+        </button>
+        
+        <button class="block w-full mt-4 text-sm font-semibold text-gray-400 hover:text-gray-300" (click)="setGateMode('join')">
+          Voltar
+        </button>
+      </div>
+    }
+  </div>
+} @else {
+  <app-shell>
+    @if (!isEventRoute()) {
+      <app-mobile-header app-shell-header (logout)="logout()" />
+    }
+
+    <router-outlet app-shell-main />
+
+    @if (fab.config().visible && (!fab.config().adminOnly || state.canManageGroup())) {
+      <button
+        app-shell-floating
+        type="button"
+        class="fixed bottom-[calc(72px+var(--safe-area-bottom))] right-4 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--brand-blue)] text-white shadow-lg shadow-cyan-900/50 hover:bg-cyan-500"
+        (click)="fab.config().action()"
+      >
+        <span class="material-icons">{{ fab.config().icon }}</span>
+      </button>
+    }
+
+    <app-bet-slip app-shell-floating />
+
+    <app-bottom-nav app-shell-footer />
+  </app-shell>
+}
+
+<app-toast-host />

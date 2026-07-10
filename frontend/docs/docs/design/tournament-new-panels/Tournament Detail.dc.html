@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/tokens/base.css">
+  <link rel="stylesheet" href="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/styles.css">
+  <script src="_ds/resenhabet-design-system-b0ab9a47-881b-4c3c-9755-312b0f9b8f3d/_ds_bundle.js"></script>
+  <style>
+    @keyframes rb-pulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+    .tdscroll::-webkit-scrollbar { width:0; height:0 }
+    .tdscroll { scrollbar-width:none }
+  </style>
+</helmet>
+
+<div style="min-height:100%;display:flex;justify-content:center;align-items:flex-start;background:#02060d;padding:24px 0;font-family:var(--font-sans)">
+  <div style="width:430px;height:900px;background:var(--surface-1);border:1px solid var(--border-hairline);border-radius:34px;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 80px rgba(0,0,0,.6);color:var(--text-primary)">
+
+    <!-- ===== Header ===== -->
+    <header style="height:56px;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:0 14px;background:var(--surface-2);border-bottom:1px solid var(--border-hairline)">
+      <span style="font-family:var(--font-display);font-weight:900;font-size:18px;letter-spacing:-.01em;color:var(--accent)">Resenha<span style="color:var(--primary)">BET</span></span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <button style="display:inline-flex;align-items:center;gap:6px;height:36px;padding:0 10px;border-radius:999px;background:var(--surface-3);border:1px solid var(--border-hairline);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer;max-width:150px">
+          <span class="material-icons" style="font-size:16px;color:var(--accent)">group</span>
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Resenha FC</span>
+          <span class="material-icons" style="font-size:16px;color:var(--text-muted)">expand_more</span>
+        </button>
+        <button style="background:none;border:none;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;padding:6px 4px">Sair</button>
+      </div>
+    </header>
+
+    <!-- ===== Scroll canvas ===== -->
+    <div class="tdscroll" style="flex:1;overflow-y:auto;overflow-x:hidden">
+      <div style="padding:14px 16px 24px;display:flex;flex-direction:column;gap:14px">
+
+        <!-- Voltar -->
+        <button style="align-self:flex-start;display:inline-flex;align-items:center;gap:4px;background:none;border:none;color:var(--text-secondary);font-size:14px;font-weight:600;cursor:pointer;padding:2px 0">
+          <span class="material-icons" style="font-size:19px;color:var(--text-muted)">arrow_back</span> Voltar
+        </button>
+
+        <!-- Tournament info card -->
+        <div style="background:var(--color-gray-800);border:1px solid var(--border-strong);border-radius:16px;box-shadow:var(--shadow-card);padding:18px">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.14em;color:var(--text-muted)">TORNEIO</span>
+            <span style="display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px;font-size:11.5px;font-weight:700;background:rgba(61,139,253,.14);color:var(--blue-400);border:1px solid rgba(61,139,253,.28)">Finalizado</span>
+          </div>
+          <h1 style="margin:0;font-family:var(--font-display);font-weight:900;font-size:25px;line-height:1.12;letter-spacing:-.01em">Copa Mateus do Nordeste 2025</h1>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--text-muted)">
+            <span style="display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--text-secondary)"><span class="material-icons" style="font-size:16px;color:var(--accent)">emoji_events</span>Mata-mata</span>
+            <span style="opacity:.4">•</span>
+            <span>27/06/2026, 14:06</span>
+          </div>
+        </div>
+
+        <!-- ===== Tab strip ===== -->
+        <div class="tdscroll" style="display:flex;gap:4px;overflow-x:auto;padding:4px;background:var(--surface-3);border:1px solid var(--border-hairline);border-radius:14px">
+          <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="6">
+            <button onClick="{{ t.onClick }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+
+        <!-- ================= PARTIDAS PANEL ================= -->
+        <sc-if value="{{ showPartidas }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;flex-direction:column">
+
+          <!-- Wallet balance panel -->
+          <div style="display:flex;align-items:center;gap:12px;background:var(--color-gray-800);border:1px solid var(--border-strong);border-radius:16px;box-shadow:var(--shadow-card);padding:13px 15px;margin-bottom:16px">
+            <div style="width:42px;height:42px;border-radius:12px;flex-shrink:0;background:rgba(16,185,129,.12);display:flex;align-items:center;justify-content:center">
+              <span class="material-icons" style="font-size:22px;color:var(--money-positive)">account_balance_wallet</span>
+            </div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:10.5px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">Sua carteira</div>
+              <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:24px;color:var(--money);line-height:1.12;margin-top:2px">{{ walletBalance }}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:10.5px;font-weight:700;color:var(--text-muted)">Saldo no torneio</div>
+              <div style="font-size:11px;font-weight:700;color:var(--text-secondary);margin-top:3px">Resenha FC</div>
+            </div>
+          </div>
+
+          <!-- section head + CTA -->
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:2px">
+            <div>
+              <h2 style="margin:0;font-family:var(--font-display);font-weight:900;font-size:21px">Partidas</h2>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--text-muted)">2 fases · 4 partidas</p>
+            </div>
+            <button style="height:48px;padding:0 16px;border-radius:12px;border:1.5px solid rgba(16,185,129,.42);background:rgba(16,185,129,.10);color:var(--money-positive);font-family:var(--font-sans);font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap">
+              <span class="material-icons" style="font-size:19px">add</span> Criar Partida
+            </button>
+          </div>
+
+          <!-- ===== Próximas Partidas (horizontal) ===== -->
+          <div style="margin-top:18px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+              <div style="display:flex;align-items:center;gap:7px">
+                <span class="material-icons" style="font-size:18px;color:var(--accent)">schedule</span>
+                <h3 style="margin:0;font-family:var(--font-display);font-weight:800;font-size:15px;letter-spacing:.01em">Próximas Partidas</h3>
+              </div>
+              <span style="font-size:11px;font-weight:700;color:var(--text-muted)">5 disponíveis</span>
+            </div>
+            <div class="tdscroll" style="display:flex;gap:10px;overflow-x:auto;padding:2px 0 6px;scroll-snap-type:x mandatory;margin:0 -2px">
+              <sc-for list="{{ nextMatches }}" as="m" hint-placeholder-count="5">
+                <div style="scroll-snap-align:start;flex-shrink:0;width:208px;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:14px;overflow:hidden">
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--surface-3);border-bottom:1px solid var(--border-hairline)">
+                    <span style="font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted)">{{ m.round }}</span>
+                    <span class="tnum" style="font-size:10px;font-weight:700;color:var(--text-muted)">#{{ m.order }}</span>
+                  </div>
+                  <div style="padding:11px 12px;display:flex;flex-direction:column;gap:9px">
+                    <div style="display:flex;align-items:center;gap:9px">
+                      <div style="width:26px;height:26px;border-radius:8px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:var(--blue-400)">{{ m.homeIni }}</div>
+                      <span style="flex:1;min-width:0;font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.home }}</span>
+                    </div>
+                    <div style="display:flex;align-items:center;gap:9px">
+                      <div style="width:26px;height:26px;border-radius:8px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:10px;color:var(--blue-400)">{{ m.awayIni }}</div>
+                      <span style="flex:1;min-width:0;font-weight:700;font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ m.away }}</span>
+                    </div>
+                  </div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:6px;padding:8px 12px;border-top:1px solid var(--border-hairline);background:var(--surface-inset)">
+                    <span style="{{ m.statusStyle }}"><span style="{{ m.dotStyle }}"></span>{{ m.status }}</span>
+                    <span style="font-size:10.5px;color:var(--text-muted);white-space:nowrap">{{ m.date }}</span>
+                  </div>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <!-- Round: Play-in -->
+          <div style="display:flex;align-items:center;gap:10px;margin:22px 0 12px">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#cbd5e1">Play-in</span>
+            <span style="flex:1;height:1px;background:var(--border-hairline)"></span>
+            <span style="font-size:11px;font-weight:700;color:var(--text-muted);background:var(--surface-3);border:1px solid var(--border-hairline);border-radius:999px;padding:2px 9px">1 partida</span>
+          </div>
+
+          <!-- Match: Paulo vs Tadeu (finalizado) -->
+          <div style="background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:14px;overflow:hidden">
+            <div style="padding:11px 14px;display:flex;flex-direction:column;gap:9px">
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--blue-400)">FO</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-weight:700;font-size:15px;line-height:1.1">Paulo</div>
+                  <div style="font-size:12px;color:var(--text-muted);margin-top:1px">Fortaleza</div>
+                </div>
+                <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:var(--text-muted)">1</div>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px">
+                <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--blue-400)">VI</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-weight:700;font-size:15px;line-height:1.1">Tadeu</div>
+                  <div style="font-size:12px;color:var(--text-muted);margin-top:1px">Vitória</div>
+                </div>
+                <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:#fff">3</div>
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--border-hairline);background:var(--surface-inset)">
+              <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;background:rgba(61,139,253,.13);color:var(--blue-400)">Finalizado</span>
+              <span style="font-size:12px;color:var(--text-muted)">Sem data</span>
+            </div>
+          </div>
+
+          <!-- Round: Quartas -->
+          <div style="display:flex;align-items:center;gap:10px;margin:22px 0 12px">
+            <span style="font-family:var(--font-display);font-weight:800;font-size:14px;letter-spacing:.08em;text-transform:uppercase;color:#cbd5e1">Quartas de final</span>
+            <span style="flex:1;height:1px;background:var(--border-hairline)"></span>
+            <span style="font-size:11px;font-weight:700;color:var(--text-muted);background:var(--surface-3);border:1px solid var(--border-hairline);border-radius:999px;padding:2px 9px">3 partidas</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:12px">
+
+            <!-- Match: França vs Suécia (criado, com odds) -->
+            <div style="background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:14px;overflow:hidden">
+              <div style="padding:11px 14px;display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;overflow:hidden;display:flex;flex-direction:column">
+                    <span style="flex:1;background:#0055a4"></span><span style="flex:1;background:#fff"></span><span style="flex:1;background:#ef4135"></span>
+                  </div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px;line-height:1.1">França</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px">Seleção</div></div>
+                  <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:var(--text-muted)">0</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;overflow:hidden;background:#006aa7;display:flex;align-items:center;justify-content:center"><span style="width:100%;height:7px;background:#fecc00"></span></div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px;line-height:1.1">Suécia</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px">Seleção</div></div>
+                  <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:var(--text-muted)">0</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--border-hairline);background:var(--surface-inset)">
+                <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;background:rgba(148,163,184,.14);color:#94a3b8"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>Criado</span>
+                <span style="font-size:12px;color:var(--text-muted)">30/06/2026, 18:00</span>
+              </div>
+              <!-- odds row, attached -->
+              <div style="border-top:1px solid var(--border-hairline);background:rgba(16,185,129,.05);padding:9px 12px 12px">
+                <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px">
+                  <span style="width:6px;height:6px;border-radius:50%;background:var(--money-positive);animation:rb-pulse 1.4s ease-in-out infinite"></span>
+                  <span style="font-size:10px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--money-positive)">Mercado aberto</span>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;border-radius:11px;border:1.5px solid var(--border-strong);background:var(--surface-inset);cursor:pointer">
+                    <span style="font-size:11px;font-weight:600;color:var(--text-secondary)">França</span>
+                    <span class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:19px;color:var(--accent)">1.33x</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;border-radius:11px;border:1.5px solid var(--border-strong);background:var(--surface-inset);cursor:pointer">
+                    <span style="font-size:11px;font-weight:600;color:var(--text-secondary)">Empate</span>
+                    <span class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:19px;color:var(--rank-gold)">6.67x</span>
+                  </div>
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 6px;border-radius:11px;border:1.5px solid var(--border-strong);background:var(--surface-inset);cursor:pointer">
+                    <span style="font-size:11px;font-weight:600;color:var(--text-secondary)">Suécia</span>
+                    <span class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:19px;color:var(--accent)">10x</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Match: Costa do Marfim vs Noruega (criado) -->
+            <div style="background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:14px;overflow:hidden">
+              <div style="padding:11px 14px;display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;overflow:hidden;display:flex">
+                    <span style="flex:1;background:#f77f00"></span><span style="flex:1;background:#fff"></span><span style="flex:1;background:#009e60"></span>
+                  </div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px;line-height:1.1">Costa do Marfim</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px">Seleção</div></div>
+                  <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:var(--text-muted)">0</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;overflow:hidden;background:#ef2b2d;display:flex;align-items:center;justify-content:center"><span style="width:8px;height:100%;background:#fff"></span><span style="position:relative;left:-6px;width:4px;height:100%;background:#002868"></span></div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px;line-height:1.1">Noruega</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px">Seleção</div></div>
+                  <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:var(--text-muted)">0</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--border-hairline);background:var(--surface-inset)">
+                <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;background:rgba(148,163,184,.14);color:#94a3b8"><span style="width:6px;height:6px;border-radius:50%;background:currentColor"></span>Criado</span>
+                <span style="font-size:12px;color:var(--text-muted)">30/06/2026, 14:00</span>
+              </div>
+            </div>
+
+            <!-- Match: Kaio vs Diego (em andamento) -->
+            <div style="background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:14px;overflow:hidden">
+              <div style="padding:11px 14px;display:flex;flex-direction:column;gap:9px">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--blue-400)">RM</div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px;line-height:1.1">Kaio</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px">Real Madrid</div></div>
+                  <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:#fff">2</div>
+                </div>
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:30px;height:30px;border-radius:9px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--blue-400)">BA</div>
+                  <div style="flex:1;min-width:0"><div style="font-weight:700;font-size:15px;line-height:1.1">Diego</div><div style="font-size:12px;color:var(--text-muted);margin-top:1px">Barcelona</div></div>
+                  <div class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:26px;color:#fff">1</div>
+                </div>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 14px;border-top:1px solid var(--border-hairline);background:var(--surface-inset)">
+                <span style="display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;background:rgba(16,185,129,.15);color:var(--money-positive)"><span style="width:6px;height:6px;border-radius:50%;background:currentColor;animation:rb-pulse 1.4s ease-in-out infinite"></span>Em andamento</span>
+                <span style="font-size:12px;color:var(--text-muted)">Hoje, 20:30</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ================= CLASSIFICAÇÃO PANEL ================= -->
+        <sc-if value="{{ showClass }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <h2 style="margin:0;font-family:var(--font-display);font-weight:900;font-size:21px">Classificação</h2>
+            <p style="margin:2px 0 0;font-size:12px;color:var(--text-muted)">Fase de grupos · 2 avançam por grupo</p>
+          </div>
+
+          <!-- Group A table -->
+          <div style="background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:16px;overflow:hidden">
+            <div style="padding:11px 14px;background:var(--surface-3);border-bottom:1px solid var(--border-hairline);display:flex;align-items:center;gap:8px">
+              <span style="font-family:var(--font-display);font-weight:800;font-size:14px;letter-spacing:.04em">Grupo A</span>
+              <span style="font-size:11px;font-weight:700;color:var(--text-muted)">6 jogadores</span>
+            </div>
+            <!-- column header -->
+            <div style="display:grid;grid-template-columns:22px 1fr 34px 30px 26px 26px;align-items:center;gap:6px;padding:8px 14px;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border-hairline)">
+              <span>#</span><span>Jogador</span>
+              <span style="text-align:center;color:var(--text-secondary)">Pts</span>
+              <span style="text-align:center">V</span>
+              <span style="text-align:center;opacity:.7">E</span>
+              <span style="text-align:center;opacity:.7">D</span>
+            </div>
+            <sc-for list="{{ standings }}" as="r" hint-placeholder-count="6">
+              <div style="{{ r.rowStyle }}">
+                <span class="tnum" style="{{ r.posStyle }}">{{ r.pos }}</span>
+                <div style="display:flex;align-items:center;gap:9px;min-width:0">
+                  <div style="width:26px;height:26px;border-radius:7px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:11px;color:var(--blue-400)">{{ r.initial }}</div>
+                  <span style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.name }}</span>
+                </div>
+                <span class="tnum" style="text-align:center;font-family:var(--font-display);font-weight:900;font-size:17px;color:#fff">{{ r.pts }}</span>
+                <span class="tnum" style="text-align:center;font-size:14px;font-weight:700;color:var(--text-secondary)">{{ r.v }}</span>
+                <span class="tnum" style="text-align:center;font-size:13px;color:var(--text-muted)">{{ r.e }}</span>
+                <span class="tnum" style="text-align:center;font-size:13px;color:var(--text-muted)">{{ r.d }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <div style="display:flex;gap:8px;align-items:flex-start;padding:11px 13px;border:1px dashed var(--border-strong);border-radius:12px;color:var(--text-muted)">
+            <span class="material-icons" style="font-size:17px;color:var(--accent)">info</span>
+            <p style="margin:0;font-size:12px;line-height:1.45">Verde nas posições 1–2 = classificados. No formato <strong style="color:var(--text-secondary)">Liga</strong> a mesma tabela aparece sem agrupamento; <strong style="color:var(--text-secondary)">Liga + Mata-mata</strong> empilha um bloco de grupo por letra.</p>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ================= MATA-MATA (BRACKET) PANEL ================= -->
+        <sc-if value="{{ showBracket }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div>
+            <h2 style="margin:0;font-family:var(--font-display);font-weight:900;font-size:21px">Mata-mata</h2>
+            <p style="margin:2px 0 0;font-size:12px;color:var(--text-muted)">Chaveamento · deslize para ver as fases</p>
+          </div>
+
+          <div class="tdscroll" style="overflow-x:auto;padding-bottom:4px">
+            <div style="display:flex;gap:26px;min-width:max-content;height:376px">
+
+              <!-- Quartas -->
+              <div style="display:flex;flex-direction:column;width:154px">
+                <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;text-align:center">Quartas</div>
+                <div style="flex:1;display:flex;flex-direction:column">
+                  <div style="flex:1;display:flex;align-items:center"><!--pair-->
+                    <div style="width:100%;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:10px;overflow:hidden">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:700;font-size:12.5px;color:#fff">Kaio</span><span class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:14px;color:#fff">2</span></div>
+                      <div style="height:1px;background:var(--border-hairline)"></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-muted)">Diego</span><span class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:14px;color:var(--text-muted)">1</span></div>
+                    </div>
+                  </div>
+                  <div style="flex:1;display:flex;align-items:center">
+                    <div style="width:100%;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:10px;overflow:hidden">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-secondary)">França</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                      <div style="height:1px;background:var(--border-hairline)"></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-secondary)">Suécia</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                    </div>
+                  </div>
+                  <div style="flex:1;display:flex;align-items:center">
+                    <div style="width:100%;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:10px;overflow:hidden">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-muted)">Paulo</span><span class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:14px;color:var(--text-muted)">1</span></div>
+                      <div style="height:1px;background:var(--border-hairline)"></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:700;font-size:12.5px;color:#fff">Tadeu</span><span class="tnum" style="font-family:var(--font-display);font-weight:900;font-size:14px;color:#fff">3</span></div>
+                    </div>
+                  </div>
+                  <div style="flex:1;display:flex;align-items:center">
+                    <div style="width:100%;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:10px;overflow:hidden">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-secondary)">C. Marfim</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                      <div style="height:1px;background:var(--border-hairline)"></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-secondary)">Noruega</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Semis -->
+              <div style="display:flex;flex-direction:column;width:154px">
+                <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px;text-align:center">Semifinais</div>
+                <div style="flex:1;display:flex;flex-direction:column">
+                  <div style="flex:1;display:flex;align-items:center">
+                    <div style="width:100%;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:10px;overflow:hidden">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:700;font-size:12.5px;color:#fff">Kaio</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                      <div style="height:1px;background:var(--border-hairline)"></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-muted)">Vencedor Q2</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                    </div>
+                  </div>
+                  <div style="flex:1;display:flex;align-items:center">
+                    <div style="width:100%;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:10px;overflow:hidden">
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:700;font-size:12.5px;color:#fff">Tadeu</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                      <div style="height:1px;background:var(--border-hairline)"></div>
+                      <div style="display:flex;align-items:center;justify-content:space-between;padding:7px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-muted)">Vencedor Q4</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Final -->
+              <div style="display:flex;flex-direction:column;width:154px">
+                <div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--rank-gold);margin-bottom:8px;text-align:center">Final</div>
+                <div style="flex:1;display:flex;flex-direction:column;justify-content:center">
+                  <div style="width:100%;background:var(--surface-2);border:1.5px solid rgba(224,178,67,.4);border-radius:10px;overflow:hidden;box-shadow:0 0 0 3px rgba(224,178,67,.06)">
+                    <div style="display:flex;align-items:center;gap:6px;justify-content:center;padding:7px 10px;background:rgba(224,178,67,.08)"><span class="material-icons" style="font-size:15px;color:var(--rank-gold)">emoji_events</span><span style="font-size:10px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--rank-gold)">Campeão</span></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-secondary)">Vencedor S1</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                    <div style="height:1px;background:var(--border-hairline)"></div>
+                    <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 10px"><span style="font-weight:600;font-size:12.5px;color:var(--text-secondary)">Vencedor S2</span><span style="font-size:10px;font-weight:700;color:#94a3b8">—</span></div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ================= JOGADORES PANEL ================= -->
+        <sc-if value="{{ showPlayers }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between">
+            <div>
+              <h2 style="margin:0;font-family:var(--font-display);font-weight:900;font-size:21px">Jogadores</h2>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--text-muted)">6 inscritos · 2 grupos</p>
+            </div>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--blue-400);background:var(--accent-muted);border-radius:999px;padding:4px 9px"><span class="material-icons" style="font-size:13px">shield</span>Admin</span>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ players }}" as="p" hint-placeholder-count="6">
+              <div style="display:flex;align-items:center;gap:11px;background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:12px;padding:9px 12px">
+                <div style="width:38px;height:38px;border-radius:10px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:13px;color:var(--blue-400)">{{ p.ini }}</div>
+                <div style="flex:1;min-width:0">
+                  <div style="font-weight:700;font-size:15px;line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.name }}</div>
+                  <div style="display:flex;align-items:center;gap:6px;margin-top:2px">
+                    <span style="font-size:12px;color:var(--text-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ p.club }}</span>
+                    <span style="font-size:10px;font-weight:700;color:var(--text-secondary);background:var(--surface-3);border-radius:5px;padding:1px 6px;flex-shrink:0">Grupo {{ p.group }}</span>
+                  </div>
+                </div>
+                <button style="height:36px;padding:0 14px;border-radius:9px;border:1px solid var(--border-strong);background:transparent;color:var(--blue-400);font-family:var(--font-sans);font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;flex-shrink:0"><span class="material-icons" style="font-size:16px">edit</span>Editar</button>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <!-- ================= RANKING (APOSTAS) PANEL ================= -->
+        <sc-if value="{{ showRanking }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between">
+            <div>
+              <h2 style="margin:0;font-family:var(--font-display);font-weight:900;font-size:21px">Ranking de Apostas</h2>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--text-muted)">Saldo da carteira no torneio</p>
+            </div>
+            <button style="display:inline-flex;align-items:center;gap:4px;background:none;border:none;color:var(--accent);font-size:13px;font-weight:700;cursor:pointer;padding:4px 0"><span class="material-icons" style="font-size:17px">refresh</span>Recarregar</button>
+          </div>
+
+          <div style="background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:16px;overflow:hidden">
+            <div style="display:grid;grid-template-columns:30px 1fr auto;align-items:center;gap:10px;padding:9px 14px;font-size:11px;font-weight:700;color:var(--text-muted);border-bottom:1px solid var(--border-hairline)">
+              <span>#</span><span>Jogador</span><span>Saldo</span>
+            </div>
+            <sc-for list="{{ betRanking }}" as="b" hint-placeholder-count="4">
+              <div style="{{ b.rowStyle }}">
+                <span class="tnum" style="{{ b.posStyle }}">{{ b.pos }}</span>
+                <div style="display:flex;align-items:center;gap:10px;min-width:0">
+                  <div style="width:30px;height:30px;border-radius:8px;flex-shrink:0;background:var(--accent-muted);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:12px;color:var(--blue-400)">{{ b.ini }}</div>
+                  <span style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ b.name }}</span>
+                </div>
+                <span class="tnum" style="{{ b.moneyStyle }}">{{ b.value }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <p style="margin:0;font-size:11.5px;color:var(--text-muted);text-align:center">Ouro marca o pódio · saldo em verde é dinheiro.</p>
+        </div>
+        </sc-if>
+
+        <!-- ================= AÇÕES DO TORNEIO PANEL ================= -->
+        <sc-if value="{{ showActions }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;align-items:flex-end;justify-content:space-between">
+            <div>
+              <h2 style="margin:0;font-family:var(--font-display);font-weight:900;font-size:21px">Ações do Torneio</h2>
+              <p style="margin:2px 0 0;font-size:12px;color:var(--text-muted)">Somente organizadores</p>
+            </div>
+            <span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:var(--blue-400);background:var(--accent-muted);border-radius:999px;padding:4px 9px"><span class="material-icons" style="font-size:13px">shield</span>Admin</span>
+          </div>
+
+          <!-- Config card -->
+          <div style="background:var(--surface-2);border:1px solid var(--border-hairline);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+            <span style="font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--text-muted)">Renomear torneio</span>
+            <div style="display:flex;gap:8px">
+              <input value="Copa Mateus do Nordeste 2025" style="flex:1;min-width:0;height:48px;border-radius:12px;border:1px solid var(--border-strong);background:var(--surface-3);color:#fff;font-family:var(--font-sans);font-size:14px;padding:0 14px;outline:none" />
+              <button style="height:48px;padding:0 18px;border-radius:12px;border:none;background:var(--primary);color:#fff;font-family:var(--font-sans);font-weight:700;font-size:14px;cursor:pointer;flex-shrink:0">Atualizar</button>
+            </div>
+          </div>
+
+          <!-- Danger card -->
+          <div style="background:var(--surface-2);border:1px solid rgba(239,68,68,.28);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:7px">
+              <span class="material-icons" style="font-size:17px;color:var(--danger)">warning</span>
+              <span style="font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--danger)">Zona de perigo</span>
+            </div>
+            <p style="margin:0;font-size:12.5px;color:var(--text-muted);line-height:1.45">Excluir o torneio remove todas as partidas, apostas e o chaveamento. Esta ação não pode ser desfeita.</p>
+            <button style="height:48px;border-radius:12px;border:none;background:var(--danger-hover);color:#fff;font-family:var(--font-sans);font-weight:700;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:6px"><span class="material-icons" style="font-size:18px">delete</span>Excluir Torneio</button>
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+    </div>
+
+    <!-- ===== Bottom nav ===== -->
+    <nav style="height:60px;flex-shrink:0;display:flex;align-items:center;justify-content:space-around;background:var(--surface-2);border-top:1px solid var(--border-hairline);box-shadow:var(--shadow-bottom-nav)">
+      <sc-for list="{{ navItems }}" as="n" hint-placeholder-count="4">
+        <button style="{{ n.style }}">
+          <span class="material-icons" style="font-size:22px">{{ n.icon }}</span>
+          <span style="font-size:10px;font-weight:700">{{ n.label }}</span>
+        </button>
+      </sc-for>
+    </nav>
+
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:478,&quot;height&quot;:948}}">
+class Component extends DCLogic {
+  state = { tab: 0 };
+
+  renderVals() {
+    const tab = this.state.tab;
+    const labels = ['Partidas', 'Classificação', 'Mata-mata', 'Jogadores', 'Ranking', 'Ações'];
+    const tabs = labels.map((label, i) => {
+      const active = tab === i;
+      return {
+        label,
+        onClick: () => this.setState({ tab: i }),
+        style: {
+          flexShrink: 0, whiteSpace: 'nowrap', minHeight: 40, padding: '0 15px',
+          border: 'none', borderRadius: 10, cursor: 'pointer',
+          fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: 13.5,
+          background: active ? 'var(--surface-2)' : 'transparent',
+          color: active ? '#fff' : 'var(--text-muted)',
+          borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+          boxShadow: active ? '0 1px 3px rgba(0,0,0,.35)' : 'none',
+          transition: 'background .12s, color .12s',
+        },
+      };
+    });
+
+    const rows = [
+      { pos: 1, name: 'Fitaroni', v: 4, e: 0, d: 0 },
+      { pos: 2, name: 'Francisco', v: 1, e: 1, d: 1 },
+      { pos: 3, name: 'Lucas', v: 0, e: 0, d: 0 },
+      { pos: 4, name: 'Nicolas', v: 0, e: 0, d: 0 },
+      { pos: 5, name: 'Tadeu', v: 0, e: 1, d: 3 },
+      { pos: 6, name: 'Conrado', v: 0, e: 0, d: 0 },
+    ];
+    const standings = rows.map((r, i) => {
+      const qualifies = r.pos <= 2;
+      return {
+        ...r,
+        pts: r.v * 3 + r.e,
+        initial: r.name[0],
+        rowStyle: {
+          display: 'grid', gridTemplateColumns: '22px 1fr 34px 30px 26px 26px',
+          alignItems: 'center', gap: 6, padding: '9px 14px',
+          borderTop: i === 0 ? 'none' : '1px solid var(--border-hairline)',
+          background: qualifies ? 'rgba(16,185,129,.05)' : 'transparent',
+          borderLeft: qualifies ? '3px solid var(--primary)' : '3px solid transparent',
+        },
+        posStyle: {
+          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 14,
+          textAlign: 'left',
+          color: qualifies ? 'var(--money-positive)' : 'var(--text-muted)',
+        },
+      };
+    });
+
+    const navBase = {
+      display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+      background: 'none', border: 'none', cursor: 'pointer', minWidth: 44, padding: '4px 0',
+    };
+    const navItems = [
+      { icon: 'home', label: 'Dashboard', on: false },
+      { icon: 'emoji_events', label: 'Torneios', on: true },
+      { icon: 'group', label: 'Grupos', on: false },
+      { icon: 'receipt_long', label: 'Apostas', on: false },
+    ].map((n) => ({ ...n, style: { ...navBase, color: n.on ? 'var(--accent)' : 'var(--text-muted)' } }));
+
+    // Jogadores inscritos
+    const players = [
+      { name: 'Bruno', club: 'Flamengo', group: 'A', ini: 'FL' },
+      { name: 'Conrado', club: 'Internacional', group: 'A', ini: 'IN' },
+      { name: 'Gustavo', club: 'São Paulo', group: 'A', ini: 'SP' },
+      { name: 'Luan', club: 'Palmeiras', group: 'B', ini: 'PA' },
+      { name: 'Lucas', club: 'Liverpool', group: 'B', ini: 'LI' },
+      { name: 'Nicolas', club: 'Santos', group: 'B', ini: 'SA' },
+    ];
+
+    // Ranking de apostas (money — green; positions gold top-3)
+    const fmt = (n) => 'R$ ' + n.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+    // Wallet balance (group-scoped, at tournament)
+    const walletBalance = fmt(128.5);
+
+    // Próximas Partidas — next 5 available matches, ordered by order
+    const stMap = {
+      aberto:     { label: 'Mercado aberto', color: 'var(--money-positive)', bg: 'rgba(16,185,129,.13)', pulse: true },
+      andamento:  { label: 'Em andamento',   color: 'var(--money-positive)', bg: 'rgba(16,185,129,.15)', pulse: true },
+      criado:     { label: 'Criado',         color: '#94a3b8', bg: 'rgba(148,163,184,.14)', pulse: false },
+      aguardando: { label: 'Aguardando',     color: '#94a3b8', bg: 'rgba(148,163,184,.10)', pulse: false },
+    };
+    const nmRaw = [
+      { round: 'Quartas',   order: 1, home: 'França',          homeIni: 'FR', away: 'Suécia',    awayIni: 'SU', status: 'aberto',     date: '30/06, 18:00' },
+      { round: 'Quartas',   order: 2, home: 'Costa do Marfim', homeIni: 'CM', away: 'Noruega',   awayIni: 'NO', status: 'criado',     date: '30/06, 14:00' },
+      { round: 'Quartas',   order: 3, home: 'Kaio',            homeIni: 'RM', away: 'Diego',     awayIni: 'BA', status: 'andamento',  date: 'Hoje, 20:30' },
+      { round: 'Semifinal', order: 4, home: 'Kaio',            homeIni: 'RM', away: 'Venc. Q2',  awayIni: '—',  status: 'aguardando', date: 'A definir' },
+      { round: 'Semifinal', order: 5, home: 'Tadeu',           homeIni: 'VI', away: 'Venc. Q4',  awayIni: '—',  status: 'aguardando', date: 'A definir' },
+    ];
+    const nextMatches = nmRaw.slice(0, 5).map((m) => {
+      const s = stMap[m.status];
+      return {
+        ...m,
+        status: s.label,
+        statusStyle: {
+          display: 'inline-flex', alignItems: 'center', gap: 5,
+          borderRadius: 999, padding: '3px 9px', fontSize: 10, fontWeight: 700,
+          background: s.bg, color: s.color, whiteSpace: 'nowrap',
+        },
+        dotStyle: {
+          width: 5, height: 5, borderRadius: '50%', background: 'currentColor', flexShrink: 0,
+          animation: s.pulse ? 'rb-pulse 1.4s ease-in-out infinite' : 'none',
+        },
+      };
+    });
+    const rankRaw = [
+      { name: 'Francisco', wallet: 40 },
+      { name: 'Nicolas', wallet: 0 },
+      { name: 'Kadu', wallet: 0 },
+      { name: 'tchoglers', wallet: 0 },
+    ];
+    const betRanking = rankRaw.map((b, i) => {
+      const pos = i + 1;
+      const top = pos <= 3;
+      return {
+        pos, name: b.name, ini: b.name[0].toUpperCase(),
+        value: fmt(b.wallet), isZero: b.wallet === 0,
+        moneyStyle: {
+          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15,
+          color: b.wallet === 0 ? 'var(--text-muted)' : 'var(--money)',
+        },
+        rowStyle: {
+          display: 'grid', gridTemplateColumns: '30px 1fr auto', alignItems: 'center', gap: 10,
+          padding: '11px 14px',
+          borderTop: i === 0 ? 'none' : '1px solid var(--border-hairline)',
+          background: top ? 'rgba(224,178,67,.05)' : 'transparent',
+        },
+        posStyle: {
+          fontFamily: 'var(--font-display)', fontWeight: 900, fontSize: 15,
+          color: top ? 'var(--rank-gold)' : 'var(--text-muted)',
+        },
+      };
+    });
+
+    return {
+      tabs,
+      showPartidas: tab === 0,
+      showClass: tab === 1,
+      showBracket: tab === 2,
+      showPlayers: tab === 3,
+      showRanking: tab === 4,
+      showActions: tab === 5,
+      walletBalance,
+      nextMatches,
+      standings,
+      players,
+      betRanking,
+      navItems,
+    };
+  }
+}
+</script>
+</body>
+</html>

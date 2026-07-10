@@ -1,0 +1,57 @@
+<div class="min-h-screen bg-gray-950 px-4 py-8 text-white sm:px-6 lg:px-8">
+  <div class="mx-auto flex min-h-[calc(100vh-4rem)] max-w-5xl items-center">
+    <section class="w-full space-y-6 rounded-3xl border border-gray-800 bg-gray-900/80 p-6 shadow-2xl shadow-black/30 sm:p-8">
+      <div class="space-y-2">
+        <p class="text-xs font-semibold uppercase tracking-[0.25em] text-cyan-300">{{ groupName() }}</p>
+        <h1 class="text-3xl font-black sm:text-4xl">Qual jogador é você?</h1>
+        <p class="max-w-2xl text-sm text-gray-400">Escolha seu jogador neste grupo ou continue como apostador.</p>
+      </div>
+
+      @if (loading()) {
+        <div class="rounded-2xl border border-cyan-900 bg-cyan-950/40 px-4 py-3 text-sm text-cyan-100">
+          Carregando jogadores...
+        </div>
+      }
+
+      @if (error()) {
+        <div class="rounded-2xl border border-red-900 bg-red-950/60 px-4 py-3 text-sm text-red-200">
+          {{ error() }}
+        </div>
+      }
+
+      @if (!loading() && hasAvailablePlayers()) {
+        <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          @for (player of availablePlayers(); track player.id) {
+            <app-claim-player-card
+              [player]="player"
+              [selected]="isSelected(player.id)"
+              (toggle)="selectPlayer($event)"
+            />
+          }
+        </div>
+
+        <button
+          class="min-h-12 w-full rounded-2xl bg-cyan-700 px-5 py-3 text-sm font-bold text-white transition hover:bg-cyan-600 disabled:cursor-not-allowed disabled:bg-gray-700"
+          type="button"
+          [disabled]="loading() || selectedPlayerId() === null"
+          (click)="confirmPlayer()"
+        >
+          {{ loading() ? 'Confirmando...' : 'Confirmar' }}
+        </button>
+      } @else if (!loading()) {
+        <div class="rounded-2xl border border-gray-800 bg-gray-950/60 px-4 py-6 text-center text-gray-300">
+          Todos os jogadores já foram escolhidos.
+        </div>
+      }
+
+      <button
+        class="min-h-12 w-full rounded-2xl border border-gray-700 bg-gray-800 px-5 py-3 text-sm font-bold text-gray-100 transition hover:bg-gray-700 disabled:cursor-not-allowed disabled:bg-gray-800 disabled:text-gray-500"
+        type="button"
+        [disabled]="loading()"
+        (click)="claimAsBettor()"
+      >
+        {{ loading() ? 'Processando...' : 'Sou só apostador' }}
+      </button>
+    </section>
+  </div>
+</div>
