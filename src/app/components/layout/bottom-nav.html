@@ -1,0 +1,38 @@
+<nav class="fixed bottom-0 left-0 right-0 z-50 flex h-[calc(64px+var(--safe-area-bottom))] items-center justify-around border-t border-[var(--brand-border)] bg-[var(--surface-2)] pb-[var(--safe-area-bottom)] shadow-brand-bottom-nav">
+  <a
+    routerLink="/"
+    routerLinkActive="text-[var(--brand-blue)]"
+    [routerLinkActiveOptions]="{ exact: true }"
+    class="flex flex-1 flex-col items-center justify-center gap-1 text-[var(--brand-muted)] transition-colors hover:text-white"
+  >
+    <span class="material-icons text-xl">home</span>
+    <span class="text-[10px] font-semibold">Dashboard</span>
+  </a>
+
+  <a
+    routerLink="/tournaments"
+    routerLinkActive="text-[var(--brand-blue)]"
+    class="flex flex-1 flex-col items-center justify-center gap-1 text-[var(--brand-muted)] transition-colors hover:text-white"
+  >
+    <span class="material-icons text-xl">emoji_events</span>
+    <span class="text-[10px] font-semibold">Torneios</span>
+  </a>
+
+  <a
+    routerLink="/groups"
+    routerLinkActive="text-[var(--brand-blue)]"
+    class="flex flex-1 flex-col items-center justify-center gap-1 text-[var(--brand-muted)] transition-colors hover:text-white"
+  >
+    <span class="material-icons text-xl">group</span>
+    <span class="text-[10px] font-semibold">Grupos</span>
+  </a>
+
+  <a
+    routerLink="/my-bets"
+    routerLinkActive="text-[var(--brand-blue)]"
+    class="flex flex-1 flex-col items-center justify-center gap-1 text-[var(--brand-muted)] transition-colors hover:text-white"
+  >
+    <span class="material-icons text-xl">receipt_long</span>
+    <span class="text-[10px] font-semibold">Apostas</span>
+  </a>
+</nav>

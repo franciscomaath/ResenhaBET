@@ -1,0 +1,31 @@
+<section [ngClass]="sectionClasses">
+  <button
+    type="button"
+    class="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-[var(--surface-inset)]"
+    (click)="toggle()"
+  >
+    @if (icon) {
+      <span class="material-icons shrink-0 text-[20px]" [ngClass]="iconClass">{{ icon }}</span>
+    }
+
+    <div class="min-w-0 flex-1">
+      <h4 class="truncate text-[14px] font-bold text-white">{{ title }}</h4>
+    </div>
+
+    @if (status) {
+      <span class="inline-flex shrink-0 items-center rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-[var(--text-secondary)]">
+        {{ status }}
+      </span>
+    }
+
+    <span class="material-icons text-[18px] text-[var(--text-muted)] transition-transform" [class.rotate-180]="open">
+      expand_more
+    </span>
+  </button>
+
+  @if (open) {
+    <div [ngClass]="contentClasses">
+      <ng-content></ng-content>
+    </div>
+  }
+</section>

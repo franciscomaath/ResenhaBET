@@ -1,0 +1,642 @@
+<section class="space-y-6 pb-32">
+
+  @if (status() === 'loading') {
+    <div class="space-y-4">
+      <div class="h-56 animate-pulse rounded-[var(--radius-lg)] border border-[var(--border-hairline)] bg-[var(--surface-2)]"></div>
+      <div class="h-44 animate-pulse rounded-[var(--radius-lg)] border border-[var(--border-hairline)] bg-[var(--surface-2)]"></div>
+    </div>
+  }
+
+  @if (status() === 'error') {
+    <div class="rounded-[var(--radius-md)] border border-red-900 bg-red-950/60 p-4 text-red-200">{{ errorMessage() }}</div>
+  }
+
+  @if (status() === 'success' && event(); as event) {
+    <div class="sticky top-0 z-40 -mx-4 -mt-4 border-b border-[var(--border-hairline)] bg-[rgba(6,16,31,0.95)] px-4 backdrop-blur-sm sm:mx-0 sm:px-0">
+      <div class="flex h-[52px] items-center gap-2">
+        <a
+          [routerLink]="['/tournaments', event.tournamentId]"
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] text-[var(--accent)] transition hover:bg-[rgba(61,139,253,0.12)]"
+          aria-label="Voltar ao torneio"
+        >
+          <span class="material-icons text-[22px]">arrow_back</span>
+        </a>
+
+        <div class="min-w-0 flex-1 text-center">
+          <h1 class="truncate text-[14px] font-black text-white">Partida #{{ event.id }}</h1>
+          <p class="truncate text-[11px] font-medium text-[var(--text-muted)]">
+            {{ tournament()?.name ?? 'Torneio' }} · {{ round()?.name ?? 'Rodada' }}
+          </p>
+        </div>
+
+        <button
+          type="button"
+          class="flex h-11 w-11 shrink-0 items-center justify-center rounded-[12px] text-[var(--text-muted)]"
+          aria-label="Mais opções"
+        >
+          <span class="material-icons text-[22px]">more_vert</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="-mx-4 border-b border-[var(--border-hairline)] px-4 py-4 text-center sm:mx-0 sm:px-4">
+      @if (isLive()) {
+        <div class="inline-flex items-center gap-2 text-[12px] font-extrabold uppercase tracking-[0.08em] text-emerald-400">
+          <span class="h-2 w-2 animate-pulse rounded-full bg-emerald-400"></span>
+          {{ liveLabel() }}
+        </div>
+      } @else {
+        <span
+          class="inline-flex items-center rounded-full px-3 py-1 text-[11px] font-bold text-white"
+          [ngClass]="{
+            'bg-gray-700': event.status === 'CREATED',
+            'bg-[var(--accent)]': event.status === 'COMPLETED',
+            'bg-red-700': event.status === 'CANCELLED'
+          }"
+        >
+          {{ statusLabel(event.status) }}
+          @if (event.isBye && event.status === 'COMPLETED') {
+            <span class="ml-2 rounded-full bg-amber-950 px-2 py-0.5 text-[10px] font-black uppercase tracking-wider text-amber-200">
+              W.O.
+            </span>
+          }
+        </span>
+      }
+
+      <div class="mt-4 grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
+        <div class="flex min-w-0 flex-col items-center gap-2 text-center">
+          @if (isRealFootball()) {
+            @if (homeTeamBadgeUrl(); as badgeUrl) {
+              <img class="h-12 w-12 rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] object-contain p-2" [src]="badgeUrl" [alt]="displayHomeName()" />
+            } @else {
+              <span class="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] font-black text-[var(--blue-400)]">
+                {{ homeInitials() }}
+              </span>
+            }
+          } @else {
+            @if (teamBadgeUrl(homePlayer()); as badgeUrl) {
+              <img class="h-12 w-12 rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] object-contain p-2" [src]="badgeUrl" [alt]="playerTeam(homePlayer())" />
+            } @else {
+              <span class="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] font-black text-[var(--blue-400)]">
+                {{ playerInitials(homePlayer()) }}
+              </span>
+            }
+          }
+          <div class="min-w-0">
+            <p class="truncate text-[15px] font-black text-white">{{ displayHomeName() }}</p>
+            <p class="truncate text-[11px] text-[var(--text-muted)]">{{ homeSubtitle() }}</p>
+          </div>
+        </div>
+
+        <div class="flex flex-col items-center gap-1 px-1 text-center">
+          <div class="flex items-center gap-2 text-[44px] font-black leading-none text-white sm:text-5xl">
+            <span>{{ scoreValue(event.homeScore) }}</span>
+            <span class="text-[22px] font-bold text-[var(--text-muted)]">×</span>
+            <span>{{ scoreValue(event.awayScore) }}</span>
+          </div>
+          @if (event.penaltiesHome !== null && event.penaltiesAway !== null) {
+            <p class="text-[12px] font-semibold text-yellow-400">Penaltis: {{ event.penaltiesHome }} x {{ event.penaltiesAway }}</p>
+          } @else if (event.status === 'COMPLETED') {
+            <p class="text-[12px] font-semibold text-[var(--accent)]">Resultado: {{ winnerLabel(event) }}</p>
+          } @else if (event.status === 'PENALTIES') {
+            <p class="text-[12px] font-semibold text-yellow-400">Penaltis em andamento</p>
+          } @else {
+            <p class="text-[12px] font-semibold text-[var(--primary)]">Placar ao vivo</p>
+          }
+        </div>
+
+        <div class="flex min-w-0 flex-col items-center gap-2 text-center">
+          @if (isRealFootball()) {
+            @if (awayTeamBadgeUrl(); as badgeUrl) {
+              <img class="h-12 w-12 rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] object-contain p-2" [src]="badgeUrl" [alt]="displayAwayName()" />
+            } @else {
+              <span class="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] font-black text-[var(--blue-400)]">
+                {{ awayInitials() }}
+              </span>
+            }
+          } @else {
+            @if (teamBadgeUrl(awayPlayer()); as badgeUrl) {
+              <img class="h-12 w-12 rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] object-contain p-2" [src]="badgeUrl" [alt]="playerTeam(awayPlayer())" />
+            } @else {
+              <span class="flex h-12 w-12 items-center justify-center rounded-full border border-[var(--border-hairline)] bg-[var(--surface-inset)] font-black text-[var(--blue-400)]">
+                {{ playerInitials(awayPlayer()) }}
+              </span>
+            }
+          }
+          <div class="min-w-0">
+            <p class="truncate text-[15px] font-black text-white">{{ displayAwayName() }}</p>
+            <p class="truncate text-[11px] text-[var(--text-muted)]">{{ awaySubtitle() }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
+    <!-- Market & Betting -->
+    @if (markets().length > 0) {
+      <div class="-mt-6">
+        <div class="sticky top-[52px] z-30 -mx-4 mb-4 flex gap-1 border-b border-[var(--border-hairline)] bg-[var(--surface-1)] px-4 pb-0 pt-1 sm:mx-0 sm:px-0">
+          <button
+            class="min-h-11 border-b-2 px-3 pb-3 text-sm font-bold transition-colors"
+            [ngClass]="selectedMarketGroup() === 'ALL'
+              ? 'border-[var(--accent)] text-[var(--accent)]'
+              : 'border-transparent text-[var(--text-muted)] hover:text-white'"
+            (click)="setSelectedMarketGroup('ALL')"
+          >
+            {{ marketGroupLabel('ALL') }}
+          </button>
+
+          <button
+            class="min-h-11 border-b-2 px-3 pb-3 text-sm font-bold transition-colors"
+            [ngClass]="selectedMarketGroup() === 'MAIN'
+              ? 'border-[var(--accent)] text-[var(--accent)]'
+              : 'border-transparent text-[var(--text-muted)] hover:text-white'"
+            (click)="setSelectedMarketGroup('MAIN')"
+          >
+            {{ marketGroupLabel('MAIN') }}
+          </button>
+
+          <button
+            class="min-h-11 border-b-2 px-3 pb-3 text-sm font-bold transition-colors"
+            [ngClass]="selectedMarketGroup() === 'GOALS'
+              ? 'border-[var(--accent)] text-[var(--accent)]'
+              : 'border-transparent text-[var(--text-muted)] hover:text-white'"
+            (click)="setSelectedMarketGroup('GOALS')"
+          >
+            {{ marketGroupLabel('GOALS') }}
+          </button>
+
+          <button
+            class="min-h-11 border-b-2 px-3 pb-3 text-sm font-bold transition-colors"
+            [ngClass]="selectedMarketGroup() === 'OTHER'
+              ? 'border-[var(--accent)] text-[var(--accent)]'
+              : 'border-transparent text-[var(--text-muted)] hover:text-white'"
+            (click)="setSelectedMarketGroup('OTHER')"
+          >
+            {{ marketGroupLabel('OTHER') }}
+          </button>
+        </div>
+
+        @if (marketsClosedNote()) {
+          <div class="mb-4 flex items-center gap-2 rounded-[var(--radius-md)] border border-[var(--border-hairline)] bg-[rgba(3,7,18,0.5)] px-4 py-3 text-sm text-[var(--text-muted)]">
+            <span class="material-icons text-[16px] text-[var(--text-muted)]">lock</span>
+            {{ marketsClosedNote() }}
+          </div>
+        }
+
+        <div class="-mx-4 sm:mx-0">
+          @for (market of visibleMarkets(); track market.id) {
+            <app-market-accordion
+              variant="flat"
+              [title]="market.name"
+              [status]="marketStatusLabel(market.status)"
+              [open]="isMarketOpen(market.id)"
+              (openChange)="setMarketOpen(market.id, $event)"
+            >
+              <div class="space-y-3">
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-[10px] font-semibold uppercase tracking-[0.08em] text-[var(--text-muted)]">
+                    {{ marketTypeLabel(market.marketType) }}
+                  </p>
+                  @if (market.status !== 'OPEN') {
+                    <span class="rounded-full bg-red-700 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.08em] text-white">
+                      Fechado
+                    </span>
+                  }
+                </div>
+
+                @if (market.outcomes.length > 0) {
+                  <div class="grid gap-2" [ngClass]="marketOutcomeGridClass(market)">
+                    @for (outcome of visibleMarketOutcomes(market); track outcome.id) {
+                      <button
+                        class="flex min-h-11 items-center justify-between gap-2 rounded-[var(--radius-md)] border px-3 py-2 text-left transition-all disabled:cursor-not-allowed disabled:opacity-50"
+                        [ngClass]="isOutcomeSelected(event.id, market.marketType, outcome.id)
+                          ? 'border-[var(--primary)] bg-[rgba(16,185,129,0.12)]'
+                          : 'border-[var(--border-hairline)] bg-[var(--surface-inset)] hover:bg-[var(--surface-3)]'"
+                        [disabled]="market.status !== 'OPEN'"
+                        (click)="addOutcomeToCart(event, market, outcome)"
+                      >
+                        <span class="min-w-0 truncate text-[12px] font-semibold text-[var(--text-secondary)]">{{ outcomeLabel(outcome.name) }}</span>
+                        <span class="shrink-0 text-[16px] font-black text-[var(--color-blue-400)]">{{ outcome.odd }}x</span>
+                      </button>
+                    }
+                  </div>
+                }
+
+                @if (market.marketType === 'EXACT_SCORE' && market.outcomes.length > 6) {
+                  <button
+                    class="flex min-h-8 items-center justify-center gap-1 rounded-[var(--radius-sm)] border border-[var(--border-hairline)] bg-transparent px-3 py-2 text-sm font-bold text-[var(--accent)] transition hover:bg-[var(--surface-3)]"
+                    (click)="toggleExactScoreExpanded(market.id)"
+                  >
+                    {{ isExactScoreExpanded(market.id) ? 'Ver menos' : 'Ver todos os placares (' + market.outcomes.length + ')' }}
+                    <span class="material-icons text-[16px]" [style.transform]="isExactScoreExpanded(market.id) ? 'rotate(180deg)' : 'rotate(0deg)'">expand_more</span>
+                  </button>
+                }
+              </div>
+            </app-market-accordion>
+          }
+        </div>
+
+        @if (userBet(); as bet) {
+          <div class="border-t border-[var(--border-hairline)] pt-4">
+            <h4 class="mb-2 font-semibold">Sua aposta</h4>
+            @for (item of bet.items; track item.id) {
+              <div class="rounded-[var(--radius-md)] bg-[var(--surface-inset)] p-3">
+                <div class="mb-1 flex items-center justify-between">
+                  <span class="font-semibold">{{ item.outcomeName }}</span>
+                  <span
+                    class="rounded-full px-2 py-0.5 text-xs font-bold"
+                    [class.bg-green-700]="item.status === 'WON'"
+                    [class.bg-red-700]="item.status === 'LOST'"
+                    [class.bg-gray-600]="item.status === 'PENDING'"
+                  >
+                    {{ item.status }}
+                  </span>
+                </div>
+                <p class="text-sm text-gray-400">Odd: {{ item.oddSnapshot }}x</p>
+                <p class="text-sm text-gray-400">Valor: R$ {{ bet.stake | number: '1.2-2' }}</p>
+                <p class="text-sm">Retorno potencial: R$ {{ bet.potentialReturn | number: '1.2-2' }}</p>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (showManagementPanel()) {
+      <app-market-accordion
+        title="Painel do administrador"
+        icon="admin_panel_settings"
+        [open]="adminPanelOpen()"
+        (openChange)="adminPanelOpen.set($event)"
+      >
+        <p class="mb-1 text-sm text-[var(--text-muted)]">Acoes de administrador para iniciar, atualizar e encerrar.</p>
+        <p class="mb-4 text-sm font-medium text-[var(--text-secondary)]">{{ adminScopeHint() }}</p>
+
+        @if (actionErrorMessage()) {
+          <p class="mb-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">{{ actionErrorMessage() }}</p>
+        }
+
+        <div>
+          <app-market-accordion
+            variant="flat"
+            title="Controle de mercados"
+            [open]="adminSectionOpen().mercados"
+            (openChange)="toggleAdminSection('mercados')"
+          >
+            <div class="space-y-2">
+              @for (market of sortedMarkets(); track market.id) {
+                <div class="flex items-center gap-2 rounded-[var(--radius-sm)] border border-[var(--border-hairline)] bg-[var(--surface-inset)] px-3 py-2">
+                  <span class="min-w-0 flex-1 truncate text-[13px] font-semibold text-[var(--text-secondary)]">{{ marketTypeLabel(market.marketType) }}</span>
+                  <span class="shrink-0 rounded-full border border-[var(--border-hairline)] bg-[var(--surface-3)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.05em] text-[var(--text-secondary)]">
+                    {{ marketStatusLabel(market.status) }}
+                  </span>
+                </div>
+              }
+            </div>
+
+            @if (canManageMarket()) {
+              <app-button
+                class="mt-3 block"
+                [fullWidth]="true"
+                variant="accent"
+                [disabled]="isSubmitting()"
+                (click)="toggleMarketStatus()"
+              >
+                {{ anyMarketOpen() ? 'Fechar mercados' : 'Abrir mercados' }}
+              </app-button>
+            }
+          </app-market-accordion>
+
+          <app-market-accordion
+            variant="flat"
+            title="Controle da partida"
+            [open]="adminSectionOpen().partida"
+            (openChange)="toggleAdminSection('partida')"
+          >
+            <div class="space-y-4">
+              @if (canAssignPlayers()) {
+                <div class="grid gap-4 sm:grid-cols-[1fr_1fr_auto] sm:items-end">
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-semibold text-[var(--text-secondary)]">Jogador mandante</span>
+                    <select class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-3" (change)="setSelectedHomePlayer($event)">
+                      <option value="" [selected]="selectedHomePlayerId() === null">Selecionar jogador...</option>
+                      @for (player of players(); track player.tournamentPlayerId) {
+                        <option [value]="player.playerId" [selected]="selectedHomePlayerId() === player.playerId">
+                          {{ player.playerName }}{{ player.teamName ? ' (' + translatedTeamName(player.teamName) + ')' : '' }}
+                        </option>
+                      }
+                    </select>
+                  </label>
+
+                  <label class="block">
+                    <span class="mb-2 block text-sm font-semibold text-[var(--text-secondary)]">Jogador visitante</span>
+                    <select class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-3" (change)="setSelectedAwayPlayer($event)">
+                      <option value="" [selected]="selectedAwayPlayerId() === null">Selecionar jogador...</option>
+                      @for (player of players(); track player.tournamentPlayerId) {
+                        <option [value]="player.playerId" [selected]="selectedAwayPlayerId() === player.playerId">
+                          {{ player.playerName }}{{ player.teamName ? ' (' + translatedTeamName(player.teamName) + ')' : '' }}
+                        </option>
+                      }
+                    </select>
+                  </label>
+
+                  <app-button variant="accent" [disabled]="isSubmitting()" (click)="assignPlayers()">
+                    Atribuir jogadores
+                  </app-button>
+                </div>
+              }
+
+              @if (canUpdateScore()) {
+                <div class="grid grid-cols-2 gap-3">
+                  <div class="flex items-center justify-between gap-2 rounded-[var(--radius-md)] border border-[var(--border-hairline)] bg-[var(--surface-inset)] px-3 py-2">
+                    <button type="button" class="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] text-[16px] font-bold text-[var(--text-secondary)]" [disabled]="isSubmitting()" (click)="stepHomeScore(-1)">−</button>
+                    <div class="text-center">
+                      <div class="truncate text-[10px] font-bold uppercase tracking-[0.05em] text-[var(--text-muted)]">{{ displayHomeName() }}</div>
+                      <div class="text-xl font-black text-white">{{ homeScoreInput() }}</div>
+                    </div>
+                    <button type="button" class="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] text-[16px] font-bold text-[var(--text-secondary)]" [disabled]="isSubmitting()" (click)="stepHomeScore(1)">+</button>
+                  </div>
+
+                  <div class="flex items-center justify-between gap-2 rounded-[var(--radius-md)] border border-[var(--border-hairline)] bg-[var(--surface-inset)] px-3 py-2">
+                    <button type="button" class="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] text-[16px] font-bold text-[var(--text-secondary)]" [disabled]="isSubmitting()" (click)="stepAwayScore(-1)">−</button>
+                    <div class="text-center">
+                      <div class="truncate text-[10px] font-bold uppercase tracking-[0.05em] text-[var(--text-muted)]">{{ displayAwayName() }}</div>
+                      <div class="text-xl font-black text-white">{{ awayScoreInput() }}</div>
+                    </div>
+                    <button type="button" class="flex h-8 w-8 items-center justify-center rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] text-[16px] font-bold text-[var(--text-secondary)]" [disabled]="isSubmitting()" (click)="stepAwayScore(1)">+</button>
+                  </div>
+                </div>
+              }
+
+              @if (canManageEvent()) {
+                <app-button [fullWidth]="true" variant="primary" [disabled]="primaryMatchDisabled()" (click)="primaryMatchAction()">
+                  {{ primaryMatchLabel() }}
+                </app-button>
+              }
+
+              @if (canReopenMatch() || canResetMatch()) {
+                <div class="flex flex-wrap gap-3">
+                  @if (canReopenMatch()) {
+                    <button class="min-h-11 rounded-[var(--radius-md)] bg-yellow-700 px-5 py-3 font-bold text-white transition hover:bg-yellow-600 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="isSubmitting()" (click)="reopenMatch()">
+                      Reabrir Partida
+                    </button>
+                  }
+
+                  @if (canResetMatch()) {
+                    <button class="min-h-11 rounded-[var(--radius-md)] bg-orange-700 px-5 py-3 font-bold text-white transition hover:bg-orange-600 disabled:cursor-not-allowed disabled:opacity-60" [disabled]="isSubmitting()" (click)="resetMatch()">
+                      Resetar Partida
+                    </button>
+                  }
+                </div>
+              }
+
+              @if (canManageEvent() && (event.status === 'CREATED' || event.status === 'IN_PROGRESS')) {
+                <button class="self-start rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-transparent px-3 py-2 text-xs font-bold text-[var(--text-secondary)] transition hover:bg-[var(--surface-3)] disabled:opacity-50" [disabled]="isEditingEvent()" (click)="cancelEvent()">
+                  Cancelar partida
+                </button>
+              }
+            </div>
+          </app-market-accordion>
+
+          @if (canManageEvent()) {
+            <app-market-accordion
+              variant="flat"
+              title="Administração da partida"
+              [open]="adminSectionOpen().datas"
+              (openChange)="toggleAdminSection('datas')"
+            >
+              <label class="block">
+                <span class="mb-2 block text-sm font-semibold text-[var(--text-secondary)]">Data e Hora</span>
+                <div class="flex gap-2">
+                  <input type="datetime-local" class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-2 text-sm" [value]="editGameDatetime()" (input)="setEditGameDatetime($event)" />
+                  <app-button variant="accent" [disabled]="isEditingEvent()" (click)="updateDatetime()">
+                    Salvar
+                  </app-button>
+                </div>
+              </label>
+            </app-market-accordion>
+
+            <app-market-accordion
+              variant="flat"
+              title="Zona destrutiva"
+              [open]="adminSectionOpen().zona"
+              (openChange)="toggleAdminSection('zona')"
+            >
+              @if (!confirmingDeleteEvent()) {
+                <button class="min-h-11 rounded-[var(--radius-md)] border border-red-900 bg-transparent px-4 text-sm font-semibold text-red-300 transition hover:bg-red-950/60 disabled:opacity-50" [disabled]="isEditingEvent()" (click)="askDeleteEvent()">
+                  Excluir partida
+                </button>
+              } @else {
+                <div class="flex flex-col gap-3 rounded-[var(--radius-md)] border border-red-900/60 bg-red-950/20 p-3">
+                  <p class="text-sm font-semibold text-red-200">
+                    Excluir esta partida? Apostas e mercados serão removidos. Essa ação não pode ser desfeita.
+                  </p>
+                  <div class="flex gap-2">
+                    <button class="min-h-9 rounded-[var(--radius-sm)] bg-[var(--danger)] px-4 text-sm font-bold text-white transition hover:bg-[var(--danger-hover)] disabled:opacity-50" [disabled]="isEditingEvent()" (click)="deleteEvent()">
+                      Confirmar exclusão
+                    </button>
+                    <button class="min-h-9 rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-transparent px-4 text-sm font-bold text-[var(--text-secondary)] transition hover:bg-[var(--surface-3)]" [disabled]="isEditingEvent()" (click)="cancelDeleteEvent()">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              }
+            </app-market-accordion>
+          }
+        </div>
+      </app-market-accordion>
+
+      @if (canManageGroup()) {
+        <app-market-accordion
+          title="Recarga de carteiras"
+          icon="account_balance_wallet"
+          iconClass="text-emerald-400"
+          [open]="walletPanelOpen()"
+          (openChange)="walletPanelOpen.set($event)"
+        >
+          <div class="mb-3">
+            <label class="mb-1 block text-sm text-[var(--text-muted)]">Usuario</label>
+            <select class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-3" [value]="depositUserId() ?? ''" (change)="setDepositUser($event)">
+              <option value="">Selecione um usuario</option>
+              @for (user of state.loginUsers(); track user.id) {
+                <option [value]="user.id">{{ user.name }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="mb-3 flex items-center gap-3">
+            <label class="block">
+              <span class="mb-1 block text-sm text-[var(--text-muted)]">Valor</span>
+              <input type="number" min="1" class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-3" [value]="depositAmount()" (input)="depositAmount.set(($any($event.target).value))" />
+            </label>
+            <app-button variant="primary" [disabled]="!depositUserId() || !depositAmount() || isDepositing()" (click)="deposit()">
+              Depositar
+            </app-button>
+          </div>
+
+          @if (depositMessage()) {
+            <p class="mb-2 text-sm text-[var(--primary)]">{{ depositMessage() }}</p>
+          }
+
+          <div class="flex items-center gap-3">
+            <label class="block">
+              <span class="mb-1 block text-sm text-[var(--text-muted)]">Valor para todos</span>
+              <input type="number" min="1" class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-3" [value]="depositAllAmount()" (input)="depositAllAmount.set(($any($event.target).value))" />
+            </label>
+            <app-button variant="accent" [disabled]="!depositAllAmount() || isDepositing()" (click)="depositAll()">
+              Depositar em todos
+            </app-button>
+          </div>
+
+          @if (depositAllMessage()) {
+            <p class="mt-2 text-sm text-[var(--primary)]">{{ depositAllMessage() }}</p>
+          }
+        </app-market-accordion>
+      }
+
+      @if (event.status === 'COMPLETED') {
+        <p class="rounded-[var(--radius-md)] bg-[var(--surface-inset)] p-4 text-[var(--text-muted)]">Partida finalizada. Mercado fechado.</p>
+      }
+    }
+
+    @if (isPenaltyModalOpen()) {
+      <div class="fixed inset-0 z-50 flex items-end bg-black/70 p-4 sm:items-center sm:justify-center">
+        <section class="w-full rounded-[var(--radius-lg)] border border-[var(--border-hairline)] bg-[var(--surface-2)] p-6 shadow-2xl sm:max-w-lg">
+          <div class="mb-5 flex items-center justify-between gap-4">
+            <h3 class="text-2xl font-bold">Penaltis</h3>
+            <button class="min-h-11 rounded-[var(--radius-md)] bg-[var(--surface-3)] px-4 font-bold text-white transition hover:bg-[var(--surface-inset)]" (click)="closePenaltyModal()">
+              Cancelar
+            </button>
+          </div>
+
+          <p class="mb-4 text-sm text-[var(--text-muted)]">
+            Placar regular: {{ scoreValue(event.homeScore) }} x {{ scoreValue(event.awayScore) }} — Empate. Defina o vencedor nos penaltis.
+          </p>
+
+          @if (actionErrorMessage()) {
+            <p class="mb-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">{{ actionErrorMessage() }}</p>
+          }
+
+          <div class="grid gap-4 sm:grid-cols-2">
+            <label class="block">
+              <span class="mb-2 block text-sm font-semibold text-gray-300">Penaltis mandante</span>
+              <input
+                type="number"
+                min="0"
+                class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-3"
+                [value]="penaltiesHomeInput()"
+                (input)="setPenaltiesHome($event)"
+              />
+            </label>
+
+            <label class="block">
+              <span class="mb-2 block text-sm font-semibold text-gray-300">Penaltis visitante</span>
+              <input
+                type="number"
+                min="0"
+                class="min-h-11 w-full rounded-[var(--radius-sm)] border border-[var(--border-strong)] bg-[var(--surface-3)] p-3"
+                [value]="penaltiesAwayInput()"
+                (input)="setPenaltiesAway($event)"
+              />
+            </label>
+          </div>
+
+          <div class="mt-5 flex flex-col gap-3">
+            <button
+              class="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent)] px-5 py-3 font-bold text-white transition hover:bg-[var(--color-blue-600)] disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="isSubmitting()"
+              (click)="submitPenalties()"
+            >
+              Atualizar Penaltis
+            </button>
+
+            <button
+              class="min-h-11 rounded-[var(--radius-md)] bg-[var(--danger)] px-5 py-3 font-bold text-white transition hover:bg-[var(--danger-hover)] disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="isSubmitting() || penaltiesAreEqual()"
+              (click)="finalizeWithPenalties()"
+            >
+              Finalizar Partida
+            </button>
+          </div>
+
+          @if (penaltiesAreEqual()) {
+            <p class="mt-3 text-sm text-red-400">Os penaltis precisam ser diferentes para finalizar.</p>
+          }
+        </section>
+      </div>
+    }
+
+    @if (canManageGroup()) {
+      <section class="rounded-[var(--radius-lg)] border border-[var(--border-hairline)] bg-[var(--surface-2)] p-4 shadow-brand-card sm:p-6">
+        <app-section-header label="Histórico de apostas" />
+
+        @if (eventBetsLoading()) {
+          <div class="mt-4 h-32 animate-pulse rounded-[var(--radius-lg)] bg-[var(--surface-inset)]"></div>
+        }
+
+        @if (eventBetsError()) {
+          <p class="mt-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">{{ eventBetsError() }}</p>
+        }
+
+        @if (!eventBetsLoading() && !eventBetsError()) {
+          @if (eventBets().length === 0) {
+            <app-empty-state
+              class="mt-4 block"
+              icon="receipt_long"
+              title="Nenhuma aposta ainda"
+              subtitle="Nenhuma aposta encontrada para este evento."
+            />
+          } @else {
+            <div class="mt-4 overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead class="bg-[var(--surface-inset)] text-[var(--text-secondary)]">
+                  <tr>
+                    <th class="px-4 py-3 font-semibold">Usuario</th>
+                    <th class="px-4 py-3 font-semibold">Bilhete</th>
+                    <th class="px-4 py-3 font-semibold">Stake</th>
+                    <th class="px-4 py-3 font-semibold">Odd Combinada</th>
+                    <th class="px-4 py-3 font-semibold">Retorno Potencial</th>
+                    <th class="px-4 py-3 font-semibold">Resultado</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-[var(--border-hairline)]">
+                  @for (bet of eventBets(); track bet.id) {
+                    <tr>
+                      <td class="px-4 py-3">{{ userName(bet.userId) }}</td>
+                      <td class="px-4 py-3">
+                        @for (item of bet.items; track item.id) {
+                          <div class="mb-1">
+                            <span class="font-medium">{{ item.outcomeName }}</span>
+                            <span class="text-[var(--text-muted)]">({{ item.oddSnapshot }}x)</span>
+                          </div>
+                        }
+                      </td>
+                      <td class="px-4 py-3">R$ {{ bet.stake | number: '1.2-2' }}</td>
+                      <td class="px-4 py-3">{{ bet.combinedOdd }}x</td>
+                      <td class="px-4 py-3">R$ {{ bet.potentialReturn | number: '1.2-2' }}</td>
+                      <td class="px-4 py-3">
+                        <span
+                          class="inline-flex rounded-full px-2 py-0.5 text-xs font-bold"
+                          [class.bg-green-700]="bet.status === 'WON'"
+                          [class.text-green-100]="bet.status === 'WON'"
+                          [class.bg-red-700]="bet.status === 'LOST'"
+                          [class.text-red-100]="bet.status === 'LOST'"
+                          [class.bg-gray-600]="bet.status === 'PENDING' || bet.status === 'CANCELLED'"
+                          [class.text-gray-100]="bet.status === 'PENDING' || bet.status === 'CANCELLED'"
+                        >
+                          {{ bet.status }}
+                        </span>
+                      </td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
+        }
+      </section>
+    }
+  }
+</section>

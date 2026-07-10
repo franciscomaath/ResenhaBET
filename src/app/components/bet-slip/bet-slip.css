@@ -1,0 +1,89 @@
+/* Bet Slip — Persistent Bottom Sheet (mobile) / Floating Card (desktop) */
+
+.bet-slip-collapsed {
+  position: fixed;
+  bottom: calc(72px + env(safe-area-inset-bottom)); /* Sit just above bottom nav */
+  right: 1rem;
+  left: auto;
+  z-index: 70;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  background-color: #0891b2; /* cyan-600 */
+  border-radius: 9999px; /* circle */
+  box-shadow: 0 10px 15px -3px rgba(8, 145, 178, 0.5); /* shadow-cyan-900/50 */
+  transition: transform 0.2s ease, background-color 0.2s ease, bottom 0.3s ease;
+  border: none;
+  padding: 0;
+}
+
+.bet-slip-collapsed.has-fab {
+  bottom: calc(144px + env(safe-area-inset-bottom)); /* Sit above the Add FAB */
+}
+
+.bet-slip-collapsed:hover {
+  background-color: #06b6d4; /* cyan-500 */
+}
+
+.bet-slip-expanded {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 70;
+  display: flex;
+  flex-direction: column;
+  background-color: #1f2937; /* gray-800 */
+  border-top: 1px solid #374151; /* gray-700 */
+  border-radius: 1rem 1rem 0 0;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
+  max-height: 70vh;
+}
+
+.bet-slip-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #374151;
+  flex-shrink: 0;
+}
+
+.bet-slip-content {
+  overflow-y: auto;
+  padding: 1rem;
+  flex: 1;
+}
+
+/* Desktop (sm and up) */
+@media (min-width: 640px) {
+  .bet-slip-collapsed {
+    bottom: 1rem;
+    right: 1rem;
+    left: auto;
+    width: auto;
+    min-width: 200px;
+    height: auto;
+    border-radius: 0.75rem;
+    border: 1px solid #374151;
+    background-color: #1f2937;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    padding: 0.75rem 1rem;
+    justify-content: space-between;
+  }
+
+  .bet-slip-expanded {
+    bottom: 1rem;
+    right: 1rem;
+    left: auto;
+    width: 100%;
+    max-width: 24rem; /* 384px */
+    border-radius: 0.75rem;
+    border: 1px solid #374151;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    max-height: 70vh;
+  }
+}

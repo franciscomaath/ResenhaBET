@@ -1,0 +1,322 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <header>
+      <app-section-header label="Jogadores" />
+      <h1 class="text-2xl font-black text-white">Jogadores</h1>
+      <p class="mt-2 text-sm text-gray-400">Gerenciar todos os jogadores</p>
+      @if (activeGroup()) {
+        <p class="mt-1 text-xs uppercase tracking-[0.2em] text-cyan-300">
+          Grupo ativo: {{ activeGroup()?.name }}
+        </p>
+      }
+    </header>
+
+    <button class="min-h-11 rounded-md bg-gray-700 px-4 font-semibold hover:bg-gray-600" (click)="loadPlayers()">
+      Recarregar
+    </button>
+  </div>
+
+  @if (canManageGroup()) {
+    <article class="rounded-xl bg-gray-800 p-6 shadow-lg">
+      <h3 class="mb-4 text-xl font-bold">Novo jogador</h3>
+      <div class="flex flex-col gap-3 sm:flex-row">
+        <input
+          class="min-h-11 min-w-0 flex-1 rounded-md border border-gray-600 bg-gray-700 p-3"
+          placeholder="Nome do jogador"
+          [value]="newPlayerName()"
+          (input)="setNewPlayerName($event)"
+        />
+        <button class="min-h-11 rounded-md bg-cyan-600 px-5 py-3 font-bold hover:bg-cyan-700" (click)="createPlayer()">
+          Criar
+        </button>
+      </div>
+    </article>
+  }
+
+  @if (isSystemAdmin()) {
+    <article class="rounded-xl bg-gray-800 p-6 shadow-lg">
+      <h3 class="mb-4 text-xl font-bold">Administracao de Usuarios</h3>
+      <div class="grid gap-6 md:grid-cols-2">
+        <div class="space-y-3">
+          <p class="text-sm font-semibold text-gray-300">Resetar PIN</p>
+          <div class="flex flex-col gap-2 sm:flex-row">
+            <select
+              class="min-h-11 min-w-0 flex-1 rounded-md border border-gray-600 bg-gray-700 p-3"
+              [value]="resetPinUserId() ?? ''"
+              (change)="setResetPinUser($event)"
+            >
+              <option value="">Selecione um usuario</option>
+              @for (user of users(); track user.id) {
+                <option [value]="user.id">{{ user.name }} - {{ user.hasPin ? 'PIN ativo' : 'sem PIN' }}</option>
+              }
+            </select>
+            <button
+              class="min-h-11 rounded-md bg-red-700 px-4 font-bold hover:bg-red-800 disabled:cursor-not-allowed disabled:opacity-60"
+              [disabled]="!resetPinUserId()"
+              (click)="resetPin()"
+            >
+              Resetar PIN
+            </button>
+          </div>
+        </div>
+
+        <div class="space-y-3">
+          <p class="text-sm font-semibold text-gray-300">Editar Usuario</p>
+          <div class="flex flex-col gap-2">
+            <select
+              class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+              [value]="editUserSelectedId() ?? ''"
+              (change)="setEditUserSelectedId($event)"
+            >
+              <option value="">Selecione um usuario</option>
+              @for (user of users(); track user.id) {
+                <option [value]="user.id">{{ user.name }}</option>
+              }
+            </select>
+            
+            @if (editUserSelectedId()) {
+              <div class="flex gap-2">
+                <input 
+                  class="min-h-11 flex-1 rounded-md border border-gray-600 bg-gray-700 p-3"
+                  [value]="editUserName()"
+                  (input)="setEditUserName($event)"
+                />
+                <select
+                  class="min-h-11 rounded-md border border-gray-600 bg-gray-700 p-3"
+                  [value]="editUserType()"
+                  (change)="setEditUserType($event)"
+                >
+                  <option value="USER">User</option>
+                  <option value="ADMIN">Admin</option>
+                </select>
+                <button
+                  class="min-h-11 rounded-md bg-cyan-700 px-4 font-bold hover:bg-cyan-800 disabled:opacity-50"
+                  [disabled]="isUpdatingUser() || !editUserName().trim()"
+                  (click)="updateUser()"
+                >
+                  Salvar
+                </button>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </article>
+  }
+
+  <div class="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-center">
+    <label class="block">
+      <span class="mb-2 block text-sm font-semibold text-gray-300">Buscar por nome</span>
+      <input
+        class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-800 p-3"
+        placeholder="Digite um nome"
+        [value]="searchTerm()"
+        (input)="setSearchTerm($event)"
+      />
+    </label>
+
+    @if (searchTerm()) {
+      <button class="min-h-11 rounded-md bg-gray-700 px-4 font-semibold hover:bg-gray-600" (click)="clearSearch()">
+        Limpar
+      </button>
+    }
+  </div>
+
+  @if (status() === 'loading') {
+    <p class="rounded-md bg-yellow-950/50 p-3 text-yellow-200">Carregando jogadores...</p>
+  }
+
+  @if (status() === 'error') {
+    <p class="rounded-md bg-red-950/60 p-3 text-red-200">{{ errorMessage() }}</p>
+  }
+
+  @if (status() === 'success' && !hasVisiblePlayers()) {
+    <div class="rounded-xl bg-gray-800 p-8 text-center text-gray-500">
+      @if (searchTerm()) {
+        Nenhum jogador encontrado para esta busca.
+      } @else {
+        Nenhum jogador cadastrado.
+      }
+    </div>
+  }
+
+  @if (activePlayers().length > 0) {
+    <section class="space-y-4">
+      <div>
+        <h3 class="text-2xl font-bold">Ativos</h3>
+        <p class="text-sm text-gray-400">{{ activePlayers().length }} jogador(es)</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        @for (player of activePlayers(); track player.id) {
+          <article class="rounded-xl bg-gray-800 p-5 shadow-lg">
+            <div class="mb-5 flex items-start gap-4">
+              <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-cyan-700 text-lg font-black">
+                {{ playerInitials(player) }}
+              </div>
+
+              <div class="min-w-0 flex-1">
+                @if (canManageGroup()) {
+                  <input
+                    class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-900/60 p-3 font-semibold"
+                    [value]="player.name"
+                    (change)="updatePlayerName(player, $event)"
+                  />
+                } @else {
+                  <div class="min-h-11 rounded-md border border-gray-600 bg-gray-900/60 p-3 font-semibold text-gray-200">
+                    {{ player.name }}
+                  </div>
+                }
+                <span class="mt-3 inline-flex rounded-full bg-green-700 px-3 py-1 text-sm font-semibold">
+                  ativo
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center text-sm">
+              <div class="rounded-md bg-gray-900/50 p-3">
+                <p class="text-xs font-semibold text-gray-400">Jogos</p>
+                <strong>{{ playerStats()[player.id]?.matchesPlayed ?? 0 }}</strong>
+              </div>
+              <div class="rounded-md bg-gray-900/50 p-3">
+                <p class="text-xs font-semibold text-gray-400">Vitorias</p>
+                <strong>{{ playerStats()[player.id]?.wins ?? 0 }}</strong>
+              </div>
+              <div class="rounded-md bg-gray-900/50 p-3">
+                <p class="text-xs font-semibold text-gray-400">Saldo</p>
+                <strong>{{ playerStats()[player.id]?.goalDifference ?? 0 }}</strong>
+              </div>
+            </div>
+
+            @if (canManageGroup()) {
+              <div class="mt-5 border-t border-gray-700 pt-4">
+                <p class="mb-2 text-sm font-semibold text-gray-300">Usuario vinculado</p>
+                <p class="mb-3 text-sm text-gray-400">{{ userName(player.userId) }}</p>
+                <div class="grid gap-2 sm:grid-cols-[1fr_auto]">
+                  <select
+                    class="min-h-11 rounded-md border border-gray-600 bg-gray-900/60 p-3 text-sm"
+                    [value]="linkSelections()[player.id] ?? ''"
+                    (change)="setLinkSelection(player.id, $event)"
+                  >
+                    <option value="">Vincular usuario</option>
+                    @for (user of availableUsersFor(player); track user.id) {
+                      <option [value]="user.id">{{ user.name }}</option>
+                    }
+                  </select>
+                  <button
+                    class="min-h-11 rounded-md bg-cyan-700 px-4 font-semibold hover:bg-cyan-800 disabled:cursor-not-allowed disabled:opacity-60"
+                    [disabled]="!linkSelections()[player.id]"
+                    (click)="linkUser(player)"
+                  >
+                    Vincular
+                  </button>
+                </div>
+              </div>
+            }
+
+            @if (canManageGroup()) {
+              <div class="mt-5 flex gap-3">
+                <button class="min-h-11 flex-1 rounded-md bg-gray-700 px-4 font-semibold hover:bg-gray-600" (click)="togglePlayerStatus(player)">
+                  Desativar
+                </button>
+                <button class="min-h-11 rounded-md bg-red-800 px-4 font-semibold text-white hover:bg-red-700" (click)="deletePlayer(player)">
+                  Excluir
+                </button>
+              </div>
+            }
+          </article>
+        }
+      </div>
+    </section>
+  }
+
+  @if (inactivePlayers().length > 0) {
+    <section class="space-y-4 border-t border-gray-700 pt-6">
+      <div>
+        <h3 class="text-2xl font-bold text-gray-300">Inativos</h3>
+        <p class="text-sm text-gray-500">{{ inactivePlayers().length }} jogador(es)</p>
+      </div>
+
+      <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        @for (player of inactivePlayers(); track player.id) {
+          <article class="rounded-xl bg-gray-800/70 p-5 text-gray-300 shadow-lg opacity-80">
+            <div class="mb-5 flex items-start gap-4">
+              <div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-gray-700 text-lg font-black">
+                {{ playerInitials(player) }}
+              </div>
+
+              <div class="min-w-0 flex-1">
+                @if (canManageGroup()) {
+                  <input
+                    class="min-h-11 w-full rounded-md border border-gray-700 bg-gray-950/50 p-3 font-semibold"
+                    [value]="player.name"
+                    (change)="updatePlayerName(player, $event)"
+                  />
+                } @else {
+                  <div class="min-h-11 rounded-md border border-gray-700 bg-gray-950/50 p-3 font-semibold text-gray-300">
+                    {{ player.name }}
+                  </div>
+                }
+                <span class="mt-3 inline-flex rounded-full bg-red-800 px-3 py-1 text-sm font-semibold text-red-50">
+                  inativo
+                </span>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center text-sm">
+              <div class="rounded-md bg-gray-900/50 p-3">
+                <p class="text-xs font-semibold text-gray-500">Jogos</p>
+                <strong>{{ playerStats()[player.id]?.matchesPlayed ?? 0 }}</strong>
+              </div>
+              <div class="rounded-md bg-gray-900/50 p-3">
+                <p class="text-xs font-semibold text-gray-500">Vitorias</p>
+                <strong>{{ playerStats()[player.id]?.wins ?? 0 }}</strong>
+              </div>
+              <div class="rounded-md bg-gray-900/50 p-3">
+                <p class="text-xs font-semibold text-gray-500">Saldo</p>
+                <strong>{{ playerStats()[player.id]?.goalDifference ?? 0 }}</strong>
+              </div>
+            </div>
+
+            @if (canManageGroup()) {
+              <div class="mt-5 border-t border-gray-700 pt-4">
+                <p class="mb-2 text-sm font-semibold text-gray-400">Usuario vinculado</p>
+                <p class="mb-3 text-sm text-gray-500">{{ userName(player.userId) }}</p>
+                <div class="grid gap-2 sm:grid-cols-[1fr_auto]">
+                  <select
+                    class="min-h-11 rounded-md border border-gray-700 bg-gray-950/50 p-3 text-sm"
+                    [value]="linkSelections()[player.id] ?? ''"
+                    (change)="setLinkSelection(player.id, $event)"
+                  >
+                    <option value="">Vincular usuario</option>
+                    @for (user of availableUsersFor(player); track user.id) {
+                      <option [value]="user.id">{{ user.name }}</option>
+                    }
+                  </select>
+                  <button
+                    class="min-h-11 rounded-md bg-cyan-800 px-4 font-semibold hover:bg-cyan-900 disabled:cursor-not-allowed disabled:opacity-60"
+                    [disabled]="!linkSelections()[player.id]"
+                    (click)="linkUser(player)"
+                  >
+                    Vincular
+                  </button>
+                </div>
+              </div>
+            }
+
+            @if (canManageGroup()) {
+              <div class="mt-5 flex gap-3">
+                <button class="min-h-11 flex-1 rounded-md bg-gray-700 px-4 font-semibold hover:bg-gray-600" (click)="togglePlayerStatus(player)">
+                  Ativar
+                </button>
+                <button class="min-h-11 rounded-md bg-red-800 px-4 font-semibold text-white hover:bg-red-700" (click)="deletePlayer(player)">
+                  Excluir
+                </button>
+              </div>
+            }
+          </article>
+        }
+      </div>
+    </section>
+  }
+</section>

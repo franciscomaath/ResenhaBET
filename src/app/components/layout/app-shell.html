@@ -1,0 +1,10 @@
+<div class="app-shell-height flex w-full flex-col overflow-hidden bg-[var(--surface-1)] text-white">
+  <ng-content select="[app-shell-header]"></ng-content>
+
+  <main class="min-h-0 flex-1 overflow-y-auto p-4 pb-[calc(96px+var(--safe-area-bottom))] sm:p-6 md:p-8">
+    <ng-content select="[app-shell-main]"></ng-content>
+  </main>
+
+  <ng-content select="[app-shell-floating]"></ng-content>
+  <ng-content select="[app-shell-footer]"></ng-content>
+</div>

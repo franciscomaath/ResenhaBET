@@ -1,0 +1,46 @@
+/* ResenhaBET — Spacing, radius, elevation, layout tokens
+ * Mobile-first. Copied verbatim from frontend styles.css where defined.
+ */
+
+:root {
+  /* Spacing scale */
+  --space-3xs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Corner radii */
+  --radius-sm: 8px;    /* inputs, small chips */
+  --radius-md: 12px;   /* buttons, inset rows */
+  --radius-lg: 16px;   /* standard cards (rounded-2xl in app = 16px) */
+  --radius-pill: 9999px;
+
+  /* Card padding — mobile then desktop (p-4 -> p-6) */
+  --card-pad: 16px;
+  --card-pad-lg: 24px;
+
+  /* Elevation — soft, dark, downward */
+  --shadow-card: 0 10px 30px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.45);
+  --shadow-bottom-nav: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-bottom-sheet: 0 -10px 30px rgba(0, 0, 0, 0.5);
+
+  /* Shell geometry (mobile) */
+  --header-height: 56px;
+  --tab-bar-height: 56px;
+  --fab-size: 56px;
+  --touch-min: 44px;   /* minimum tappable target */
+
+  /* Safe areas */
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-area-top: env(safe-area-inset-top, 0px);
+
+  /* Motion */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+  --dur-fast: 120ms; /* @kind other */
+  --dur-base: 180ms; /* @kind other */
+}

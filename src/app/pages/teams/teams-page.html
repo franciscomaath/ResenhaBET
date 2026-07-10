@@ -1,0 +1,165 @@
+<section class="space-y-6">
+  <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+    <header>
+      <app-section-header label="Times" />
+      <h1 class="text-2xl font-black text-white">Times</h1>
+      <p class="mt-2 text-sm text-gray-400">Gerenciar todos os times do grupo.</p>
+    </header>
+
+    <div class="flex gap-3">
+      <button class="min-h-11 rounded-md bg-gray-700 px-4 font-semibold hover:bg-gray-600" (click)="loadTeams()">
+        Recarregar
+      </button>
+      <button *appAdminOnly class="min-h-11 rounded-md bg-cyan-600 px-5 font-bold hover:bg-cyan-700" (click)="openCreateModal()">
+        Adicionar Time
+      </button>
+    </div>
+  </div>
+
+  @if (status() === 'loading') {
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      @for (item of [1, 2, 3]; track item) {
+        <div class="h-36 animate-pulse rounded-xl bg-gray-800"></div>
+      }
+    </div>
+  }
+
+  @if (status() === 'error') {
+    <p class="rounded-md bg-red-950/60 p-3 text-red-200">{{ errorMessage() }}</p>
+  }
+
+  @if (status() === 'success' && sortedTeams().length === 0) {
+    <div class="flex min-h-72 flex-col items-center justify-center rounded-xl border border-dashed border-gray-700 bg-gray-800/60 p-8 text-center">
+      <div class="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-gray-700 text-xl font-black text-cyan-400">
+        TM
+      </div>
+      <h3 class="text-xl font-bold">Nenhum time cadastrado.</h3>
+    </div>
+  }
+
+  @if (status() === 'success' && sortedTeams().length > 0) {
+    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+      @for (team of sortedTeams(); track team.id) {
+        <article class="rounded-xl bg-gray-800 p-5 shadow-lg">
+          <div class="flex items-center gap-4">
+            @if (team.badgeUrl) {
+              <img
+                class="h-16 w-16 rounded-lg bg-gray-900 object-contain p-2"
+                [src]="team.badgeUrl"
+                [alt]="team.name"
+              />
+            } @else {
+              <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-900 text-lg font-black text-cyan-300">
+                {{ initials(team) }}
+              </div>
+            }
+
+            <div class="min-w-0">
+              <h3 class="truncate text-xl font-bold">{{ team.name }}</h3>
+              <p class="mt-1 inline-flex rounded bg-gray-700 px-2 py-1 text-xs font-black text-cyan-200">
+                {{ team.abbreviation }}
+              </p>
+              @if (team.gameForecastTeamId) {
+                <p *appAdminOnly class="mt-1 text-xs text-gray-400">API ID: {{ team.gameForecastTeamId }}</p>
+              }
+            </div>
+          </div>
+          <div *appAdminOnly class="mt-4 border-t border-gray-700 pt-4">
+            <label class="block">
+              <span class="mb-1 block text-xs font-semibold text-gray-400">ID GameForecast</span>
+              <div class="flex gap-2">
+                <input
+                  #forecastInput
+                  type="number"
+                  class="min-h-9 w-full rounded-md border border-gray-600 bg-gray-900/60 p-2 text-sm"
+                  placeholder="ID da API"
+                  [value]="team.gameForecastTeamId ?? ''"
+                />
+                <button
+                  class="rounded-md bg-cyan-700 px-3 text-sm font-semibold hover:bg-cyan-600"
+                  (click)="updateGameForecastId(team, forecastInput.value)"
+                >
+                  Salvar
+                </button>
+              </div>
+            </label>
+          </div>
+        </article>
+      }
+    </div>
+  }
+</section>
+
+@if (isCreateModalOpen()) {
+  <div class="fixed inset-0 z-50 flex items-end bg-black/70 p-4 sm:items-center sm:justify-center">
+    <section class="w-full rounded-xl bg-gray-800 p-6 shadow-2xl sm:max-w-lg">
+      <div class="mb-5 flex items-center justify-between gap-4">
+        <h3 class="text-2xl font-bold">Adicionar Time</h3>
+        <button class="min-h-11 rounded-md bg-gray-700 px-4 font-bold hover:bg-gray-600" (click)="closeCreateModal()">
+          Fechar
+        </button>
+      </div>
+
+      @if (createErrorMessage()) {
+        <p class="mb-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">
+          {{ createErrorMessage() }}
+        </p>
+      }
+
+      <div class="space-y-4">
+        <div class="flex items-center gap-4 rounded-lg bg-gray-900/50 p-4">
+          @if (newTeamBadgeUrl().trim()) {
+            <img
+              class="h-16 w-16 rounded-lg bg-gray-950 object-contain p-2"
+              [src]="newTeamBadgeUrl().trim()"
+              alt="Preview"
+            />
+          } @else {
+            <div class="flex h-16 w-16 items-center justify-center rounded-lg bg-gray-950 text-lg font-black text-cyan-300">
+              {{ previewInitials() }}
+            </div>
+          }
+          <div class="min-w-0">
+            <p class="truncate font-bold">{{ newTeamName().trim() || 'Nome do time' }}</p>
+            <p class="mt-1 text-sm text-gray-400">{{ newTeamAbbreviation().trim() || 'ABR' }}</p>
+          </div>
+        </div>
+
+        <label class="block">
+          <span class="mb-2 block text-sm font-semibold text-gray-300">Nome</span>
+          <input
+            class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+            placeholder="Ex: Palmeiras"
+            [value]="newTeamName()"
+            (input)="setTeamName($event)"
+          />
+        </label>
+
+        <label class="block">
+          <span class="mb-2 block text-sm font-semibold text-gray-300">Abreviacao</span>
+          <input
+            class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3 uppercase"
+            maxlength="4"
+            placeholder="Ex: PAL"
+            [value]="newTeamAbbreviation()"
+            (input)="setTeamAbbreviation($event)"
+          />
+        </label>
+
+        <label class="block">
+          <span class="mb-2 block text-sm font-semibold text-gray-300">URL do escudo</span>
+          <input
+            class="min-h-11 w-full rounded-md border border-gray-600 bg-gray-700 p-3"
+            placeholder="https://..."
+            [value]="newTeamBadgeUrl()"
+            (input)="setTeamBadgeUrl($event)"
+          />
+        </label>
+
+        <button class="min-h-11 w-full rounded-md bg-cyan-600 p-3 font-bold hover:bg-cyan-700" (click)="createTeam()">
+          Criar Time
+        </button>
+      </div>
+    </section>
+  </div>
+}

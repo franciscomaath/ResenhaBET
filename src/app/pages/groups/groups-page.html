@@ -1,0 +1,417 @@
+<div class="space-y-6">
+  <!-- Page Header -->
+  <header>
+    <app-section-header label="Grupos" />
+    <h1 class="text-2xl font-black text-white">Seus grupos</h1>
+    <p class="mt-2 text-sm text-gray-400">
+      Gerencie o contexto ativo e os membros do seu grupo.
+    </p>
+  </header>
+
+  @if (status() === 'error') {
+    <app-state-banner type="error" [message]="errorMessage()" />
+  }
+
+  <!-- In-Page Tab Strip -->
+  <div class="flex space-x-1 rounded-xl bg-gray-800/50 p-1 overflow-x-auto">
+    <button
+      class="flex-1 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition"
+      [class.bg-gray-700]="activeTab() === 'ranking'"
+      [class.text-white]="activeTab() === 'ranking'"
+      [class.text-gray-400]="activeTab() !== 'ranking'"
+      [class.hover:text-gray-200]="activeTab() !== 'ranking'"
+      (click)="setTab('ranking')"
+    >
+      Ranking
+    </button>
+    <button
+      class="flex-1 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition"
+      [class.bg-gray-700]="activeTab() === 'overview'"
+      [class.text-white]="activeTab() === 'overview'"
+      [class.text-gray-400]="activeTab() !== 'overview'"
+      [class.hover:text-gray-200]="activeTab() !== 'overview'"
+      (click)="setTab('overview')"
+    >
+      Visão Geral
+    </button>
+    <button
+      class="flex-1 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition"
+      [class.bg-gray-700]="activeTab() === 'members'"
+      [class.text-white]="activeTab() === 'members'"
+      [class.text-gray-400]="activeTab() !== 'members'"
+      [class.hover:text-gray-200]="activeTab() !== 'members'"
+      (click)="setTab('members')"
+    >
+      Membros
+    </button>
+    @if (canViewSettings()) {
+      <button
+        class="flex-1 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-semibold transition"
+        [class.bg-gray-700]="activeTab() === 'settings'"
+        [class.text-white]="activeTab() === 'settings'"
+        [class.text-gray-400]="activeTab() !== 'settings'"
+        [class.hover:text-gray-200]="activeTab() !== 'settings'"
+        (click)="setTab('settings')"
+      >
+        Configurações
+      </button>
+    }
+  </div>
+
+  <!-- Tab Content: Ranking -->
+  @if (activeTab() === 'ranking') {
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-white">Ranking do Grupo</h2>
+        <button
+          class="text-sm font-semibold text-gray-400 hover:text-white"
+          type="button"
+          (click)="loadRanking()"
+        >
+          Recarregar
+        </button>
+      </div>
+
+      @if (rankingStatus() === 'loading') {
+        <app-empty-state title="Carregando ranking..." icon="hourglass_empty" />
+      } @else if (rankingStatus() === 'error') {
+        <app-state-banner type="error" [message]="rankingError()" />
+      } @else if (ranking().length === 0) {
+        <app-empty-state 
+          title="Sem ranking" 
+          subtitle="Ainda não há dados de ranking para este grupo." 
+          icon="leaderboard" 
+        />
+      } @else {
+        <app-card>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-gray-300">
+              <thead class="bg-gray-800/50 text-xs uppercase text-gray-400">
+                <tr>
+                  <th scope="col" class="px-4 py-3 font-semibold">Pos</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Jogador</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Elo</th>
+                  <th scope="col" class="px-4 py-3 font-semibold text-yellow-500">Títulos</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">Pts</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">J</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">V</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">E</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">D</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">GP</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">GC</th>
+                  <th scope="col" class="px-4 py-3 font-semibold">SG</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-700/50">
+                @for (player of ranking(); track player.playerId; let i = $index) {
+                  <tr class="hover:bg-gray-800/30">
+                    <td class="whitespace-nowrap px-4 py-3 text-white font-bold">{{ i + 1 }}º</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-white font-semibold">{{ player.playerName }}</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-cyan-400 font-bold">{{ player.currentElo }}</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-yellow-500 font-bold">{{ player.tournamentsWon }}</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-white font-bold">{{ player.points }}</td>
+                    <td class="whitespace-nowrap px-4 py-3">{{ player.matchesPlayed }}</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-green-400">{{ player.wins }}</td>
+                    <td class="whitespace-nowrap px-4 py-3">{{ player.draws }}</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-red-400">{{ player.losses }}</td>
+                    <td class="whitespace-nowrap px-4 py-3">{{ player.goalsScored }}</td>
+                    <td class="whitespace-nowrap px-4 py-3">{{ player.goalsConceded }}</td>
+                    <td class="whitespace-nowrap px-4 py-3">{{ player.goalDifference }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </app-card>
+      }
+    </div>
+  }
+
+  <!-- Tab Content: Overview -->
+  @if (activeTab() === 'overview') {
+    <div class="space-y-4">
+      <div class="flex items-center justify-between">
+        <h2 class="text-lg font-bold text-white">Seus grupos</h2>
+        <span class="text-sm text-gray-400">{{ groups().length }}</span>
+      </div>
+
+      @if (status() === 'loading') {
+        <app-empty-state title="Carregando grupos..." icon="hourglass_empty" />
+      } @else if (groups().length === 0) {
+        <app-empty-state 
+          title="Nenhum grupo" 
+          subtitle="Crie o primeiro grupo para começar." 
+          icon="group_off" 
+        />
+      } @else {
+        <div class="space-y-3">
+          @for (group of groups(); track group.id) {
+            <app-card [elevated]="isActive(group)">
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <div class="flex flex-wrap items-center gap-2">
+                    <h3 class="text-base font-semibold text-white">{{ group.name }}</h3>
+                    <app-role-chip [role]="group.role" />
+                    @if (isActive(group)) {
+                      <span class="rounded-full bg-cyan-950 px-2 py-0.5 text-[10px] font-bold uppercase tracking-[0.2em] text-cyan-300">
+                        Ativo
+                      </span>
+                    }
+                  </div>
+                  <p class="mt-1 text-sm text-gray-400">Código: <span class="font-mono text-gray-300">{{ group.groupCode ?? 'N/A' }}</span></p>
+                </div>
+
+                <button
+                  class="min-h-11 rounded-md bg-cyan-700 px-4 text-sm font-semibold text-white hover:bg-cyan-600 disabled:cursor-not-allowed disabled:bg-gray-700"
+                  type="button"
+                  [disabled]="isActive(group) || switchingGroupId() === group.id"
+                  (click)="switchGroup(group)"
+                >
+                  {{ switchingGroupId() === group.id ? 'Trocando...' : 'Tornar ativo' }}
+                </button>
+              </div>
+            </app-card>
+          }
+        </div>
+      }
+    </div>
+  }
+
+  <!-- Tab Content: Members -->
+  @if (activeTab() === 'members') {
+    <div class="space-y-4">
+      @if (!activeGroup()) {
+        <app-empty-state 
+          title="Nenhum grupo ativo" 
+          subtitle="Selecione um grupo na Visão Geral para gerenciar seus membros." 
+          icon="group" 
+        />
+      } @else {
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-white">Membros</h2>
+          <button
+            class="text-sm font-semibold text-gray-400 hover:text-white"
+            type="button"
+            (click)="loadMembers()"
+          >
+            Recarregar
+          </button>
+        </div>
+
+        @if (memberStatus() === 'loading') {
+          <app-empty-state title="Carregando membros..." icon="hourglass_empty" />
+        } @else if (memberStatus() === 'error') {
+          <app-state-banner type="error" [message]="memberError()" />
+        } @else if (members().length === 0) {
+          <app-empty-state 
+            title="Nenhum membro" 
+            subtitle="Nenhum membro encontrado para este grupo." 
+            icon="group_off" 
+          />
+        } @else {
+          <div class="space-y-3">
+            @for (member of members(); track member.userId) {
+              <app-card>
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <div class="font-semibold text-white">{{ member.userName }}</div>
+                    @if (canManageGroup() && member.role !== 'OWNER') {
+                      <select
+                        class="mt-1 min-h-8 rounded-md border border-gray-700 bg-[var(--surface-3)] px-2 py-1 text-xs text-gray-300"
+                        [value]="member.role"
+                        (change)="updateMemberRole(member.userId, $event)"
+                      >
+                        @for (role of allowedMemberRoles(); track role) {
+                          <option [value]="role">{{ roleLabel(role) }}</option>
+                        }
+                      </select>
+                    } @else {
+                      <div class="mt-1">
+                        <app-role-chip [role]="member.role" />
+                      </div>
+                    }
+                  </div>
+                  <div class="flex items-center gap-3 text-sm text-gray-500">
+                    <span>{{ createdAtLabel(member.createdAt) }}</span>
+                    @if (canManageGroup() && member.role !== 'OWNER') {
+                      <button class="font-bold text-red-500 hover:text-red-400" (click)="removeMember(member.userId)">
+                        Remover
+                      </button>
+                    }
+                  </div>
+                </div>
+              </app-card>
+            }
+          </div>
+        }
+      }
+    </div>
+  }
+
+  <!-- Tab Content: Settings -->
+  @if (activeTab() === 'settings' && canViewSettings()) {
+    <div class="space-y-6">
+      @if (!activeGroup()) {
+        <app-empty-state 
+          title="Nenhum grupo ativo" 
+          subtitle="Selecione um grupo na Visão Geral para ver suas configurações." 
+          icon="settings" 
+        />
+      } @else {
+        @if (canManageGroup()) {
+          <app-card>
+            <div class="space-y-4">
+              <h2 class="text-lg font-bold text-white">Administração</h2>
+              <p class="text-sm text-gray-400">Gerencie times e jogadores do seu grupo.</p>
+
+              <div class="flex flex-col gap-3 sm:flex-row">
+                <a
+                  *appAdminOnly
+                  routerLink="/teams"
+                  class="flex min-h-11 items-center justify-center rounded-md bg-cyan-700 px-4 text-sm font-semibold text-white hover:bg-cyan-600"
+                >
+                  <span class="material-icons mr-2 text-[18px]">shield</span>
+                  Gerenciar Times
+                </a>
+                <a
+                  routerLink="/players"
+                  class="flex min-h-11 items-center justify-center rounded-md bg-cyan-700 px-4 text-sm font-semibold text-white hover:bg-cyan-600"
+                >
+                  <span class="material-icons mr-2 text-[18px]">group</span>
+                  Gerenciar Jogadores
+                </a>
+              </div>
+            </div>
+          </app-card>
+        }
+
+        <app-card>
+          <div class="space-y-4">
+            <h2 class="text-lg font-bold text-white">Configurações do Grupo</h2>
+            
+            @if (canManageGroup()) {
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-gray-200">Renomear Grupo</label>
+                <div class="flex gap-2">
+                  <input
+                    class="min-h-11 w-full rounded-md border border-gray-700 bg-[var(--surface-3)] px-3 text-sm text-white outline-none focus:border-cyan-500"
+                    type="text"
+                    [value]="updateGroupName()"
+                    (input)="setUpdateGroupName($event)"
+                  />
+                  <button
+                    class="min-h-11 rounded-md bg-cyan-700 px-4 text-sm font-semibold text-white hover:bg-cyan-600 disabled:opacity-50"
+                    [disabled]="isUpdatingGroup() || !updateGroupName().trim()"
+                    (click)="updateActiveGroup()"
+                  >
+                    Salvar
+                  </button>
+                </div>
+              </div>
+            }
+
+            @if (canManageGroup()) {
+              <div class="space-y-3 pt-4 border-t border-gray-800">
+                <h3 class="text-sm font-medium text-gray-200">Ações</h3>
+                
+                <div class="flex flex-col gap-3 sm:flex-row">
+                  <button
+                    class="min-h-11 rounded-md border border-gray-700 bg-gray-800 px-4 text-sm font-semibold text-gray-100 hover:bg-gray-700 disabled:opacity-50"
+                    [disabled]="isRecalculatingElo()"
+                    (click)="recalculateElo()"
+                  >
+                    Recalcular Elo
+                  </button>
+                  
+                  @if (isGroupOwner()) {
+                    <button
+                      class="min-h-11 rounded-md bg-red-800 px-4 text-sm font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+                      [disabled]="isDeletingGroup()"
+                      (click)="deleteActiveGroup()"
+                    >
+                      Excluir Grupo
+                    </button>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </app-card>
+      }
+    </div>
+  }
+</div>
+
+@if (showGroupModal()) {
+  <div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
+    <div class="w-full max-w-sm rounded-2xl border border-gray-700 bg-[var(--surface-2)] p-6 shadow-2xl">
+      @if (groupModalMode() === 'default') {
+        <h2 class="mb-2 text-xl font-bold text-white text-center">Entrar em um Grupo</h2>
+        <p class="mb-6 text-sm text-gray-400 text-center">Insira o código de convite para participar.</p>
+        
+        <div class="space-y-4">
+          <input
+            type="text"
+            [value]="joinGroupCode()"
+            (input)="setJoinGroupCode($event)"
+            placeholder="Código"
+            maxlength="6"
+            class="w-full rounded-md border border-gray-600 bg-[var(--surface-3)] p-4 text-center text-xl tracking-widest text-white outline-none focus:border-cyan-500 uppercase"
+          />
+          @if (joinGroupError()) {
+            <p class="text-sm text-red-400 text-center">{{ joinGroupError() }}</p>
+          }
+          <button
+            class="w-full rounded-md bg-cyan-600 p-4 font-bold text-white hover:bg-cyan-500 disabled:opacity-50"
+            [disabled]="isJoiningGroup() || joinGroupCode().length !== 6"
+            (click)="joinGroup()"
+          >
+            {{ isJoiningGroup() ? 'Entrando...' : 'Entrar' }}
+          </button>
+          
+          <div class="my-4 text-center text-sm text-gray-500">— ou —</div>
+          
+          <button
+            class="block w-full text-sm font-semibold text-cyan-400 hover:text-cyan-300 pb-2"
+            (click)="setGroupModalMode('create')"
+          >
+            Criar novo grupo
+          </button>
+          <button
+            class="block w-full text-sm font-semibold text-gray-400 hover:text-gray-300"
+            (click)="closeGroupModal()"
+          >
+            Cancelar
+          </button>
+        </div>
+      } @else if (groupModalMode() === 'create') {
+        <h2 class="mb-2 text-xl font-bold text-white text-center">Criar Grupo</h2>
+        <p class="mb-6 text-sm text-gray-400 text-center">Dê um nome para o seu novo grupo.</p>
+        
+        <div class="space-y-4">
+          <input
+            type="text"
+            [value]="newGroupName()"
+            (input)="setNewGroupName($event)"
+            placeholder="Nome do grupo"
+            class="w-full rounded-md border border-gray-600 bg-[var(--surface-3)] p-4 text-center text-lg text-white outline-none focus:border-cyan-500"
+          />
+          <button
+            class="w-full rounded-md bg-cyan-600 p-4 font-bold text-white hover:bg-cyan-500 disabled:opacity-50"
+            [disabled]="isCreating() || !newGroupName().trim()"
+            (click)="createGroup()"
+          >
+            {{ isCreating() ? 'Criando...' : 'Criar Grupo' }}
+          </button>
+          
+          <button
+            class="block w-full text-sm font-semibold text-gray-400 hover:text-gray-300 mt-2"
+            (click)="setGroupModalMode('default')"
+          >
+            Voltar
+          </button>
+        </div>
+      }
+    </div>
+  </div>
+}

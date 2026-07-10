@@ -1,0 +1,16 @@
+.btn-bet {
+  border-radius: 0.5rem;
+  font-weight: 700;
+  padding: 1rem;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-bet:hover:not(:disabled) {
+  box-shadow: 0 4px 10px rgb(0 0 0 / 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-bet:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}

@@ -1,0 +1,88 @@
+<article class="rounded-xl bg-gray-800 p-6 shadow-lg">
+  <h2 class="mb-4 text-center text-2xl font-bold">Partida Atual</h2>
+
+  @if (match(); as match) {
+    <div class="mb-6 flex items-center justify-around text-center">
+      <div class="w-2/5">
+        <p class="text-2xl font-bold">{{ match.home.name }}</p>
+        <p class="text-4xl font-black text-cyan-400">{{ match.odds.home }}x</p>
+      </div>
+
+      @if (!match.isKnockout) {
+        <div class="w-1/5 text-2xl font-light text-gray-500">
+          <p>Empate</p>
+          <p class="text-4xl font-black text-yellow-400">{{ match.odds.draw }}x</p>
+        </div>
+      }
+
+      <div class="w-2/5">
+        <p class="text-2xl font-bold">{{ match.away.name }}</p>
+        <p class="text-4xl font-black text-cyan-400">{{ match.odds.away }}x</p>
+      </div>
+    </div>
+
+    <div class="my-4 rounded-lg bg-gray-900/50 p-4 text-center">
+      <div class="flex items-center justify-center gap-4">
+        <span class="text-5xl font-black">{{ match.scoreHome }}</span>
+        <div class="flex flex-col items-center">
+          <span class="mb-1 rounded-full bg-gray-700 px-3 py-1 text-sm font-semibold text-gray-300">
+            {{ match.phase }}
+          </span>
+          <p class="text-3xl font-black">{{ match.elapsed }}</p>
+        </div>
+        <span class="text-5xl font-black">{{ match.scoreAway }}</span>
+      </div>
+    </div>
+
+    <div class="mt-8 border-t border-gray-700 pt-6">
+      <p
+        class="mb-4 text-center font-semibold"
+        [class.text-green-400]="match.bettingOpen"
+        [class.text-red-400]="!match.bettingOpen"
+      >
+        {{ match.bettingOpen ? 'APOSTAS ABERTAS!' : 'APOSTAS ENCERRADAS' }}
+      </p>
+
+      <div class="mb-4 flex items-center gap-4">
+        <label for="bet-amount" class="text-lg">Apostar:</label>
+        <input
+          id="bet-amount"
+          type="number"
+          min="1"
+          class="flex-grow rounded-md border border-gray-600 bg-gray-700 p-2 text-center text-lg"
+          [value]="betAmount()"
+          (input)="setBetAmount($event)"
+        />
+        <button class="rounded-md bg-gray-600 px-4 py-2 hover:bg-gray-500" (click)="maxBet.emit()">
+          MAX
+        </button>
+      </div>
+
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <button class="btn-bet bg-cyan-600 hover:bg-cyan-500" [disabled]="!match.bettingOpen" (click)="placeBet.emit('home')">
+          Apostar em {{ match.home.name }}
+        </button>
+        @if (!match.isKnockout) {
+          <button class="btn-bet bg-yellow-600 hover:bg-yellow-500" [disabled]="!match.bettingOpen" (click)="placeBet.emit('draw')">
+            Apostar no Empate
+          </button>
+        }
+        <button class="btn-bet bg-cyan-600 hover:bg-cyan-500" [disabled]="!match.bettingOpen" (click)="placeBet.emit('away')">
+          Apostar em {{ match.away.name }}
+        </button>
+      </div>
+
+      <p class="mt-4 text-center text-gray-400">
+        @if (myCurrentBet(); as bet) {
+          Sua aposta: R$ {{ bet.amount | number: '1.2-2' }} em {{ bet.label }}
+        } @else {
+          Voce ainda nao apostou nesta partida.
+        }
+      </p>
+    </div>
+  } @else {
+    <div class="py-12 text-center text-gray-500">
+      <p>Aguardando o Admin definir a proxima partida...</p>
+    </div>
+  }
+</article>

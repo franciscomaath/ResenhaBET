@@ -1,0 +1,23 @@
+<article class="space-y-4">
+  <h2 class="text-center text-3xl font-bold">Historico de Partidas</h2>
+  @for (item of history(); track item.matchLabel + item.score) {
+    <details class="cursor-pointer rounded-lg bg-gray-800 p-4">
+      <summary class="flex justify-between text-lg font-semibold">
+        <span>{{ item.matchLabel }} - {{ item.score }}</span>
+        <span>Vencedor: {{ item.winner }}</span>
+      </summary>
+      <ul class="mt-2 space-y-1 border-t border-gray-700 pt-2 text-sm">
+        @for (bet of item.bets; track bet.bettor + bet.label) {
+          <li class="flex justify-between">
+            <span>{{ bet.bettor }} apostou R$ {{ bet.amount | number: '1.2-2' }} em {{ bet.label }}</span>
+            <span [class.text-green-400]="bet.outcome === 'win'" [class.text-red-400]="bet.outcome === 'loss'">
+              {{ bet.outcome === 'win' ? '+' : '-' }} R$ {{ (bet.outcome === 'win' ? bet.payout : bet.amount) | number: '1.2-2' }}
+            </span>
+          </li>
+        }
+      </ul>
+    </details>
+  } @empty {
+    <p class="mt-8 text-center text-gray-500">Nenhuma partida resolvida no historico.</p>
+  }
+</article>

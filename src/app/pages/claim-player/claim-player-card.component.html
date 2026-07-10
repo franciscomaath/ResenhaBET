@@ -1,0 +1,22 @@
+<button
+  type="button"
+  class="w-full rounded-2xl border p-4 text-left transition"
+  [class.border-cyan-500]="selected()"
+  [class.bg-cyan-950/40]="selected()"
+  [class.border-gray-800]="!selected()"
+  [class.bg-gray-900/70]="!selected()"
+  (click)="selectPlayer()"
+>
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <div class="text-base font-bold text-white">{{ player().name }}</div>
+      <div class="mt-1 text-sm text-gray-400">Elo {{ player().currentElo }}</div>
+    </div>
+
+    @if (selected()) {
+      <span class="rounded-full bg-cyan-600 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-white">
+        Selecionado
+      </span>
+    }
+  </div>
+</button>

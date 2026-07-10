@@ -1,0 +1,46 @@
+<article class="rounded-xl bg-gray-800 p-6 shadow-lg">
+  <div class="mb-4 flex items-center justify-between gap-4">
+    <div>
+      <h2 class="text-2xl font-bold">Backend API</h2>
+      <p class="text-sm text-gray-400">GET /api/v1/players</p>
+    </div>
+    <span
+      class="rounded-full px-3 py-1 text-sm font-semibold"
+      [class.bg-gray-700]="status() === 'idle'"
+      [class.bg-yellow-700]="status() === 'loading'"
+      [class.bg-green-700]="status() === 'success'"
+      [class.bg-red-700]="status() === 'error'"
+    >
+      {{ statusLabel() }}
+    </span>
+  </div>
+
+  <button
+    class="w-full rounded-md bg-cyan-600 p-2 font-bold hover:bg-cyan-700 disabled:cursor-not-allowed disabled:opacity-60"
+    [disabled]="status() === 'loading'"
+    (click)="loadPlayers()"
+  >
+    Carregar jogadores do backend
+  </button>
+
+  @if (status() === 'success') {
+    <div class="mt-4 space-y-2">
+      @for (player of players(); track player.id) {
+        <div class="flex items-center justify-between rounded-md bg-gray-700/50 p-2">
+          <span>{{ player.name }}</span>
+          <span class="text-xs font-semibold" [class.text-green-400]="player.active" [class.text-red-400]="!player.active">
+            {{ player.active ? 'ativo' : 'inativo' }}
+          </span>
+        </div>
+      } @empty {
+        <p class="text-center text-gray-500">Nenhum jogador cadastrado ainda.</p>
+      }
+    </div>
+  }
+
+  @if (status() === 'error') {
+    <p class="mt-4 rounded-md bg-red-950/60 p-3 text-sm text-red-200">
+      {{ errorMessage() }}
+    </p>
+  }
+</article>
