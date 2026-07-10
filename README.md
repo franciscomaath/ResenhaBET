@@ -211,8 +211,6 @@ Observação: A integração com APIfootball está implementada e foi validada e
 
 ## Screenshots
 
-Nota para o Francisco: adicionar 3-4 screenshots reais aqui antes de publicar: dashboard, tela de evento ao vivo, tela de apostas e gestão de grupos.
-
 <!-- screenshot: dashboard -->
 ![alt text](image.png)
 
