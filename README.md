@@ -1,6 +1,7 @@
 # ResenhaBET
 
 Plataforma multi-grupo para campeonatos de FIFA entre amigos, com apostas internas e suporte a eventos de futebol real.
+**[🔗 Acessar o projeto em produção](https://resenha-bet.vercel.app/)**
 
 ## A origem
 
@@ -159,6 +160,8 @@ boolean isGroupStageMatch = homeGroup != null && homeGroup.equals(awayGroup);
 O CI/CD existe no fluxo real do projeto, mas está configurado fora deste repositório. Por isso não há workflows versionados em `.github/workflows/` aqui.
 
 ## Rodando localmente
+
+Se preferir só explorar o produto sem configurar o ambiente, o projeto está no ar em [resenha-bet.vercel.app](https://resenha-bet.vercel.app/).
 
 Pré-requisitos:
 
