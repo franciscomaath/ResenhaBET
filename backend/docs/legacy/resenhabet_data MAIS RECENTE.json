@@ -1,0 +1,1330 @@
+{
+  "bettors": {
+    "Alexandre": {
+      "name": "Alexandre",
+      "wallet": 40,
+      "hasBetted": false
+    },
+    "Bichas": {
+      "name": "Bichas",
+      "wallet": 0.2756999999999792,
+      "hasBetted": false
+    },
+    "Bruno": {
+      "name": "Bruno",
+      "wallet": 40,
+      "hasBetted": false
+    },
+    "Conrado": {
+      "name": "Conrado",
+      "wallet": 40,
+      "hasBetted": false
+    },
+    "Fitaroni": {
+      "name": "Fitaroni",
+      "wallet": 0.007799999999804186,
+      "hasBetted": false
+    },
+    "Francisco": {
+      "name": "Francisco",
+      "wallet": 209.7321,
+      "hasBetted": false
+    },
+    "Gustavo": {
+      "name": "Gustavo",
+      "wallet": 50,
+      "hasBetted": false
+    },
+    "Kadu": {
+      "name": "Kadu",
+      "wallet": 0.0029000000000678483,
+      "hasBetted": false
+    },
+    "Leo": {
+      "name": "Leo",
+      "wallet": 0.849999999999909,
+      "hasBetted": false
+    },
+    "Macario": {
+      "name": "Macario",
+      "wallet": 41.25,
+      "hasBetted": false
+    },
+    "Nicolas": {
+      "name": "Nicolas",
+      "wallet": 50.52999999999984,
+      "hasBetted": false
+    },
+    "Paulo": {
+      "name": "Paulo",
+      "wallet": 0.7199999999999989,
+      "hasBetted": false
+    },
+    "Puskas": {
+      "name": "Puskas",
+      "wallet": 40,
+      "hasBetted": false
+    },
+    "Ribas": {
+      "name": "Ribas",
+      "wallet": 40,
+      "hasBetted": false
+    },
+    "Tadeu": {
+      "name": "Tadeu",
+      "wallet": 100.31,
+      "hasBetted": false
+    },
+    "Vini": {
+      "name": "Vini",
+      "wallet": 40,
+      "hasBetted": false
+    },
+    "Luan": {
+      "name": "Luan",
+      "wallet": 0.9800000000000182,
+      "hasBetted": false
+    },
+    "Lucas": {
+      "name": "Lucas",
+      "wallet": 589.575,
+      "hasBetted": false
+    }
+  },
+  "betHistory": [
+    {
+      "match": {
+        "id": "match_1752973848835",
+        "p1": "Lucas",
+        "p2": "Fitaroni",
+        "isKnockout": true,
+        "score1": 2,
+        "score2": 1,
+        "penaltyScore1": 2,
+        "penaltyScore2": 1,
+        "odds": {
+          "p1": "2.48",
+          "p2": "1.68",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Nicolas",
+          "on": "Lucas",
+          "amount": 20,
+          "outcome": "win",
+          "payout": 49.6
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Fitaroni",
+          "amount": 26.96,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Francisco",
+          "on": "Lucas",
+          "amount": 48.28,
+          "outcome": "win",
+          "payout": 119.73440000000001
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Fitaroni",
+          "amount": 52,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Fitaroni",
+          "amount": 597.36,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Fitaroni",
+          "amount": 181,
+          "outcome": "loss",
+          "payout": 0
+        }
+      ],
+      "winner": "Lucas"
+    },
+    {
+      "match": {
+        "id": "match_1752973177533",
+        "p1": "Fitaroni",
+        "p2": "Nicolas",
+        "isKnockout": true,
+        "score1": 4,
+        "score2": 0,
+        "penaltyScore1": 2,
+        "penaltyScore2": 1,
+        "odds": {
+          "p1": "1.75",
+          "p2": "2.33",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Fitaroni",
+          "amount": 50,
+          "outcome": "win",
+          "payout": 87.5
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Fitaroni",
+          "amount": 329.92,
+          "outcome": "win",
+          "payout": 577.36
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Fitaroni",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 175
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Fitaroni",
+          "amount": 200,
+          "outcome": "win",
+          "payout": 350
+        }
+      ],
+      "winner": "Fitaroni"
+    },
+    {
+      "match": {
+        "id": "match_1752972251590",
+        "p1": "Francisco",
+        "p2": "Lucas",
+        "isKnockout": true,
+        "score1": 2,
+        "score2": 3,
+        "penaltyScore1": 2,
+        "penaltyScore2": 1,
+        "odds": {
+          "p1": "1.59",
+          "p2": "2.69",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Francisco",
+          "amount": 110,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Luan",
+          "on": "Francisco",
+          "amount": 10,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Leo",
+          "on": "Francisco",
+          "amount": 377,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Francisco",
+          "amount": 61,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Francisco",
+          "amount": 300,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Francisco",
+          "amount": 1415,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Lucas",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 269
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Francisco",
+          "amount": 300,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Lucas",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 26.9
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Francisco",
+          "amount": 20,
+          "outcome": "loss",
+          "payout": 0
+        }
+      ],
+      "winner": "Lucas"
+    },
+    {
+      "match": {
+        "id": "match_1752971455881",
+        "p1": "Tadeu",
+        "p2": "Kadu",
+        "isKnockout": true,
+        "score1": 3,
+        "score2": 2,
+        "penaltyScore1": 2,
+        "penaltyScore2": 1,
+        "odds": {
+          "p1": "2.32",
+          "p2": "1.76",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Kadu",
+          "on": "Kadu",
+          "amount": 500,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Tadeu",
+          "amount": 22.1,
+          "outcome": "win",
+          "payout": 51.272
+        },
+        {
+          "bettor": "Francisco",
+          "on": "Kadu",
+          "amount": 316,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Kadu",
+          "amount": 250,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Luan",
+          "on": "Kadu",
+          "amount": 1074,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Leo",
+          "on": "Kadu",
+          "amount": 2000,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Kadu",
+          "amount": 876.7,
+          "outcome": "loss",
+          "payout": 0
+        }
+      ],
+      "winner": "Tadeu"
+    },
+    {
+      "match": {
+        "id": "match_1752970391117",
+        "p1": "Kadu",
+        "p2": "Luan",
+        "isKnockout": true,
+        "score1": 2,
+        "score2": 2,
+        "penaltyScore1": 2,
+        "penaltyScore2": 1,
+        "odds": {
+          "p1": "2.21",
+          "p2": "1.83",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Kadu",
+          "amount": 98.09,
+          "outcome": "win",
+          "payout": 216.7789
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Kadu",
+          "amount": 150,
+          "outcome": "win",
+          "payout": 331.5
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Kadu",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 221
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Kadu",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 22.1
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Kadu",
+          "amount": 500,
+          "outcome": "win",
+          "payout": 1105
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Kadu",
+          "amount": 20,
+          "outcome": "win",
+          "payout": 44.2
+        },
+        {
+          "bettor": "Leo",
+          "on": "Kadu",
+          "amount": 1000,
+          "outcome": "win",
+          "payout": 2210
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Kadu",
+          "amount": 200,
+          "outcome": "win",
+          "payout": 442
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Luan",
+          "amount": 250,
+          "outcome": "loss",
+          "payout": 0
+        }
+      ],
+      "winner": "Kadu"
+    },
+    {
+      "match": {
+        "id": "match_1752968900032",
+        "p1": "Bichas",
+        "p2": "Tadeu",
+        "isKnockout": true,
+        "score1": 2,
+        "score2": 4,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "1.56",
+          "p2": "2.78",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Luan",
+          "on": "Tadeu",
+          "amount": 386,
+          "outcome": "win",
+          "payout": 1073.08
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Tadeu",
+          "amount": 295,
+          "outcome": "win",
+          "payout": 820.0999999999999
+        },
+        {
+          "bettor": "Francisco",
+          "on": "Tadeu",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 278
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Bichas",
+          "amount": 145.94,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Leo",
+          "on": "Tadeu",
+          "amount": 350,
+          "outcome": "win",
+          "payout": 972.9999999999999
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Tadeu",
+          "amount": 300,
+          "outcome": "win",
+          "payout": 833.9999999999999
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Tadeu",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 27.799999999999997
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Tadeu",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 278
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Tadeu",
+          "amount": 250,
+          "outcome": "win",
+          "payout": 695
+        }
+      ],
+      "winner": "Tadeu"
+    },
+    {
+      "match": {
+        "id": "match_1752966546714",
+        "p1": "Kadu",
+        "p2": "Paulo",
+        "isKnockout": true,
+        "score1": 4,
+        "score2": 1,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "1.91",
+          "p2": "2.10",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Luan",
+          "on": "Kadu",
+          "amount": 200,
+          "outcome": "win",
+          "payout": 382
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Paulo",
+          "amount": 24,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Kadu",
+          "amount": 300,
+          "outcome": "win",
+          "payout": 573
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Kadu",
+          "amount": 76.41,
+          "outcome": "win",
+          "payout": 145.9431
+        },
+        {
+          "bettor": "Leo",
+          "on": "Kadu",
+          "amount": 280,
+          "outcome": "win",
+          "payout": 534.8
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Kadu",
+          "amount": 133,
+          "outcome": "win",
+          "payout": 254.03
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Kadu",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 191
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Kadu",
+          "amount": 60,
+          "outcome": "win",
+          "payout": 114.6
+        },
+        {
+          "bettor": "Francisco",
+          "on": "Kadu",
+          "amount": 104.76,
+          "outcome": "win",
+          "payout": 200.0916
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Kadu",
+          "amount": 310,
+          "outcome": "win",
+          "payout": 592.1
+        }
+      ],
+      "winner": "Kadu"
+    },
+    {
+      "match": {
+        "id": "match_1752965457751",
+        "p1": "Leo",
+        "p2": "Tadeu",
+        "isKnockout": true,
+        "score1": 0,
+        "score2": 3,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "1.69",
+          "p2": "2.46",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Paulo",
+          "on": "Tadeu",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 24.6
+        },
+        {
+          "bettor": "Leo",
+          "on": "Tadeu",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 246
+        },
+        {
+          "bettor": "Luan",
+          "on": "Tadeu",
+          "amount": 80,
+          "outcome": "win",
+          "payout": 196.8
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Tadeu",
+          "amount": 40,
+          "outcome": "win",
+          "payout": 98.4
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Tadeu",
+          "amount": 31.06,
+          "outcome": "win",
+          "payout": 76.4076
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Tadeu",
+          "amount": 100,
+          "outcome": "win",
+          "payout": 246
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Tadeu",
+          "amount": 30,
+          "outcome": "win",
+          "payout": 73.8
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Tadeu",
+          "amount": 125.88,
+          "outcome": "win",
+          "payout": 309.66479999999996
+        },
+        {
+          "bettor": "Francisco",
+          "on": "Tadeu",
+          "amount": 38.52,
+          "outcome": "win",
+          "payout": 94.7592
+        }
+      ],
+      "winner": "Tadeu"
+    },
+    {
+      "match": {
+        "id": "match_1752964409650",
+        "p1": "Nicolas",
+        "p2": "Bichas",
+        "isKnockout": true,
+        "score1": 2,
+        "score2": 0,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "2.00",
+          "p2": "2.00",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Paulo",
+          "on": "Bichas",
+          "amount": 6,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Nicolas",
+          "amount": 72.46,
+          "outcome": "win",
+          "payout": 144.92
+        },
+        {
+          "bettor": "Francisco",
+          "on": "Nicolas",
+          "amount": 14.26,
+          "outcome": "win",
+          "payout": 28.52
+        },
+        {
+          "bettor": "Luan",
+          "on": "Nicolas",
+          "amount": 30,
+          "outcome": "win",
+          "payout": 60
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Nicolas",
+          "amount": 14,
+          "outcome": "win",
+          "payout": 28
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Nicolas",
+          "amount": 40,
+          "outcome": "win",
+          "payout": 80
+        },
+        {
+          "bettor": "Leo",
+          "on": "Nicolas",
+          "amount": 50,
+          "outcome": "win",
+          "payout": 100
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Nicolas",
+          "amount": 25,
+          "outcome": "win",
+          "payout": 50
+        }
+      ],
+      "winner": "Nicolas"
+    },
+    {
+      "match": {
+        "id": "match_1752963386685",
+        "p1": "Fitaroni",
+        "p2": "Kadu",
+        "isKnockout": true,
+        "score1": 1,
+        "score2": 0,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "1.56",
+          "p2": "2.79",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Fitaroni",
+          "amount": 15.55,
+          "outcome": "win",
+          "payout": 24.258000000000003
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Fitaroni",
+          "amount": 25,
+          "outcome": "win",
+          "payout": 39
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Kadu",
+          "amount": 20,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Fitaroni",
+          "amount": 50,
+          "outcome": "win",
+          "payout": 78
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Fitaroni",
+          "amount": 15,
+          "outcome": "win",
+          "payout": 23.400000000000002
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Fitaroni",
+          "amount": 40,
+          "outcome": "win",
+          "payout": 62.400000000000006
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Fitaroni",
+          "amount": 50,
+          "outcome": "win",
+          "payout": 78
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Fitaroni",
+          "amount": 2,
+          "outcome": "win",
+          "payout": 3.12
+        },
+        {
+          "bettor": "Luan",
+          "on": "Fitaroni",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 15.600000000000001
+        },
+        {
+          "bettor": "Leo",
+          "on": "Fitaroni",
+          "amount": 30,
+          "outcome": "win",
+          "payout": 46.800000000000004
+        }
+      ],
+      "winner": "Fitaroni"
+    },
+    {
+      "match": {
+        "id": "match_1752959921682",
+        "p1": "Francisco",
+        "p2": "Tadeu",
+        "isKnockout": true,
+        "score1": 1,
+        "score2": 0,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "1.37",
+          "p2": "3.70",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Francisco",
+          "amount": 15,
+          "outcome": "win",
+          "payout": 20.55
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Francisco",
+          "amount": 42.67,
+          "outcome": "win",
+          "payout": 58.45790000000001
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Francisco",
+          "amount": 7.5,
+          "outcome": "win",
+          "payout": 10.275
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Francisco",
+          "amount": 45.9,
+          "outcome": "win",
+          "payout": 62.883
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Francisco",
+          "amount": 29.9,
+          "outcome": "win",
+          "payout": 40.963
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Tadeu",
+          "amount": 5,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Francisco",
+          "amount": 79,
+          "outcome": "win",
+          "payout": 108.23
+        },
+        {
+          "bettor": "Luan",
+          "on": "Francisco",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 13.700000000000001
+        },
+        {
+          "bettor": "Leo",
+          "on": "Francisco",
+          "amount": 30,
+          "outcome": "win",
+          "payout": 41.1
+        }
+      ],
+      "winner": "Francisco"
+    },
+    {
+      "match": {
+        "id": "match_1752958934578",
+        "p1": "Macario",
+        "p2": "Lucas",
+        "isKnockout": true,
+        "score1": 4,
+        "score2": 3,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "1.86",
+          "p2": "2.16",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Lucas",
+          "amount": 5.75,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Luan",
+          "on": "Lucas",
+          "amount": 5,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Lucas",
+          "amount": 4,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Macario",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 9.3
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Lucas",
+          "amount": 20,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Macario",
+          "amount": 20,
+          "outcome": "win",
+          "payout": 37.2
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Macario",
+          "amount": 8,
+          "outcome": "win",
+          "payout": 14.88
+        },
+        {
+          "bettor": "Leo",
+          "on": "Macario",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 18.6
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Macario",
+          "amount": 15,
+          "outcome": "win",
+          "payout": 27.900000000000002
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Lucas",
+          "amount": 5,
+          "outcome": "loss",
+          "payout": 0
+        }
+      ],
+      "winner": "Macario"
+    },
+    {
+      "match": {
+        "id": "match_1752957857076",
+        "p1": "Kadu",
+        "p2": "Leo",
+        "isKnockout": true,
+        "score1": 3,
+        "score2": 0,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "2.10",
+          "p2": "1.91",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Macario",
+          "on": "Kadu",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 10.5
+        },
+        {
+          "bettor": "Luan",
+          "on": "Kadu",
+          "amount": 8,
+          "outcome": "win",
+          "payout": 16.8
+        },
+        {
+          "bettor": "Francisco",
+          "on": "Kadu",
+          "amount": 7.5,
+          "outcome": "win",
+          "payout": 15.75
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Kadu",
+          "amount": 7.5,
+          "outcome": "win",
+          "payout": 15.75
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Kadu",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 10.5
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Kadu",
+          "amount": 8.75,
+          "outcome": "win",
+          "payout": 18.375
+        },
+        {
+          "bettor": "Leo",
+          "on": "Kadu",
+          "amount": 8,
+          "outcome": "win",
+          "payout": 16.8
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Kadu",
+          "amount": 15,
+          "outcome": "win",
+          "payout": 31.5
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Kadu",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 10.5
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Kadu",
+          "amount": 15,
+          "outcome": "win",
+          "payout": 31.5
+        }
+      ],
+      "winner": "Kadu"
+    },
+    {
+      "match": {
+        "id": "match_1752956698745",
+        "p1": "Lucas",
+        "p2": "Paulo",
+        "isKnockout": true,
+        "score1": 5,
+        "score2": 0,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "1.75",
+          "p2": "2.33",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Lucas",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 17.5
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Lucas",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 8.75
+        },
+        {
+          "bettor": "Leo",
+          "on": "Lucas",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 8.75
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Lucas",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 17.5
+        },
+        {
+          "bettor": "Luan",
+          "on": "Lucas",
+          "amount": 8,
+          "outcome": "win",
+          "payout": 14
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Paulo",
+          "amount": 8,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Lucas",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 17.5
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Lucas",
+          "amount": 12,
+          "outcome": "win",
+          "payout": 21
+        },
+        {
+          "bettor": "Tadeu",
+          "on": "Lucas",
+          "amount": 10,
+          "outcome": "win",
+          "payout": 17.5
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Lucas",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 8.75
+        },
+        {
+          "bettor": "Macario",
+          "on": "Lucas",
+          "amount": 1,
+          "outcome": "win",
+          "payout": 1.75
+        }
+      ],
+      "winner": "Lucas"
+    },
+    {
+      "match": {
+        "id": "match_1752955895630",
+        "p1": "Tadeu",
+        "p2": "Luan",
+        "isKnockout": true,
+        "score1": 1,
+        "score2": 0,
+        "penaltyScore1": 0,
+        "penaltyScore2": 0,
+        "odds": {
+          "p1": "2.60",
+          "p2": "1.63",
+          "draw": null
+        },
+        "bettingOpen": false
+      },
+      "bets": [
+        {
+          "bettor": "Francisco",
+          "on": "Luan",
+          "amount": 10,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Lucas",
+          "on": "Luan",
+          "amount": 7,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Kadu",
+          "on": "Luan",
+          "amount": 5,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Macario",
+          "on": "Luan",
+          "amount": 15,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Leo",
+          "on": "Luan",
+          "amount": 5,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Nicolas",
+          "on": "Tadeu",
+          "amount": 5,
+          "outcome": "win",
+          "payout": 13
+        },
+        {
+          "bettor": "Bichas",
+          "on": "Luan",
+          "amount": 9,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Paulo",
+          "on": "Luan",
+          "amount": 12,
+          "outcome": "loss",
+          "payout": 0
+        },
+        {
+          "bettor": "Fitaroni",
+          "on": "Luan",
+          "amount": 9,
+          "outcome": "loss",
+          "payout": 0
+        }
+      ],
+      "winner": "Tadeu"
+    }
+  ],
+  "guestBettors": [
+  ]
+}

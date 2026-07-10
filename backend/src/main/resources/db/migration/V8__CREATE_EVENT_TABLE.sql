@@ -1,0 +1,18 @@
+CREATE TABLE event (
+    id BIGSERIAL PRIMARY KEY,
+    tournament_id BIGINT NOT NULL,
+    round_id BIGINT,
+    player_home_id BIGINT NOT NULL,
+    home_elo_before DECIMAL(10,2),
+    player_away_id BIGINT NOT NULL,
+    away_elo_before DECIMAL(10,2),
+    game_datetime TIMESTAMP NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    home_score INT,
+    away_score INT,
+    is_knockout BOOLEAN NOT NULL DEFAULT FALSE,
+    is_bye BOOLEAN NOT NULL DEFAULT FALSE,
+    CONSTRAINT fk_event_tournament FOREIGN KEY (tournament_id) REFERENCES tournament(id),
+    CONSTRAINT fk_event_round FOREIGN KEY (round_id) REFERENCES tournament_round(id),
+    CONSTRAINT fk_event_player_home FOREIGN KEY (player_home_id) REFERENCES player(id),
+    CONSTRAINT fk_event_player_away FOREIGN KEY (player_away_id) REFERENCES player(id));
